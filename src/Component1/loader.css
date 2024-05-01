@@ -1,0 +1,52 @@
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  --_c: no-repeat radial-gradient(farthest-side, #25b09b 92%, #0000);
+  background: var(--_c) top, var(--_c) left, var(--_c) right, var(--_c) bottom;
+  background-size: 12px 12px;
+  animation: l7 1s infinite;
+}
+@keyframes l7 {
+  to {
+    transform: rotate(0.5turn);
+  }
+}
+
+.rowColorHead {
+  background-color: rgb(43, 77, 129);
+  width: "100%";
+}
+
+.rowColor {
+  background-color: rgb(176, 193, 219);
+  width: "100%";
+}
+
+.rowColor:nth-child(odd) {
+  background-color: rgb(43, 77, 129);
+}
+
+.theadStyle {
+  color: #fff;
+  text-transform: capitalize;
+  font-weight: bold;
+  font-size: 18px;
+  border-right: "2px solid white";
+  font-family: Calibri;
+  width: 14%;
+  text-align: center;
+  /* borderRight: "2px solid white", */
+  /* fontFamily: "Calibri", */
+}
+.tbodyStyle {
+  text-align: "center";
+}
+.noDataavail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  font-weight: bold;
+  color: rgb(82, 114, 161);
+}
