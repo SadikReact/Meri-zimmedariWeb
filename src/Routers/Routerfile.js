@@ -56,6 +56,7 @@ import Faqpageweb from "../Component1/Faqpageweb";
 import FAQs from "../Component1/FAQs";
 import TermsAndConditions from "../Component1/TermsAndConditions";
 import PrivacyandPolicy from "../Component1/PrivacyandPolicy";
+import Faq1 from "../Component1/FAQ";
 
 const Routerfile = () => {
   const [loading, setLoading] = useState(false);
@@ -95,7 +96,8 @@ const Routerfile = () => {
                 path="/termsandcondition"
                 element={<Termsandcondition />}
               />
-              <Route path="/FAQ" element={<Faqpageweb />} />
+              <Route path='/FAQ' element={<Faq1/>}/>
+              // <Route path="/FAQ" element={<Faqpageweb />} />
               <Route path="/Preview" element={<Preview />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/face" element={<Loginform />} />
