@@ -1,0 +1,28 @@
+.accordion {
+  /* max-width: 400px;   */
+  margin: 0 auto;
+}
+
+.accordion-item {
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.accordion-header {
+  padding: 10px;
+  cursor: pointer;
+  padding-left: 2rem;
+}
+
+.accordion-content {
+  border-top: 1px solid #ccc;
+  display: none;
+  padding: 10px;
+  padding-left: 2rem;
+}
+
+.accordion-item.active .accordion-content {
+  display: block;
+}

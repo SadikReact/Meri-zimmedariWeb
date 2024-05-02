@@ -33,7 +33,7 @@ const Manageaccount = () => {
   const [isLoader, setIsLoader] = useState(false);
 
   const handleGeneratePassword = () => {
-    let userData = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
 
     setIsLoader(true);
     axiosConfig

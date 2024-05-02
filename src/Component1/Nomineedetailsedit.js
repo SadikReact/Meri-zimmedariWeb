@@ -6,8 +6,11 @@ import axiosConfig from "./../axiosConfig";
 import { OTP_main } from "./Api";
 import EmailModal from "./nominee/EmailModal";
 import PhoneOtp from "./nominee/phoneOtp";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 const Nomineedetailsedit = () => {
   const [modalShow, setModalShow] = useState(false);
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [newOtp, setNewOtp] = useState(null);
   const [myNumber, setMyNumber] = useState("");
   const [modalShowmail, setModalShowmail] = useState(false);
@@ -32,7 +35,6 @@ const Nomineedetailsedit = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (location?.state) {
-      console.log(location?.state);
       setFormValues(location.state);
       setNomineedetails(location.state);
     }
@@ -49,7 +51,7 @@ const Nomineedetailsedit = () => {
     });
   };
   const handleSubmit = e => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     console.log(user?._id);
     formValues.userId = user?._id;
     e.preventDefault();
@@ -61,7 +63,6 @@ const Nomineedetailsedit = () => {
     if (!formValues.relationWithNominee) errors.IsrelationWithNominee = true;
 
     if (Object.keys(errors)?.length === 0) {
-      // console.log(formValues);
       axiosConfig
         .put(`/asset/update-nominee/${location.state._id}`, formValues)
         .then(response => {
@@ -72,9 +73,15 @@ const Nomineedetailsedit = () => {
             relationWithNominee: "",
           });
           setFormError("");
-          navigate("/nomineedetails");
+          setMessage(response.data.message);
+          setErrModal(true);
+          setTimeout(() => {
+            navigate("/nomineedetails");
+          }, 2000);
         })
         .catch(err => {
+          setMessage("Something Went Wrong");
+          setErrModal(true);
           console.log("err", err);
         });
     } else {
@@ -106,7 +113,7 @@ const Nomineedetailsedit = () => {
     }
   };
   const handlePhoneModal = number => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
         userId: user?._id,
@@ -127,7 +134,7 @@ const Nomineedetailsedit = () => {
     }
   };
   const handleEmailModal = currentEmail => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
       let payload = {
         userId: user?._id,
@@ -587,6 +594,11 @@ const Nomineedetailsedit = () => {
           />
         </div>
       ) : null}
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

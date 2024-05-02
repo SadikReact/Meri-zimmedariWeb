@@ -11,11 +11,12 @@ const Nomineedetails = () => {
 
   useEffect(() => {
     (async () => {
-      const userData = JSON.parse(localStorage.getItem("UserZimmedari"));
+      const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
       await axiosConfig
         .get(`/asset/nominee-list/${userData?._id}`)
         .then(response => {
           setModel(false);
+          console.log(response.data.Nominee);
           setNomineeList(response.data.Nominee);
         })
         .catch(err => {

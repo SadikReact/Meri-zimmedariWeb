@@ -21,11 +21,11 @@ const AssetDetails = () => {
   }, []);
 
   const AllAssetList = () => {
-    const userData = JSON.parse(localStorage.getItem("UserZimmedari"));
+    const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     axiosConfig
       .get(`/asset/view-assets-userId/${userData?._id}`)
       .then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         setModel(false);
         setAssetList(response.data.Asset);
       })
@@ -53,9 +53,9 @@ const AssetDetails = () => {
   };
 
   const handleEdit = item => {
-    console.log(item);
+    // console.log(item);
     localStorage.setItem("AssetEditData", item);
-    navigate("/StepperForm", { state: item });
+    navigate("/add-aseets/nominee", { state: item });
   };
   const handleNomineeDetails = item => {
     console.log(item);

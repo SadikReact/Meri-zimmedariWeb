@@ -83,11 +83,15 @@ const Manageconfidential = () => {
                   color: "black",
                 }}
               >
-                <td style={{ borderRight: "2px solid white", color: "black" }}>
+                <td style={{ borderRight: "2px solid white", color: "white" }}>
                   Confidential Note
                 </td>
-                <td style={{ borderRight: "2px solid white" }}>ABC</td>
-                <td style={{ borderRight: "2px solid white" }}>Wife</td>
+                <td style={{ borderRight: "2px solid white", color: "white" }}>
+                  ABC
+                </td>
+                <td style={{ borderRight: "2px solid white", color: "white" }}>
+                  Wife
+                </td>
                 <td style={{ borderRight: "2px solid white" }}>
                   <div style={{ marginTop: "-10px" }}>
                     <span className=" btn icon-container">

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axiosConfig from "../../axiosConfig";
 import { Link } from "react-router-dom";
 import imagelogo from "../image/logo.png";
-import swal from "sweetalert";
+
 import NavBar from "./NavBar";
 import Footer from "../Footer";
 const SendOtp = () => {

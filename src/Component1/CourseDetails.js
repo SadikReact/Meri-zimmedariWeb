@@ -322,7 +322,8 @@ const CourseDetails = ({
     }
   };
   const handlePhoneModal = number => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
         userId: user?._id,
@@ -346,7 +347,8 @@ const CourseDetails = ({
     }
   };
   const handleEmailModal = currentEmail => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
       let payload = {
         userId: user?._id,

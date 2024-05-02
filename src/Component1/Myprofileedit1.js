@@ -6,9 +6,10 @@ import PhoneOtp from "./nominee/phoneOtp";
 import axiosConfig from "../axiosConfig";
 import EmailModal from "./nominee/EmailModal";
 import Spinner from "react-bootstrap/Spinner";
-import swal from "sweetalert";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 const Myprofileedit1 = () => {
-  // const navigate = useNavigate();
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [modalShowmail, setModalShowmail] = useState(false);
   const [phoneNo, setPhoneNo] = useState(false);
@@ -18,11 +19,13 @@ const Myprofileedit1 = () => {
     firstName: "",
     mobileNo: "",
     email: "",
-    // dob: "",
-    // gender: "",
+    dob: "",
+    gender: "",
+    mailVerifyStatus: "",
   });
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    console.log(user);
     setformDetails(user || {});
   }, []);
 
@@ -46,15 +49,13 @@ const Myprofileedit1 = () => {
     setMyEmail(email);
     setModalShowmail(true);
   };
-  //  const handleDateChange = event => {
-  //    setSelectedDate(event.target.value);
-  //  };
-  // Get today's date
+
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const dd = String(today.getDate()).padStart(2, "0");
   const maxDate = `${yyyy}-${mm}-${dd}`;
+
   const handleSubmit = () => {
     const payload = {
       firstName: formDetails?.firstName,
@@ -63,14 +64,24 @@ const Myprofileedit1 = () => {
       dob: formDetails?.dob,
       gender: formDetails?.gender,
     };
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     axiosConfig
       .put(`/user/edit-profile/${user?._id}`, payload)
       .then(response => {
-        swal("User Data Update Successfully");
-        console.log(response.data);
+        if (response.data.updatedUser) {
+          sessionStorage.setItem(
+            "UserZimmedari",
+            JSON.stringify(response.data.updatedUser)
+          );
+          setformDetails(response.data.updatedUser);
+
+          setErrModal(true);
+          setMessage("User Data Update Successfully");
+        }
       })
       .catch(error => {
+        setMessage("Something went Wrong");
+        setErrModal(true);
         console.log(error);
       });
   };
@@ -471,6 +482,12 @@ const Myprofileedit1 = () => {
           />
         </div>
       ) : null}
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
+      ;
     </>
   );
 };

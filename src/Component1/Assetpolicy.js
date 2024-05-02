@@ -27,12 +27,11 @@ const Assetpolicy = props => {
   const [result, setResult] = useState([]);
   useEffect(() => {
     AssetListFunc();
-    let viewData = JSON.parse(localStorage.getItem("ViewOne"));
+    let viewData = JSON.parse(sessionStorage.getItem("ViewOne"));
     console.log(viewData);
-    let assetAllData = JSON.parse(localStorage.getItem("assetDetails"));
+    let assetAllData = JSON.parse(sessionStorage.getItem("assetDetails"));
 
     if (viewData) {
-      // console.log("@@@@", location?.state);
       setdynamicFields(viewData);
       setPolicyName(viewData?.policyName);
       setPolicyNumber(viewData?.policyNumber);
@@ -72,7 +71,7 @@ const Assetpolicy = props => {
 
     // If there are no errors, submit the form
     if (Object.keys(errors)?.length === 0) {
-      let userId = JSON.parse(localStorage.getItem("UserZimmedari"))._id;
+      let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"))._id;
       const assetType = {
         userId,
         dynamicFields,
@@ -101,7 +100,7 @@ const Assetpolicy = props => {
 
     if (file && file.size > 500 * 1024) {
       setError("File size exceeds the permissible limit of 500 KB.");
-      setUploadedFile(null);
+      setUploadedFile(file);
     } else {
       setError(null);
       setUploadedFile(file);

@@ -9,8 +9,10 @@ const MyProfile = () => {
   const [user, setUser] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
-    setUser(user);
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    if(user){
+   setUser(user);
+    }
   }, []);
 
   const hanldeEdit = () => {

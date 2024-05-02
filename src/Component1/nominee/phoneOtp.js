@@ -38,7 +38,7 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
     setModalShow(false);
   };
   const handleOtpVerify = () => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     let payload = {
       userId: user?._id,
       mobileNo: Number(myNumber),
