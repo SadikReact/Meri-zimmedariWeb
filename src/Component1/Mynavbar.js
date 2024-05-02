@@ -12,7 +12,7 @@ const Mynavbar = () => {
   const handleLogOut = () => {
     let token = JSON.parse(localStorage.getItem("user_token"));
     // if (token) {
-
+sessionStorage.clear();
     localStorage.removeItem("ad-token");
     localStorage.removeItem("UserZimmedari");
     localStorage.removeItem("user_token");
@@ -33,7 +33,7 @@ const Mynavbar = () => {
       >
         <Container fluid>
           <Navbar.Brand href="#home">
-            <Link to={"/"}>
+            <Link to={"/dashboard"}>
               <img src={imagelogo} width={"100px"} alt="12" />
             </Link>
           </Navbar.Brand>
@@ -97,13 +97,9 @@ const Mynavbar = () => {
                   <NavDropdown.Item>Manage Account</NavDropdown.Item>
                 </LinkContainer>
               </NavDropdown>
-
-              <div className="cssfornavbarpadding sdasdfadfdfsdffsdfsdf">
-                <Link to={"/FAQs"}>
-                  <NavDropdown.Item>FAQ</NavDropdown.Item>
-                </Link>
-              </div>
-
+              <LinkContainer to={"/FAQs"}>
+                <Nav.Link className="cssfornavbarpadding">FAQ</Nav.Link>
+              </LinkContainer>
               <div className="cssfornavbarpadding sdasdfadfdfsdffsdfsdf">
                 <a
                   href={"https://merizimmedari.com/contact.html"}

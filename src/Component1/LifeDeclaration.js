@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Mynavbar from "./Mynavbar";
-import swal from "sweetalert";
 import BlinkEye from "../image/eyedrop.gif";
 import * as tf from "@tensorflow/tfjs";
 import "./loader.css";
@@ -16,19 +15,21 @@ import {
   Row,
 } from "reactstrap";
 import Webcam from "react-webcam";
-import axios from "axios";
 import axiosConfig from "../axiosConfig";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detection");
 
 const LifeDeclaration = args => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDate, setIsDate] = useState(false);
-
+  const [futureDate, setFutureDate] = useState("");
   const [count, setCount] = useState(0);
   const [maxLeft, setMaxLeft] = useState(0);
   const [maxRight, setMaxRight] = useState(0);
   const [model, setModel] = useState(null);
   const [text, setText] = useState("modal loading...");
+  const [errModal, setErrModal] = useState(false);
+  const [message, setMessage] = useState("");
 
   const webcamRef = useRef(null);
   const [Data, setData] = useState({});
@@ -64,6 +65,12 @@ const LifeDeclaration = args => {
       }, 1500);
     }
   }, [isOpen]);
+  const calculateFutureDate = currectDates => {
+    const currentDateNew = new Date(currectDates);
+    currentDateNew.setDate(currentDateNew.getDate() + 15);
+    const futureDates = currentDateNew.toISOString().split("T")[0];
+    setFutureDate(futureDates);
+  };
 
   const loadModel = async () => {
     faceLandmarksDetection
@@ -202,12 +209,15 @@ const LifeDeclaration = args => {
   };
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     (async () => {
       await axiosConfig
         .get(`/life-declaration/view-life-declaration/${user?._id}`)
         .then(res => {
-          console.log(res?.data?.Life);
+          console.log(res?.data?.Life.lastDeclarationDate);
+
+          calculateFutureDate(res?.data?.Life.lastDeclarationDate);
           setDeclarationDate(res?.data?.Life);
         })
         .catch(err => {
@@ -237,7 +247,8 @@ const LifeDeclaration = args => {
   }
   const handleSubmit = async () => {
     setLoading(true);
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     let formdata = new FormData();
     formdata.append("userId", user?._id);
     formdata.append("image", dataURItoBlob(Data?.image));
@@ -248,8 +259,8 @@ const LifeDeclaration = args => {
       .then(res => {
         setLoading(false);
         toggle();
-        swal("Success", "Data Submitted ", "success");
-
+        setMessage("Data Submitted ");
+        setErrModal(true);
         console.log(res);
       })
       .catch(err => {
@@ -257,7 +268,8 @@ const LifeDeclaration = args => {
         toggle();
 
         console.log(err);
-        swal("Error", "Error Occured ", "error");
+        setMessage("Error Occured ");
+        setErrModal(true);
       });
   };
 
@@ -414,7 +426,8 @@ const LifeDeclaration = args => {
             <div style={{ justifyContent: "center", display: "flex" }}>
               <input
                 type="text"
-                value={DeclarationDate?.nextPaymentDate}
+                value={futureDate}
+                // value={DeclarationDate?.nextPaymentDate}
                 id="dateInput"
                 class="form-control"
                 style={{
@@ -512,7 +525,7 @@ const LifeDeclaration = args => {
                           screenshotFormat="image/jpeg"
                           // className="mb-2"
                           style={{ borderRadius: "8px" }}
-                          // onClick={handleSubmit}
+                          onClick={handleSubmit}
                         />
                       </div>
                     )}
@@ -561,6 +574,11 @@ const LifeDeclaration = args => {
           </Row>
         </div>
       </Modal>
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

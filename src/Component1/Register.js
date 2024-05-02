@@ -5,15 +5,17 @@ import * as tf from "@tensorflow/tfjs";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import BlinkEye from "../image/eyedrop.gif";
-import swal from "sweetalert";
 import axiosConfig from "../axiosConfig";
 import { Modal, ModalHeader, Col, Form, Row } from "reactstrap";
 import NavBar from "./NavBar";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
+import Footer from "./Footer";
 const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detection");
-const Register = (args) => {
+const Register = args => {
   const webcamRef = useRef(null);
   const navigate = useNavigate();
-
+  const [errModal, setErrModal] = useState(false);
+  const [message, setMessage] = useState("");
   const [showWebcam, setShowWebcam] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [count, setCount] = useState(0);
@@ -66,11 +68,11 @@ const Register = (args) => {
       .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh, {
         maxFaces: 1,
       })
-      .then((model) => {
+      .then(model => {
         setModel(model);
         setText("ready for capture");
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   };
@@ -91,13 +93,18 @@ const Register = (args) => {
     setRegistration(true);
   };
   const handleCapture = () => {
+    setErrModal(true);
     const imageSrc = webcamRef.current.getScreenshot();
     setFormData({
       ...formData,
       image: imageSrc,
     });
-    setShowWebcam(false);
-    toggle();
+    setMessage("Image Captured Successfully Save");
+    setErrModal(true);
+    setTimeout(() => {
+      setShowWebcam(false);
+      toggle();
+    }, 2000);
   };
   const detectPoints = async () => {
     if (isOpen == false) return;
@@ -114,7 +121,6 @@ const Register = (args) => {
         // Somente 1 face
         const keypoints = predictions[0].scaledMesh;
         if (detectarBlink(keypoints)) {
-          // TODO :: Found blink, do someting
           const countN = count + 1;
           setCount(countN);
           setIsOpen(false);
@@ -146,7 +152,7 @@ const Register = (args) => {
     return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
   };
 
-  const detectarBlink = (keypoints) => {
+  const detectarBlink = keypoints => {
     const leftEye_left = 263;
     const leftEye_right = 362;
     const leftEye_top = 386;
@@ -192,18 +198,11 @@ const Register = (args) => {
     if (maxRight < eyeRight) {
       setMaxRight(eyeRight);
     }
-    // console.log("isopen:::::", isOpen);
     let result = false;
-    //    if ((maxLeft > limitOpenEye) && (maxRight > limitOpenEye)) {
     if (eyeLeft < baseCloseEye && eyeRight < baseCloseEye) {
       result = true;
       setIsOpen(false);
-      // console.log("isopen11", isOpen);
     }
-    // console.log("isopen", isOpen);
-    //    }
-
-    // console.log(result);
 
     return result;
   };
@@ -218,7 +217,7 @@ const Register = (args) => {
     return new Blob([ab], { type: mimeString });
   }
 
-  const HandleSubmitData = async (e) => {
+  const HandleSubmitData = async e => {
     e.preventDefault();
 
     setLoginButton("Submitting...");
@@ -233,11 +232,11 @@ const Register = (args) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email.trim());
   }
-  const handleEmailValidation = (e) => {
+  const handleEmailValidation = e => {
     setFormData({ ...formData, email: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setEmailError("");
     setFormError({
@@ -245,9 +244,9 @@ const Register = (args) => {
       IsImage: false,
     });
     if (formData.name) {
-      setFormError((prevData) => ({ ...prevData, IsName: false }));
+      setFormError(prevData => ({ ...prevData, IsName: false }));
     } else {
-      setFormError((prevData) => ({ ...prevData, IsName: true }));
+      setFormError(prevData => ({ ...prevData, IsName: true }));
     }
 
     // Validate email
@@ -260,16 +259,10 @@ const Register = (args) => {
 
     if (!formData.image) {
       setImageError("indicates required field");
-      // setFormError(prevData => ({ ...prevData, IsImage: false }));
     }
-    // else {
-    //   setImageError("");
-    //   // setFormError(prevData => ({ ...prevData, IsImage: true }));
-    // }
 
     let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
-    // if (formError.IsName && ImageError) {
-    //   console.log("go to inside api page");
+
     try {
       setIsCheck(false);
       const formDataToSend = new FormData();
@@ -279,27 +272,30 @@ const Register = (args) => {
       formDataToSend.append("image", dataURItoBlob(formData.image));
       setBackloading(true);
       setIsTrue(true);
-      for (const pair of formDataToSend.entries()) {
-        const [key, value] = pair;
-        console.log("Key:", key, "Value:", value);
-      }
+      // for (const pair of formDataToSend.entries()) {
+      //   const [key, value] = pair;
+      //   console.log("Key:", key, "Value:", value);
+      // }
 
       axiosConfig
         .post("/register", formDataToSend)
-        .then((response) => {
+        .then(response => {
           localStorage.removeItem("MobileNUM");
-          console.log(response.data);
           setImageError("");
           if (response.data.message) {
             setIsTrue(false);
-            // setImageError("");
-            swal("success", response.data.message);
+            setMessage(response.data.message);
+            setErrModal(true);
           } else {
+            setTimeout(() => {
+              setErrModal(false);
+            }, 1000);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           setIsTrue(true);
-          console.log(error);
+          setMessage("Something went wrong");
+          setErrModal(true);
         });
 
       setRegistered(true);
@@ -400,7 +396,7 @@ const Register = (args) => {
                         id="name"
                         name="name"
                         value={formData.name}
-                        onChange={(e) => {
+                        onChange={e => {
                           setFormData({ ...formData, name: e.target.value });
                         }}
                         required
@@ -489,7 +485,7 @@ const Register = (args) => {
                           color: "white",
                           height: "2.8rem",
                         }}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.preventDefault();
                           toggle();
                           detectPoints();
@@ -526,7 +522,7 @@ const Register = (args) => {
                         id="terms"
                         name="terms"
                         checked={isCheck}
-                        onChange={(e) => {
+                        onChange={e => {
                           setIsCheck(e.target.checked);
                         }}
                         style={{ width: "5%", float: "left", marginTop: "5px" }}
@@ -539,11 +535,7 @@ const Register = (args) => {
                       >
                         <span style={{ color: "black" }}>I agree to the</span>
                         <span style={{ marginLeft: "3px" }}>
-                          <Link
-                            to={
-                              "https://merizimmedari.com/termsandcondition.html"
-                            }
-                          >
+                          <Link to={"/TermsAndConditions"}>
                             Terms & conditions
                           </Link>
                         </span>
@@ -552,11 +544,7 @@ const Register = (args) => {
                         </span>
 
                         <span style={{ marginLeft: "3px" }}>
-                          <Link
-                            to={"https://merizimmedari.com/PrivacyPolicy.html"}
-                          >
-                            Privacy Policy
-                          </Link>
+                          <Link to={"/PrivacyandPolicy"}>Privacy Policy</Link>
                         </span>
                       </label>
                     </div>
@@ -600,6 +588,7 @@ const Register = (args) => {
           </div>
         </div>
       </div>
+      <Footer />
       <Modal isOpen={modal} toggle={toggle} {...args}>
         <ModalHeader toggle={toggle}>Capture Image</ModalHeader>
         <div className="p-3">
@@ -660,8 +649,6 @@ const Register = (args) => {
                           />
                         </div>
                       )}
-
-                      {/* </form> */}
                     </div>
                   </>
                 )}
@@ -670,7 +657,11 @@ const Register = (args) => {
           </Form>
         </div>
       </Modal>
-      {/* //   iske uper edit */}
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

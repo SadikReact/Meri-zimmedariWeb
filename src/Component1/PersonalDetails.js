@@ -55,6 +55,7 @@ const PersonalDetails = ({
     }
   }, []);
   const continueStep = e => {
+    debugger;
     e.preventDefault();
     let errors = {};
     if (!policyName) errors.IspolicyName = true;
@@ -75,14 +76,15 @@ const PersonalDetails = ({
     };
     // console.log(assetType);
     if (Object.keys(errors)?.length === 0) {
+      debugger;
       // setShowAsset(assetType);
       // setPolicyName(assetType);
       localStorage.removeItem("AssetEditData");
       localStorage.setItem("ViewOne", JSON.stringify(assetType));
-      nextStep();
-      // if(isUpload==false){
-      //   nextStep();
-      // }
+      // nextStep();
+      if (isUpload) {
+        nextStep();
+      }
     } else {
       // Set form errors
       setFormError(errors);

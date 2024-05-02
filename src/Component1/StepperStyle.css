@@ -12,7 +12,7 @@
   width: 100%;
   margin: 0 auto;
   background-color: #fafafa;
-  padding: 25px 15px;
+  /* padding: 25px 15px; */
 }
 
 .form-group {
@@ -63,7 +63,6 @@
   /* background-color: #003487; */
   /* color: #fff; */
 }
-
 
 .buttons__button--back {
   background-color: #fff;

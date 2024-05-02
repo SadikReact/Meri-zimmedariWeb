@@ -39,7 +39,7 @@ const EmailOtp = ({ setModalShowmail, setModalShow, myEmail }) => {
   };
 
   const handleOtpVerify = () => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     console.log(user);
     let payload = {
       otp: Number(otp),

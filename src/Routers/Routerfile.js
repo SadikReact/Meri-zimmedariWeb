@@ -4,6 +4,7 @@ import {
   Route,
   Switch,
   BrowserRouter,
+  useNavigate,
   Routes,
 } from "react-router-dom";
 import Mynavbar from "../Component1/Mynavbar";
@@ -55,13 +56,22 @@ import Faqpageweb from "../Component1/Faqpageweb";
 import FAQs from "../Component1/FAQs";
 import TermsAndConditions from "../Component1/TermsAndConditions";
 import PrivacyandPolicy from "../Component1/PrivacyandPolicy";
+
 const Routerfile = () => {
   const [loading, setLoading] = useState(false);
-
+  const [loader, setLoader] = useState("");
+  // const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
-    let token = localStorage.getItem("user_token");
+    // let token = localStorage.getItem("user_token");
+    // let pageparmission = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    // let accessToken = JSON.parse(sessionStorage.getItem("UserZimmedari")).token;
+    // setLoader(pageparmission);
 
+    //  if (accessToken === null || accessToken === undefined) {
+    //       // window.location.href = "/";
+    //       navigate("/");
+    //     }
     // console.log(token);
     setTimeout(() => {
       setLoading(false);

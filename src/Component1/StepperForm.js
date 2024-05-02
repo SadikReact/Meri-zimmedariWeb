@@ -22,10 +22,11 @@ const StepperForm = () => {
   const [gotNomineeData, setGotNominee] = useState([]);
   const [showNominee, setShowNominee] = useState([]);
   const [dynamicFields, setdynamicFields] = useState(""); // for fields
-  const [isUpload, setIsupload] = useState(false);
+  const [isUpload, setIsupload] = useState(true);
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [error, setError] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
   const [policyName, setPolicyName] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [reEnterPolicyNumber, setReEnterPolicyNumber] = useState("");
@@ -37,6 +38,7 @@ const StepperForm = () => {
     IsBothMatch: false,
   });
   const nextStep = () => {
+    debugger;
     setStep(step + 1);
   };
   const prevStep = () => {
@@ -70,19 +72,40 @@ const StepperForm = () => {
     }
   };
   const handleFileChange = files => event => {
-    debugger;
     const file = event.target.files[0];
+    setUploadedFileName(file?.name || "Name Not Found");
+    setUploadedFile(file);
 
     if (file && file.size > 500 * 1024) {
+      debugger;
       setError("File size exceeds the permissible limit of 500 KB.");
-      setIsupload(true);
-      console.log(file);
-      setUploadedFile(file);
+      setIsupload(false);
+      setUploadedFile(null);
     } else {
+      setIsupload(true);
       setError(null);
       setUploadedFile(file);
-      // setUploadedFileName(file?.name || "Name Not Found");
+      // if (file) {
+      //   const fileReader = new FileReader();
+      //   fileReader.onload = () => {
+      //     setFileUrl(fileReader.result);
+      //   };
+      //   if (file.type.includes("image") || file.type === "application/pdf") {
+      //     fileReader.readAsDataURL(file);
+      //   }
+      // }
     }
+
+    // if (file && file.size > 500 * 1024) {
+    //   setError("File size exceeds the permissible limit of 500 KB.");
+    //   setIsupload(true);
+    //   console.log(file);
+    //   setUploadedFile(file);
+    // } else {
+    //   setError(null);
+    //   setUploadedFile(file);
+    //   // setUploadedFileName(file?.name || "Name Not Found");
+    // }
     // if (file) {
     //   const fileSizeInBytes = file.size;
     //   const fileSizeInKilobytes = fileSizeInBytes / 1024;

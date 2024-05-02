@@ -1,19 +1,20 @@
 // import dotenv from "dotenv";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "reactstrap";
 import { Razorpay } from "react-razorpay"; // Import Razorpay correctly
 import image from "../image/logo.png";
 import axiosConfig from "../axiosConfig";
 import { useNavigate } from "react-router-dom";
-import swal from "sweetalert";
+import { ErrorModal } from "../Component1/ManageAccount/ErrorModal";
 
 // dotenv.config();
 export default function Payment({ selectedPlan, USer }) {
   const navigate = useNavigate();
-
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   //   console.log(USer);
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
+  const loadScript = src => {
+    return new Promise(resolve => {
       const script = document.createElement("script");
       script.src = src;
       script.onload = () => {
@@ -46,7 +47,7 @@ export default function Payment({ selectedPlan, USer }) {
       image: image,
       //   order_id: "9A33XWu170gUtm",
 
-      handler: async (response) => {
+      handler: async response => {
         // console.log(response.razorpay_payment_id);
         // console.log(response.razorpay_order_id);
         // console.log(response.razorpay_signature);
@@ -61,14 +62,15 @@ export default function Payment({ selectedPlan, USer }) {
         (async () => {
           await axiosConfig
             .post("/payment/save-payment", payload)
-            .then((res) => {
+            .then(res => {
               console.log(res);
-              swal("success", "Successfully Paid", "success");
-              // /dashboard
+              setMessage("Successfully Paid");
+              setErrModal(true);
               navigate("/dashboard");
             })
-            .catch((err) => {
-              swal("error", "Something Went Wrong", "error");
+            .catch(err => {
+              setMessage("Something Went Wrong");
+              setErrModal(true);
               localStorage.setItem("Payment", JSON.stringify(payload));
               console.log(err);
             });
@@ -93,9 +95,9 @@ export default function Payment({ selectedPlan, USer }) {
     };
     const paymentObject = new window.Razorpay(options);
     paymentObject.on("payment.failed", function (response) {
-      debugger;
       console.log(response);
-      swal("error", `${response?.error?.reason}`, "error");
+      setMessage(response?.error?.reason);
+      setErrModal(true);
 
       //   alert(response.error.code);
       //   alert(response.error.description);
@@ -120,6 +122,11 @@ export default function Payment({ selectedPlan, USer }) {
           Proceed To Checkout
         </Button>
       )}
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 }

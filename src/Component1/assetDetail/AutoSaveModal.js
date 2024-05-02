@@ -7,7 +7,7 @@ export const AutoSaveModal = props => {
   const [nomineeList, setNomineeList] = useState([]);
   useEffect(() => {
     (async () => {
-      const userData = JSON.parse(localStorage.getItem("UserZimmedari"));
+      const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
       await axiosConfig
         .get(`/asset/nominee-list/${userData?._id}`)
         .then(response => {

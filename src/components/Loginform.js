@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import * as tf from "@tensorflow/tfjs";
 import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import swal from "sweetalert";
 
 const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detection");
 
@@ -281,7 +280,7 @@ const Loginform = args => {
     // await axiosConfigOne
     //   .post("/register", formdata)
     //   .then(res => {
-    //     swal("Sucess", "Data Saved Sucessfully");
+    //
     //     setLoginButton("Submit");
     //     toggle();
     //     setPanVerify(false);
@@ -290,11 +289,11 @@ const Loginform = args => {
     //     setLoginButton("Submit");
     //     console.log(err.response);
     //     if (!!err.response?.data?.message) {
-    //       swal("Error", err.response?.data?.message);
+
     //     }
     //   });
     // } else {
-    //   swal("Error", "Verify Pan Number First");
+
     // }
   };
 
@@ -321,7 +320,6 @@ const Loginform = args => {
     //     console.log(err.response);
     //     setLoginScreen(true);
 
-    //     swal("Error", err?.response?.data?.message, "error");
     //   });
   };
 

@@ -6,10 +6,10 @@ import axiosConfig from "../axiosConfig";
 import { useNavigate } from "react-router-dom";
 
 import "./Otpveri";
-import swal from "sweetalert";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { OTP_main } from "./Api";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detection");
 
 const Login = () => {
@@ -17,6 +17,8 @@ const Login = () => {
 
   const webcamRef = useRef(null);
   const [response, setResponse] = useState(null);
+  const [errModal, setErrModal] = useState(false);
+  const [message, setMessage] = useState("");
   const [showWebcam, setShowWebcam] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [count, setCount] = useState(0);
@@ -31,7 +33,36 @@ const Login = () => {
 
   const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
+  useEffect(() => {
+    // Prevent the user from going back in history
+    preventBackButton();
 
+    // Get location and update state asynchronously
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    console.log(user);
+    // debugger
+    // if(user===null ||user===undefined){
+    //   debugger
+    //   navigate("/")
+    // }
+    // Cleanup function to allow back button when component unmounts
+    return () => {
+      allowBackButton();
+    };
+  }, []);
+  const preventBackButton = () => {
+    window.history.pushState(null, null, window.location.href);
+    const popstateHandler = () => {
+      window.history.go(1);
+    };
+    window.addEventListener("popstate", popstateHandler);
+    // Return the handler to cleanup when component unmounts
+    return popstateHandler;
+  };
+
+  const allowBackButton = popstateHandler => {
+    window.removeEventListener("popstate", popstateHandler);
+  };
   useEffect(() => {
     tf.setBackend("webgl");
     loadModel();
@@ -72,7 +103,16 @@ const Login = () => {
   };
 
   const handleCapture = () => {
-    alert("Image captured");
+    // setTimeout(() => {
+    //   alert("Image Save Suceessfully");
+    //    const imageSrc = webcamRef.current.getScreenshot();
+    //    setFormData({
+    //      ...formData,
+    //      image: imageSrc,
+    //    });
+    //    setShowWebcam(false);
+    // },2000)
+    alert("Image Save Suceessfully");
     const imageSrc = webcamRef.current.getScreenshot();
     setFormData({
       ...formData,
@@ -250,7 +290,8 @@ const Login = () => {
           }
         })
         .catch(error => {
-          swal("Something Went Wrong");
+          setMessage("Something Went Wrong");
+          setErrModal(true);
           console.log(error.message);
         });
     } else {
@@ -354,7 +395,7 @@ const Login = () => {
                         for="exampleInputPassword1"
                         class="form-label"
                       >
-                        Mobile Number{" "}
+                        Mobile Number
                         <span style={{ marginLeft: "2px", color: "red" }}>
                           *
                         </span>
@@ -499,6 +540,11 @@ const Login = () => {
         </div>
       </div>
       <Footer />
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

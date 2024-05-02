@@ -47,7 +47,7 @@ const Assetstep2 = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let nomineeDetails = JSON.parse(localStorage.getItem("nomineeDetails"));
+    let nomineeDetails = JSON.parse(sessionStorage.getItem("nomineeDetails"));
 
     if (nomineeDetails) {
       const newArray = [...nomineeDetails];
@@ -79,7 +79,7 @@ const Assetstep2 = () => {
       if (fieldName === "NomineePhoneNumber") {
         if (phoneNumberRegex.test(value)) {
           newFormValues[i][fieldName] = Number(value);
-          localStorage.setItem("UpdatedNo", Number(value));
+          sessionStorage.setItem("UpdatedNo", Number(value));
         } else {
           newFormValues[i][fieldName] = Number(value);
         }
@@ -243,7 +243,9 @@ const Assetstep2 = () => {
         !allError.IsrelationWithNominee
       ) {
         setPhoneModalNotify(true);
-        let nomineeDetails = JSON.parse(localStorage.getItem("nomineeDetails"));
+        let nomineeDetails = JSON.parse(
+          sessionStorage.getItem("nomineeDetails")
+        );
         let newArray;
         if (nomineeDetails?.length > 0) {
           newArray = [...nomineeDetails];
@@ -253,7 +255,7 @@ const Assetstep2 = () => {
         }
         if (phoneRemark) {
           setPhoneModalNotify(false);
-          localStorage.setItem("nomineeDetails", JSON.stringify(newArray));
+          sessionStorage.setItem("nomineeDetails", JSON.stringify(newArray));
           navigate("/add-asset/step3");
         }
       }
@@ -263,7 +265,7 @@ const Assetstep2 = () => {
   let removeFormFields = i => {
     let newFormValues = [...formValues];
     newFormValues.splice(i, 1);
-    localStorage.setItem("nomineeDetails", JSON.stringify(newFormValues));
+    sessionStorage.setItem("nomineeDetails", JSON.stringify(newFormValues));
     setFormValues(newFormValues);
   };
   const generateOTP = () => {

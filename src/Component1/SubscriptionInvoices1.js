@@ -6,12 +6,12 @@ import axiosConfig from "../axiosConfig";
 const SubscriptionInvoices1 = () => {
   const [selectedPlan, setselectedPlan] = useState([]);
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
 
     axiosConfig
       .get("/payment/view-payment-by-userId/" + user?._id)
       .then(res => {
-        console.log(res?.data?.Payment);
+        // console.log(res?.data?.Payment);
         if (res?.data?.Payment) {
           setselectedPlan(res?.data?.Payment);
         }
@@ -74,25 +74,25 @@ const SubscriptionInvoices1 = () => {
           <table class="table">
             <thead>
               <tr>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-left">
                   Date
                 </th>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-left">
                   Description
                 </th>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-left">
                   Service period
                 </th>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-left">
                   Transaction Id
                 </th>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-left">
                   Total
                 </th>
 
-                <th scope="col" className="text-center">
+                {/* <th scope="col" className="text-center">
                   Download Invoice{" "}
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -120,26 +120,10 @@ const SubscriptionInvoices1 = () => {
                             <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" />
                           </svg>
                         </span>
-                        <span>
-                          {ele?.price}
-                          {/* (+ */}
-                          {/* <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              class="bi bi-currency-rupee"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" />
-                            </svg>
-                          </span> */}
-                          {/* <span>30.36 IGST</span>) */}
-                        </span>
+                        <span>{ele?.price} </span>
                       </td>
 
-                      <td style={{ justifyContent: "center", display: "flex" }}>
+                      {/* <td style={{ justifyContent: "center", display: "flex" }}>
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +138,7 @@ const SubscriptionInvoices1 = () => {
                             <path d="M4.603 14.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.188-.012.396-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.066.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.7 11.7 0 0 0-1.997.406 11.3 11.3 0 0 1-1.02 1.51c-.292.35-.609.656-.927.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.245.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 7.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z" />
                           </svg>
                         </span>
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </>

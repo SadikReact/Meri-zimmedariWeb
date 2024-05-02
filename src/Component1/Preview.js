@@ -6,21 +6,21 @@ const Preview = () => {
   const [showIcon, setShowIcon] = useState([]); // State to manage icon visibility for each card
   const [NomineeList, setNomineeList] = useState([]);
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("UserZimmedari"));
+    const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     axiosConfig
       .get(`/asset/nominee-list/${userData._id}`)
-      .then((response) => {
+      .then(response => {
         setNomineeList(response.data?.Nominee);
         // console.log(response.data?.Nominee);
       })
-      .catch((err) => {
+      .catch(err => {
         setNomineeList([]);
 
         console.log("err", err);
       });
   }, []);
 
-  const toggleIcon = (index) => {
+  const toggleIcon = index => {
     const updatedIcons = [false, false];
     updatedIcons[index] = true;
     console.log(updatedIcons);

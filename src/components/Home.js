@@ -10,7 +10,7 @@ import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 // import axiosConfigOne from "./../axiosCofigOne";
 // import { Login, SaveData } from "../EndPoint/EndPoint";
 // import logo from ".././assets/images/logo.png";
-import swal from "sweetalert";
+
 import { ToastContainer, toast } from "react-toastify";
 import { RiArrowGoBackFill, RiLogoutCircleRLine } from "react-icons/ri";
 
@@ -309,7 +309,7 @@ const Loginform = args => {
     // await axiosConfigOne
     //   .post("/register", formdata)
     //   .then(res => {
-    //     swal("Sucess", "Data Saved Sucessfully");
+
     //     // console.log(res);
     //     setLoginButton("Submit");
     //     toggle();
@@ -319,7 +319,7 @@ const Loginform = args => {
     //     setLoginButton("Submit");
     //     console.log(err.response);
     //     if (!!err.response?.data?.message) {
-    //       swal("Error", err.response?.data?.message);
+    //
     //     }
     //   });
   };
@@ -358,7 +358,6 @@ const Loginform = args => {
     //     console.log(err.response);
     //     setLoginScreen(true);
 
-    //     swal("Error", err?.response?.data?.message, "error");
     //   });
   };
 

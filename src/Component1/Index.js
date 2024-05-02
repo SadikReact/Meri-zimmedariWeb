@@ -17,9 +17,14 @@ const StyledText = styled("text")(({ theme }) => ({
 }));
 
 const Index = () => {
+  let arr = [];
   const [PaymentStatus, setPaymentStatus] = useState({});
+  const [user, setUser] = useState("");
+  const [userPercentage, setUserPercentage] = useState("");
   const [assetList, setAssetList] = useState("");
-
+  const [actionLength, setActionLength] = useState("");
+  const [nomineeList, setNomineeList] = useState([]);
+  const [futureDate, setFutureDate] = useState("");
   const pieParams = {
     width: 160,
     height: 160,
@@ -28,11 +33,34 @@ const Index = () => {
   // const pieParams = { margin: { right: 60 } };
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    axiosConfig
+      .get(`/asset/nominee-list/${user?._id}`)
+      .then(response => {
+        // console.log(response.data.Nominee);
+        let lengthSize = response.data.Nominee.filter(item =>
+          item.mailVerifyStatus.includes("Not Verified")
+            ? item.mailVerifyStatus.length
+            : null
+        );
+        let lengthSize1 = response.data.Nominee.filter(item =>
+          item.mobileVerifyStatus.includes("Not Verified")
+            ? item.mobileVerifyStatus.length
+            : null
+        );
+        // console.log(lengthSize.length);
+        setActionLength(lengthSize.length + lengthSize1.length);
+        // console.log(lengthSize.length + lengthSize1.length);
+        setNomineeList(response.data.Nominee);
+      })
+      .catch(err => {
+        console.log("err", err);
+      });
     axiosConfig
       .get("/payment/view-payment-by-userId/" + user?._id)
       .then(res => {
-        console.log(res?.data);
+        // console.log(res?.data);
         let length = res?.data?.Payment?.length - 1;
         localStorage.setItem("PaymentList", JSON.stringify(res?.data?.Payment));
         if (res?.data?.Payment) {
@@ -51,14 +79,86 @@ const Index = () => {
       .catch(error => {
         console.log(error.response.data.message);
       });
+
+    axiosConfig
+      .get(`/life-declaration/view-life-declaration/${user?._id}`)
+      .then(res => {
+        calculateFutureDate(res?.data?.Life.lastDeclarationDate);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
+  useEffect(() => {
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+
+    let totalPercenatage = 100;
+    if (user) {
+      // console.log(user)
+      if (user?.firstName.length > 1) {
+        arr.push(totalPercenatage / 6);
+      }
+      if (user?.email.length > 1) {
+        arr.push(totalPercenatage / 6);
+      }
+
+      if (user?.mobileNo || user?.mobileNo !== null) {
+        arr.push(totalPercenatage / 6);
+      }
+      if (user?.gender.length > 1) {
+        arr.push(totalPercenatage / 6);
+      }
+      if (user?.dob.length > 1) {
+        arr.push(totalPercenatage / 6);
+      }
+      if (user?.image) {
+        arr.push(totalPercenatage / 6);
+      }
+      let total = arr.reduce((current, total) => current + total, 0);
+      setUserPercentage(total);
+      setUser(user);
+    }
+  }, []);
+  const calculateFutureDate = currectDates => {
+    const currentDateNew = new Date(currectDates);
+    currentDateNew.setDate(currentDateNew.getDate() + 15);
+    const futureDates = currentDateNew.toISOString().split("T")[0];
+    const date = new Date(futureDates);
+
+    // Get the month name
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const month = monthNames[date.getMonth()]; // Get month name from the array
+
+    // Get the day
+    const day = date.getDate(); // Get the day of the month
+
+    // Get the year
+    const year = date.getFullYear(); // Get the year
+    // Construct the formatted date string
+    const formattedDate = `${year}-${month}-${day < 10 ? "0" : ""}${day}`;
+
+    setFutureDate(formattedDate);
+  };
 
   const PieCenterLabel = ({ children }) => {
     const { width, height, left, top } = useDrawingArea();
 
     return (
       <StyledText x={left + width / 2} y={top + height / 2}>
-        80%
+        {userPercentage && userPercentage ? userPercentage.toFixed() : 0}%
       </StyledText>
     );
   };
@@ -157,7 +257,7 @@ const Index = () => {
                     <p className="m-3">
                       <span
                         style={{
-                          fontSize: "18px",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                           float: "left",
                         }}
@@ -166,24 +266,23 @@ const Index = () => {
                       </span>
                       <span
                         style={{
-                          marginLeft: "53px",
-                          fontSize: "18px",
+                          justifyContent: "right",
+                          display: "flex",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        :
-                        {PaymentStatus?.nextPaymentDate ? (
+                        {/* {PaymentStatus?.nextPaymentDate ? (
                           <>{PaymentStatus?.nextPaymentDate}</>
                         ) : (
                           "NA"
-                        )}
+                        )} */}
+                        {futureDate ? <>{futureDate}</> : "NA"}
                       </span>
-
-                      <br></br>
 
                       <span
                         style={{
-                          fontSize: "18px",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                           float: "left",
                         }}
@@ -192,12 +291,12 @@ const Index = () => {
                       </span>
                       <span
                         style={{
-                          marginLeft: "10px",
-                          fontSize: "18px",
+                          justifyContent: "right",
+                          display: "flex",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        :
                         {PaymentStatus?.lastPaymentDate ? (
                           <>{PaymentStatus?.lastPaymentDate}</>
                         ) : (
@@ -239,7 +338,7 @@ const Index = () => {
                     <p className="m-3">
                       <span
                         style={{
-                          fontSize: "18px",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                           fontWeight: "700",
                         }}
@@ -251,7 +350,7 @@ const Index = () => {
                       <br></br>
                       <span
                         style={{
-                          fontSize: "18px",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                           float: "left",
                         }}
@@ -260,12 +359,12 @@ const Index = () => {
                       </span>
                       <span
                         style={{
-                          marginLeft: "10px",
-                          fontSize: "18px",
+                          justifyContent: "right",
+                          display: "flex",
+                          fontSize: "17px",
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        :
                         {PaymentStatus?.nextPaymentDate ? (
                           <> {PaymentStatus?.nextPaymentDate}</>
                         ) : (
@@ -311,7 +410,7 @@ const Index = () => {
                                 color: "rgb(43, 77, 129)",
                               }}
                             >
-                              04
+                              {actionLength ? actionLength + 1 : 0}
                             </span>
                           </div>
                           <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 col-6">
@@ -330,50 +429,46 @@ const Index = () => {
                     </div>
                     <div className="col-md-8 col-xl-8 col-lg-8 col-12 col-sm-8">
                       <div style={{ overflow: "auto", height: "10.1rem" }}>
-                        <div
-                          className="actionItem"
-                          style={{
+                        {nomineeList.map((item, ind) => (
+                          <>
+                            {item?._id.includes("663104e7aec036a0bb79c0a3") && (
+                              <div
+                                className="actionItem"
+                                style={{
+                                  backgroundImage:
+                                    "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
+                                }}
+                              >
+                                Renew Subscription, expiring in 15 days
+                              </div>
+                            )}
 
-                            backgroundImage:
-                              "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
-                          }}
-                        >
-                          Renew Subscription, expiring in 15 days
-                        </div>
-                        <div
-                          className="actionItem"
-                          style={{
-                            // fontSize: "16px",
-                            // fontWeight: "400",
-                            // color: "rgb(43, 77, 129)",
-                            // height: "3rem",
-                            // padding: "10px",
-                            backgroundImage:
-                              "linear-gradient(to right, rgb(243, 206, 175) , rgb(250, 252, 253))",
-                          }}
-                        >
-                          Validate Nominee Phone Number
-                        </div>
-                        <div
-                          className=" actionItem"
-                          style={{
-
-                            backgroundImage:
-                              "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
-                          }}
-                        >
-                          Validate Nominee e-mail ID
-                        </div>
-                        <div
-                          className="actionItem cssforborderradiusmobileveiw"
-                          style={{
-
-                            backgroundImage:
-                              "linear-gradient(to right, rgb(243, 206, 175) , rgb(250, 252, 253))",
-                          }}
-                        >
-                          Validate Nominee Phone Number
-                        </div>
+                            {item.mailVerifyStatus.includes("Not Verified") && (
+                              <div
+                                className=" actionItem"
+                                style={{
+                                  backgroundImage:
+                                    "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
+                                }}
+                              >
+                                Validate Nominee e-mail ID
+                              </div>
+                            )}
+                            {item.mobileVerifyStatus.includes(
+                              "Not Verified"
+                            ) && (
+                              <div
+                                className="actionItem"
+                                style={{
+                                  backgroundImage:
+                                    "linear-gradient(to right, rgb(243, 206, 175) , rgb(250, 252, 253))",
+                                }}
+                              >
+                                Validate Nominee Phone Number
+                              </div>
+                            )}
+                          </>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -424,9 +519,19 @@ const Index = () => {
                       className="pieArea"
                       series={[
                         {
+                          // data: [
+                          //   { value: 80, color: "rgb(52, 145, 233)" },
+                          //   { value: 20, color: "rgb(235, 139, 94)" },
+                          // ],
                           data: [
-                            { value: 80, color: "rgb(52, 145, 233)" },
-                            { value: 20, color: "rgb(235, 139, 94)" },
+                            {
+                              value: `${userPercentage}`,
+                              color: "rgb(52, 145, 233)",
+                            },
+                            {
+                              value: `${100 - userPercentage}`,
+                              color: "rgb(235, 139, 94)",
+                            },
                           ],
                           innerRadius: 70,
                         },

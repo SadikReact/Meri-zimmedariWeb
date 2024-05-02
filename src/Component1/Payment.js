@@ -21,7 +21,7 @@ const Payment = () => {
   };
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     setUser(user);
     axiosConfig
       .get("/plan/view-plan")

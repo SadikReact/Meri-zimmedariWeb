@@ -14,7 +14,7 @@ import Mynavbar from "./Mynavbar";
 import Payment from "../Payment/Payment";
 import Axios from "axios";
 
-const Subscriptioninvoices = (args) => {
+const Subscriptioninvoices = args => {
   const [modal, setModal] = useState(false);
   const [selectedPlan, setselectedPlan] = useState({});
   const [PaymentStatus, setPaymentStatus] = useState({});
@@ -24,31 +24,31 @@ const Subscriptioninvoices = (args) => {
   const toggle = () => setModal(!modal);
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     console.log(user);
     setUser(user);
     axiosConfig
       .get("/plan/view-plan")
-      .then((res) => {
+      .then(res => {
         setplan(res?.data?.Plan);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err.response);
       });
     axiosConfig
       .get("/payment/view-payment-by-userId/" + user?._id)
-      .then((res) => {
+      .then(res => {
         // console.log(res?.data?.Payment);
         let length = res?.data?.Payment?.length - 1;
         if (res?.data?.Payment) {
           setPaymentStatus(res?.data?.Payment[length]);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err.response);
       });
   }, []);
-  const handleSelectPlan = (data) => {
+  const handleSelectPlan = data => {
     setselectedPlan(data);
     toggle();
   };
@@ -415,7 +415,7 @@ const Subscriptioninvoices = (args) => {
                           <td>
                             <Button
                               color="primary"
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.preventDefault();
                                 handleSelectPlan(ele);
                               }}

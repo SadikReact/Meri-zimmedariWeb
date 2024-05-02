@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 
 export const ErrorModal = props => {
-  console.log(props.message);
   return (
     <Modal
       {...props}
@@ -66,7 +65,7 @@ export const Createpassword = props => {
         <Modal.Body style={{ textAlign: "center" }}>
           New password sent to
           <span className="p-1">
-            {JSON.parse(localStorage.getItem("UserZimmedari")).email}
+            {JSON.parse(sessionStorage.getItem("UserZimmedari")).email}
           </span>
           {/* </>
             )} */}

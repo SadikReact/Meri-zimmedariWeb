@@ -11,10 +11,13 @@ const Confidentialeditor = () => {
   );
 
   const onEditorStateChange = newEditorState => {
-    console.log(newEditorState);
-    setEditorState(newEditorState);
+    setEditorState(newEditorState.getCurrentContent().getPlainText());
+    // Here, you can access the new editor state if needed
+    console.log(newEditorState.getCurrentContent().getPlainText());
+    // This will log the plain text content of the editor whenever it changes
   };
   const handleNext = () => {
+    console.log(editorState);
     navigate("/confidentialnote");
   };
   return (

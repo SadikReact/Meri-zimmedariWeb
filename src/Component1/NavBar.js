@@ -1,9 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import imagelogo from "../image/logo.png";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import { RiHandCoinFill } from "react-icons/ri";
 
 export default function NavBar() {
+  const navigate = useNavigate();
+  const handleFaq = () => {
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    if (user?._id) {
+      navigate("/FAQs");
+    } else {
+      navigate("/");
+    }
+  };
   return (
     <div class="container-fluid">
       <div class="row d_flex">
@@ -51,10 +62,12 @@ export default function NavBar() {
                     How It Works ?
                   </a>
                 </li>
-                <li class="nav-item ">
-                  <Link class="nav-link" to="/FAQs">
+                <li class="nav-item " onClick={handleFaq}>
+                  <a class="nav-link">
+                    {/* <Link class="nav-link" to="/FAQs"> */}
                     FAQ
-                  </Link>
+                    {/* </Link> */}
+                  </a>
                 </li>
 
                 <li class="nav-item ">

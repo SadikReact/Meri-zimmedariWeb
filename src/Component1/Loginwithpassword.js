@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosConfig from "../axiosConfig";
-import swal from "sweetalert";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 
 const Loginwithpassword = () => {
   const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const phoneNumber = location.state;
@@ -26,7 +28,7 @@ const Loginwithpassword = () => {
         .then(response => {
           // console.log(response);
           if (response.status == 200) {
-            localStorage.setItem(
+            sessionStorage.setItem(
               "UserZimmedari",
               JSON.stringify(response.data.User)
             );
@@ -34,8 +36,11 @@ const Loginwithpassword = () => {
               "user_token",
               JSON.stringify(response.data.User.token)
             );
-            swal("Login Successfully");
-            navigate("/dashboard");
+            setMessage("Login Successfully");
+            setErrModal(true);
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 3000);
           } else {
             setIsInvalid("Invalid Credentials");
           }
@@ -224,6 +229,11 @@ const Loginwithpassword = () => {
         </div>
       </div>
       <Footer />
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };
