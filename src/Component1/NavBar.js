@@ -10,7 +10,7 @@ export default function NavBar() {
   const handleFaq = () => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (user?._id) {
-      navigate("/FAQs");
+      navigate("/FAQ");
     } else {
       navigate("/");
     }
@@ -62,11 +62,11 @@ export default function NavBar() {
                     How It Works ?
                   </a>
                 </li>
-                <li class="nav-item " onClick={handleFaq}>
-                  <a class="nav-link">
-                    {/* <Link class="nav-link" to="/FAQs"> */}
+                <li class="nav-item " >
+                  <a class="nav-link" href="https://user.merizimmedari.com/#/FAQ">
+                     
                     FAQ
-                    {/* </Link> */}
+                    
                   </a>
                 </li>
 
