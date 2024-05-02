@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import MyContext from "../context/Context.js";
-
+import "./loader.css";
 import "./StepperStyle.css";
 import axiosConfig from "../axiosConfig.js";
 const PersonalDetails = ({
   policyName,
   policyNumber,
   reEnterPolicyNumber,
+  setPolicyName,
+  setPolicyNumber,
+  setReEnterPolicyNumber,
   setShowAsset,
   showAsset,
   handleChange,
@@ -21,6 +24,7 @@ const PersonalDetails = ({
   // const sharedValue = useContext(MyContext);
   // const [data, setData] = useToggleContext();
   const fileInputRef = useRef(null);
+  const [model, setModel] = useState(null);
   const [dynamicFields, setdynamicFields] = useState(""); // for fields
   // const [isUpload, setIsupload] = useState(false);
   const [formError, setFormError] = useState({
@@ -31,23 +35,30 @@ const PersonalDetails = ({
   });
   useEffect(() => {
     let viewData = JSON.parse(localStorage.getItem("ViewOne"));
-    let AssetEditid = localStorage.getItem("AssetEditId");
-    if (viewData.dynamicFields) {
-      setdynamicFields(viewData.dynamicFields);
-    } else if (viewData) {
+
+    let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
+    console.log(AssetEditid);
+    // console.log(viewData);
+    if (
+      viewData?.dynamicFields != undefined ||
+      viewData?.dynamicFields != null
+    ) {
+      setdynamicFields(viewData?.dynamicFields);
+      setModel(false);
+    } else if (viewData != null || viewData != undefined) {
       // console.log(viewData);
       setdynamicFields(viewData);
-    }
-
-    if (AssetEditid) {
+      setModel(false);
+    } else if (AssetEditid != null || AssetEditid != undefined) {
       axiosConfig
         .get(`/asset/view-asset-by-id/${AssetEditid._id}`)
         .then(res => {
-          console.log("personal", res.data);
-          // setdynamicFields(res.data);
-          // setPolicyName;
-          // setPolicyNumber;
-          // setReEnterPolicyNumber;
+          console.log("personal", res.data.Asset);
+          setdynamicFields(res.data.Asset);
+          setPolicyName(res?.data?.Asset?.policyIssuersName);
+          setPolicyNumber(res?.data?.Asset?.policynumber);
+          setReEnterPolicyNumber(res?.data?.Asset?.ReEnterPolicyNumber);
+          setModel(false);
         })
         .catch(err => {
           console.log(err);
@@ -55,7 +66,7 @@ const PersonalDetails = ({
     }
   }, []);
   const continueStep = e => {
-    debugger;
+    // debugger;
     e.preventDefault();
     let errors = {};
     if (!policyName) errors.IspolicyName = true;
@@ -74,14 +85,9 @@ const PersonalDetails = ({
       policyName,
       reEnterPolicyNumber,
     };
-    // console.log(assetType);
     if (Object.keys(errors)?.length === 0) {
-      debugger;
-      // setShowAsset(assetType);
-      // setPolicyName(assetType);
-      localStorage.removeItem("AssetEditData");
+      // localStorage.removeItem("AssetEditData");
       localStorage.setItem("ViewOne", JSON.stringify(assetType));
-      // nextStep();
       if (isUpload) {
         nextStep();
       }
@@ -97,7 +103,6 @@ const PersonalDetails = ({
   return (
     <div className="form">
       <form>
-        {/* <h3>{sharedValue}</h3> */}
         <div style={{ backgroundColor: "rgb(182, 205, 236)" }}>
           <div className="container-fluid">
             <div className="row">
@@ -213,285 +218,297 @@ const PersonalDetails = ({
           </div>
         </div>
 
-        <div className="container mt-5">
-          <div className="row">
-            <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 mt-4">
-              <div>
-                <span
-                  className="mt-5"
-                  style={{
-                    color: "rgb(82, 114, 161)",
-                    fontSize: "20px",
-                    fontFamily: "Calibri",
-                  }}
-                >
-                  {dynamicFields?.Field_1}
-                </span>
-                <span className="ml-1">
-                  <svg
-                    type="button"
-                    xmlns="http://www.w3.org/2000/svg"
-                    color="grey"
-                    width="50"
-                    height="50"
-                    fill="currentColor"
-                    class="bi bi-cloud-plus"
-                    viewBox="0 0 16 16"
-                    onClick={handleIconClick}
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"
-                    />
-                    <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
-                  </svg>
-                  <input
-                    type="file"
-                    id="poster"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    name="uploadedFileName"
-                    required
-                    accept="application/pdf, image/png, image/jpeg,image/jpg,image/jpe"
-                    // onChange={handleFileChange}
-                    onChange={handleFileChange("uploadedFileName")}
-                  />
-                  <p>Acceptable file - .jpg/.jpeg/.png/pdf</p>
-                  {uploadedFileName && <p>Uploaded file: {uploadedFileName}</p>}
-                </span>
-              </div>
-
-              {error && (
-                <p
-                  style={{
-                    color: "red",
-                    padding: "5px",
-                    fontSize: "16px",
-                    marginTop: "3px",
-                  }}
-                >
-                  {error}
-                </p>
-              )}
-              {/* {uploadedFile && <p>File selected: {uploadedFileName}</p>} */}
+        {model == null ? (
+          <>
+            <div className="d-flex justify-content-center mt-5 mb-5">
+              <div className="loader"></div>
             </div>
-            <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
-              <div className="mt-4">
-                <div className="mb-3">
-                  <fieldset
-                    style={{
-                      color: "rgb(82, 114, 161)",
-                      fontSize: "20px",
-                      fontFamily: "Calibri",
-                      border: "1px solid rgb(114, 158, 216)",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <legend
+          </>
+        ) : (
+          <>
+            <div className="container mt-5">
+              <div className="row">
+                <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 mt-4">
+                  <div>
+                    <span
+                      className="mt-5"
                       style={{
                         color: "rgb(82, 114, 161)",
-                        fontSize: "16px",
-                        paddingLeft: "5px",
+                        fontSize: "20px",
                         fontFamily: "Calibri",
-                        marginLeft: "15px",
-                        width: "auto",
                       }}
-                      for="exampleInputPassword1"
-                      class="form-label"
                     >
-                      {dynamicFields?.Field_2}
+                      {dynamicFields?.Field_1}
+                    </span>
+                    <span className="ml-1">
+                      <svg
+                        type="button"
+                        xmlns="http://www.w3.org/2000/svg"
+                        color="grey"
+                        width="50"
+                        height="50"
+                        fill="currentColor"
+                        class="bi bi-cloud-plus"
+                        viewBox="0 0 16 16"
+                        onClick={handleIconClick}
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"
+                        />
+                        <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+                      </svg>
+                      <input
+                        type="file"
+                        id="poster"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        name="uploadedFileName"
+                        required
+                        accept="application/pdf, image/png, image/jpeg,image/jpg,image/jpe"
+                        // onChange={handleFileChange}
+                        onChange={handleFileChange("uploadedFileName")}
+                      />
+                      <p>Acceptable file - .jpg/.jpeg/.png/pdf</p>
+                      {uploadedFileName && (
+                        <p>Uploaded file: {uploadedFileName}</p>
+                      )}
+                    </span>
+                  </div>
 
-                      <span style={{ color: "red" }}>*</span>
-                    </legend>
-                    <input
-                      required
-                      type="text"
-                      value={policyName}
-                      style={{
-                        border: "none",
-                        width: "100%",
-                        paddingLeft: "15px",
-                        paddingBottom: "10px",
-                        marginBottom: "5px",
-                        outline: "none",
-                      }}
-                      id="policyName"
-                      onChange={handleChange("policyName")}
-                      name="policyName"
-                    />
-                  </fieldset>
-                  {formError.IspolicyName && (
-                    <div
-                      className="validationmobilefont"
+                  {error && (
+                    <p
                       style={{
                         color: "red",
                         padding: "5px",
-
+                        fontSize: "16px",
                         marginTop: "3px",
                       }}
                     >
-                      * indicates required field
+                      {error}
+                    </p>
+                  )}
+                  {/* {uploadedFile && <p>File selected: {uploadedFileName}</p>} */}
+                </div>
+                <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+                  <div className="mt-4">
+                    <div className="mb-3">
+                      <fieldset
+                        style={{
+                          color: "rgb(82, 114, 161)",
+                          fontSize: "20px",
+                          fontFamily: "Calibri",
+                          border: "1px solid rgb(114, 158, 216)",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <legend
+                          style={{
+                            color: "rgb(82, 114, 161)",
+                            fontSize: "16px",
+                            paddingLeft: "5px",
+                            fontFamily: "Calibri",
+                            marginLeft: "15px",
+                            width: "auto",
+                          }}
+                          for="exampleInputPassword1"
+                          class="form-label"
+                        >
+                          {dynamicFields?.Field_2}
+
+                          <span style={{ color: "red" }}>*</span>
+                        </legend>
+                        <input
+                          required
+                          type="text"
+                          value={policyName}
+                          style={{
+                            border: "none",
+                            width: "100%",
+                            paddingLeft: "15px",
+                            paddingBottom: "10px",
+                            marginBottom: "5px",
+                            outline: "none",
+                          }}
+                          id="policyName"
+                          onChange={handleChange("policyName")}
+                          name="policyName"
+                        />
+                      </fieldset>
+                      {formError.IspolicyName && (
+                        <div
+                          className="validationmobilefont"
+                          style={{
+                            color: "red",
+                            padding: "5px",
+
+                            marginTop: "3px",
+                          }}
+                        >
+                          * indicates required field
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
-              <div className="mb-3 mt-5">
-                <fieldset
-                  style={{
-                    color: "rgb(82, 114, 161)",
-                    fontSize: "20px",
-                    fontFamily: "Calibri",
-                    border: "1px solid rgb(114, 158, 216)",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <legend
-                    style={{
-                      color: "rgb(82, 114, 161)",
-                      fontSize: "16px",
-                      paddingLeft: "5px",
-                      fontFamily: "Calibri",
-                      marginLeft: "15px",
-                      width: "auto",
-                    }}
-                    for="exampleInputPassword1"
-                    class="form-label"
-                  >
-                    {dynamicFields?.Field_3}
-                    <span style={{ color: "red" }}>*</span>
-                  </legend>
-                  <input
-                    type="password"
-                    required
-                    placeholder="XXXXXX"
-                    value={policyNumber}
-                    style={{
-                      border: "none",
-                      paddingLeft: "15px",
-                      paddingBottom: "10px",
-                      marginBottom: "5px",
-                      width: "100%",
-                      outline: "none",
-                    }}
-                    id="policyNumber"
-                    name="policyNumber"
-                    // onChange={e => setPolicyNumber(e.target.value)}
-                    onChange={handleChange("policyNumber")}
-                  />
-                </fieldset>
-                {formError.IspolicyNumber && (
-                  <p
-                    className="validationmobilefont"
-                    style={{
-                      color: "red",
-                      padding: "5px",
-
-                      marginTop: "3px",
-                    }}
-                  >
-                    * indicates required field
-                  </p>
-                )}
-                {formError.IsBothMatch && (
-                  <p
-                    style={{
-                      color: "red",
-                      padding: "5px",
-                      fontSize: "16px",
-                      marginTop: "3px",
-                    }}
-                  >
-                    Value Mismatch
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
-              <div className="mt-5">
-                <div class="mb-3">
-                  <fieldset
-                    style={{
-                      color: "rgb(82, 114, 161)",
-                      fontSize: "20px",
-                      fontFamily: "Calibri",
-                      border: "1px solid rgb(114, 158, 216)",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <legend
+                <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+                  <div className="mb-3 mt-5">
+                    <fieldset
                       style={{
                         color: "rgb(82, 114, 161)",
-                        fontSize: "16px",
-                        paddingLeft: "5px",
+                        fontSize: "20px",
                         fontFamily: "Calibri",
-                        marginLeft: "15px",
-                        width: "auto",
+                        border: "1px solid rgb(114, 158, 216)",
+                        borderRadius: "10px",
                       }}
-                      for="exampleInputPassword1"
-                      class="form-label"
                     >
-                      {dynamicFields?.Field_4}
-                      <span style={{ color: "red" }}>*</span>
-                    </legend>
-                    <input
-                      type="text"
-                      required
-                      style={{
-                        border: "none",
-                        paddingLeft: "15px",
-                        paddingBottom: "10px",
-                        marginBottom: "5px",
-                        width: "100%",
-                        outline: "none",
-                      }}
-                      placeholder="1234567890101023"
-                      value={reEnterPolicyNumber}
-                      id="reEnterPolicyNumber"
-                      // onChange={e => setReEnterPolicyNumber(e.target.value)}
-                      onChange={handleChange("reEnterPolicyNumber")}
-                      name="reEnterPolicyNumber"
-                    />
-                  </fieldset>
-                  {formError.IsreEnterPolicyNumber && (
-                    <p
-                      className="validationmobilefont"
-                      style={{
-                        color: "red",
-                        padding: "5px",
+                      <legend
+                        style={{
+                          color: "rgb(82, 114, 161)",
+                          fontSize: "16px",
+                          paddingLeft: "5px",
+                          fontFamily: "Calibri",
+                          marginLeft: "15px",
+                          width: "auto",
+                        }}
+                        for="exampleInputPassword1"
+                        class="form-label"
+                      >
+                        {dynamicFields?.Field_3}
+                        <span style={{ color: "red" }}>*</span>
+                      </legend>
+                      <input
+                        type="password"
+                        required
+                        placeholder="XXXXXX"
+                        value={policyNumber}
+                        style={{
+                          border: "none",
+                          paddingLeft: "15px",
+                          paddingBottom: "10px",
+                          marginBottom: "5px",
+                          width: "100%",
+                          outline: "none",
+                        }}
+                        id="policyNumber"
+                        name="policyNumber"
+                        // onChange={e => setPolicyNumber(e.target.value)}
+                        onChange={handleChange("policyNumber")}
+                      />
+                    </fieldset>
+                    {formError.IspolicyNumber && (
+                      <p
+                        className="validationmobilefont"
+                        style={{
+                          color: "red",
+                          padding: "5px",
 
-                        marginTop: "13px",
-                      }}
-                    >
-                      * indicates required field
-                    </p>
-                  )}
-                  {formError.IsBothMatch && (
-                    <p
-                      style={{
-                        color: "red",
-                        padding: "5px",
-                        fontSize: "16px",
-                        marginTop: "3px",
-                      }}
-                    >
-                      Value Mismatch
-                    </p>
-                  )}
+                          marginTop: "3px",
+                        }}
+                      >
+                        * indicates required field
+                      </p>
+                    )}
+                    {formError.IsBothMatch && (
+                      <p
+                        style={{
+                          color: "red",
+                          padding: "5px",
+                          fontSize: "16px",
+                          marginTop: "3px",
+                        }}
+                      >
+                        Value Mismatch
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6">
+                  <div className="mt-5">
+                    <div class="mb-3">
+                      <fieldset
+                        style={{
+                          color: "rgb(82, 114, 161)",
+                          fontSize: "20px",
+                          fontFamily: "Calibri",
+                          border: "1px solid rgb(114, 158, 216)",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <legend
+                          style={{
+                            color: "rgb(82, 114, 161)",
+                            fontSize: "16px",
+                            paddingLeft: "5px",
+                            fontFamily: "Calibri",
+                            marginLeft: "15px",
+                            width: "auto",
+                          }}
+                          for="exampleInputPassword1"
+                          class="form-label"
+                        >
+                          {dynamicFields?.Field_4}
+                          <span style={{ color: "red" }}>*</span>
+                        </legend>
+                        <input
+                          type="text"
+                          required
+                          style={{
+                            border: "none",
+                            paddingLeft: "15px",
+                            paddingBottom: "10px",
+                            marginBottom: "5px",
+                            width: "100%",
+                            outline: "none",
+                          }}
+                          placeholder="1234567890101023"
+                          value={reEnterPolicyNumber}
+                          id="reEnterPolicyNumber"
+                          // onChange={e => setReEnterPolicyNumber(e.target.value)}
+                          onChange={handleChange("reEnterPolicyNumber")}
+                          name="reEnterPolicyNumber"
+                        />
+                      </fieldset>
+                      {formError.IsreEnterPolicyNumber && (
+                        <p
+                          className="validationmobilefont"
+                          style={{
+                            color: "red",
+                            padding: "5px",
+
+                            marginTop: "13px",
+                          }}
+                        >
+                          * indicates required field
+                        </p>
+                      )}
+                      {formError.IsBothMatch && (
+                        <p
+                          style={{
+                            color: "red",
+                            padding: "5px",
+                            fontSize: "16px",
+                            marginTop: "3px",
+                          }}
+                        >
+                          Value Mismatch
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <button
-            className="buttons__button buttons__button--next"
-            onClick={continueStep}
-          >
-            Next
-          </button>
-        </div>
+            <div style={{ textAlign: "right" }}>
+              <button
+                className="buttons__button buttons__button--next"
+                onClick={continueStep}
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </div>
   );

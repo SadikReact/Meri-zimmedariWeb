@@ -48,10 +48,6 @@ export default function Payment({ selectedPlan, USer }) {
       //   order_id: "9A33XWu170gUtm",
 
       handler: async response => {
-        // console.log(response.razorpay_payment_id);
-        // console.log(response.razorpay_order_id);
-        // console.log(response.razorpay_signature);
-        // toast.success("Order Success");
         let payload = {
           userId: USer?._id,
           planId: selectedPlan?._id,
@@ -98,14 +94,6 @@ export default function Payment({ selectedPlan, USer }) {
       console.log(response);
       setMessage(response?.error?.reason);
       setErrModal(true);
-
-      //   alert(response.error.code);
-      //   alert(response.error.description);
-      //   alert(response.error.source);
-      //   alert(response.error.step);
-      //   alert(response.error.reason);
-      //   alert(response.error.metadata.order_id);
-      //   alert(response.error.metadata.payment_id);
     });
 
     //   rzp1.open();

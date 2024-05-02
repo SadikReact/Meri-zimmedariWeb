@@ -25,7 +25,7 @@ const Subscriptioninvoices = args => {
 
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    console.log(user);
+    // console.log(user);
     setUser(user);
     axiosConfig
       .get("/plan/view-plan")
@@ -348,7 +348,8 @@ const Subscriptioninvoices = args => {
                     border: "1px solid rgb(193, 194, 192)",
                   }}
                 >
-                  <span style={{borderBottom:'1px solid rgb(8, 73, 134)'}}>Transaction History</span>
+<span style={{borderBottom:'1px solid rgb(8, 73, 134)'}}>Transaction History</span>
+
                 </button>
               </Link>
             </div>

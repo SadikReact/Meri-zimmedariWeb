@@ -38,7 +38,7 @@ const StepperForm = () => {
     IsBothMatch: false,
   });
   const nextStep = () => {
-    debugger;
+    // debugger;
     setStep(step + 1);
   };
   const prevStep = () => {
@@ -71,6 +71,7 @@ const StepperForm = () => {
       setReEnterPolicyNumber(e.target.value);
     }
   };
+
   const handleFileChange = files => event => {
     const file = event.target.files[0];
     setUploadedFileName(file?.name || "Name Not Found");
@@ -141,6 +142,8 @@ const StepperForm = () => {
             dynamicFields={dynamicFields}
             myForm={myForm}
             setPolicyName={setPolicyName}
+            setPolicyNumber={setPolicyNumber}
+            setReEnterPolicyNumber={setReEnterPolicyNumber}
             showAssetData={showAsset}
             setShowAsset={setShowAsset}
             policyName={policyName}

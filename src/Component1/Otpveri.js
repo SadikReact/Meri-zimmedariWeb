@@ -58,7 +58,7 @@ const Otpveri = () => {
               "user_token",
               JSON.stringify(response.data.User.token)
             );
-            localStorage.setItem(
+            sessionStorage.setItem(
               "UserZimmedari",
               JSON.stringify(response.data.User)
             );

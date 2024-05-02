@@ -20,6 +20,7 @@ const CourseDetails = ({
   gotNomineeData,
 }) => {
   const [newOtp, setNewOtp] = useState(null);
+  const [model, setModel] = useState(null);
   const [formValues, setFormValues] = useState([
     {
       nomineeName: "",
@@ -49,12 +50,18 @@ const CourseDetails = ({
   const [modalShowauto, setModalShowauto] = useState(false);
 
   useEffect(() => {
+    debugger;
     // console.log(showAsset);
+    let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
+    console.log(AssetEditid.nominee);
     if (gotNomineeData?.length > 0) {
       setFormValues(gotNomineeData);
+      setModel(false);
+    } else if (AssetEditid?.nominee?.length > 0) {
+      setFormValues(AssetEditid.nominee);
+      setModel(false);
     }
-    console.log(gotNomineeData);
-    setShowAsset(showAsset);
+    // setShowAsset(showAsset);
   }, [gotNomineeData]);
 
   const handleChange = (i, e) => {
