@@ -392,10 +392,11 @@ const Index = () => {
                 style={{ justifyContent: "center", display: "flex" }}
               >
                 <div
+                className="cssforindexaction"
                   style={{
                     border: "1px solid rgb(43, 77, 129)",
                     width: "100%",
-                    borderBottomLeftRadius: "20px",
+                   
                     borderTopLeftRadius: "20px",
                   }}
                 >
@@ -476,7 +477,7 @@ const Index = () => {
               </div>
             </div>
             <div className="col-md-5 col-xl-5 col-lg-5">
-              <div className="m-2">
+              <div className="m-2 cssformobileindexveiw" >
                 <div
                   className="row "
                   style={{
