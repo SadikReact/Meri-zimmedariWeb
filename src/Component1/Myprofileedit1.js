@@ -25,7 +25,7 @@ const Myprofileedit1 = () => {
   });
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    console.log(user);
+    // console.log(user);
     setformDetails(user || {});
   }, []);
 

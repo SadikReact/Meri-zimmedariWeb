@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import imagelogo from "../image/logo.png";
-import { Link } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
-import { RiHandCoinFill } from "react-icons/ri";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -62,8 +59,11 @@ export default function NavBar() {
                     How It Works ?
                   </a>
                 </li>
-                <li class="nav-item " onClick={handleFaq}>
-                  <a class="nav-link">
+                <li class="nav-item ">
+                  <a
+                    class="nav-link"
+                    href="https://user.merizimmedari.com/#/FAQ"
+                  >
                     {/* <Link class="nav-link" to="/FAQs"> */}
                     FAQ
                     {/* </Link> */}

@@ -23,6 +23,7 @@ const Summary = ({
   useEffect(() => {
     let assetDetails = JSON.parse(localStorage.getItem("ViewOne"));
     if (assetDetails) {
+      console.log(assetDetails);
       setAssetData(assetDetails);
     }
     if (showNominee) {
@@ -32,7 +33,7 @@ const Summary = ({
 
   const handleSubmit = () => {
     const formData = new FormData();
-    let userId = JSON.parse(localStorage.getItem("UserZimmedari"))._id;
+    let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"))._id;
     formData.append("userId", userId);
     formData.append("file", AssetData?.uploadedFile);
     formData.append("assetType", AssetData?.dynamicFields?.Asset_Type);
@@ -53,6 +54,7 @@ const Summary = ({
         localStorage.removeItem("assetDetails");
         localStorage.removeItem("nomineeDetails");
         localStorage.removeItem("ViewOne");
+        localStorage.removeItem("AssetEditData");
       })
       .catch(error => {
         setErrModal(true);
@@ -258,7 +260,9 @@ const Summary = ({
                       className="text-center"
                       style={{ border: "2px solid rgb(201, 198, 198)" }}
                     >
-                      {AssetData?.dynamicFields?.Asset_Type}
+                      {AssetData?.dynamicFields?.assetType
+                        ? AssetData.dynamicFields.assetType
+                        : AssetData?.dynamicFields?.Asset_Type}
                     </td>
                   </tr>
 

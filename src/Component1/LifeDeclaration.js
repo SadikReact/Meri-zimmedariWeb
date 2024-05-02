@@ -215,7 +215,7 @@ const LifeDeclaration = args => {
       await axiosConfig
         .get(`/life-declaration/view-life-declaration/${user?._id}`)
         .then(res => {
-          console.log(res?.data?.Life.lastDeclarationDate);
+          console.log(res?.data?.Life);
 
           calculateFutureDate(res?.data?.Life.lastDeclarationDate);
           setDeclarationDate(res?.data?.Life);
@@ -227,13 +227,17 @@ const LifeDeclaration = args => {
   }, []);
 
   const handleCapture = () => {
-    alert("Image captured");
+    setMessage("Image Captured Suceessfully");
+    setErrModal(true);
     const imageSrc = webcamRef.current.getScreenshot();
     setData({
       ...Data,
       image: imageSrc,
     });
     setShowWebcam(false);
+    setTimeout(() => {
+      setErrModal(false);
+    }, 1000);
   };
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
@@ -259,14 +263,15 @@ const LifeDeclaration = args => {
       .then(res => {
         setLoading(false);
         toggle();
-        setMessage("Data Submitted ");
+        setMessage(res?.data?.message);
         setErrModal(true);
-        console.log(res);
+        setTimeout(() => {
+          setErrModal(false);
+        }, 1000);
       })
       .catch(err => {
         setLoading(false);
         toggle();
-
         console.log(err);
         setMessage("Error Occured ");
         setErrModal(true);
@@ -426,8 +431,8 @@ const LifeDeclaration = args => {
             <div style={{ justifyContent: "center", display: "flex" }}>
               <input
                 type="text"
-                value={futureDate}
-                // value={DeclarationDate?.nextPaymentDate}
+                // value={futureDate}
+                value={DeclarationDate?.nextPaymentDate}
                 id="dateInput"
                 class="form-control"
                 style={{
@@ -525,7 +530,6 @@ const LifeDeclaration = args => {
                           screenshotFormat="image/jpeg"
                           // className="mb-2"
                           style={{ borderRadius: "8px" }}
-                          onClick={handleSubmit}
                         />
                       </div>
                     )}
@@ -557,7 +561,7 @@ const LifeDeclaration = args => {
                               <button
                                 type="button"
                                 onClick={handleSubmit}
-                                disabled={isDate ? true : false}
+                                // disabled={isDate ? true : false}
                                 className="btn btn-primary"
                               >
                                 Submit

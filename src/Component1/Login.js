@@ -103,22 +103,17 @@ const Login = () => {
   };
 
   const handleCapture = () => {
-    // setTimeout(() => {
-    //   alert("Image Save Suceessfully");
-    //    const imageSrc = webcamRef.current.getScreenshot();
-    //    setFormData({
-    //      ...formData,
-    //      image: imageSrc,
-    //    });
-    //    setShowWebcam(false);
-    // },2000)
-    alert("Image Save Suceessfully");
+    setMessage("Image Captured Suceessfully");
+    setErrModal(true);
     const imageSrc = webcamRef.current.getScreenshot();
     setFormData({
       ...formData,
       image: imageSrc,
     });
     setShowWebcam(false);
+    setTimeout(() => {
+      setErrModal(false);
+    }, 1000);
   };
   const detectPoints = async () => {
     if (isOpen == false) return;
@@ -244,7 +239,7 @@ const Login = () => {
 
       const response = await axiosConfig.get(allUrl);
       setResponse(response.data);
-      console.log(response.data);
+      // console.log(response.data);
       document.getElementById("alert").innerHTML = "";
       navigate("/login/otp", {
         state: { phone, newOTP },

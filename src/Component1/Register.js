@@ -99,12 +99,13 @@ const Register = args => {
       ...formData,
       image: imageSrc,
     });
-    setMessage("Image Captured Successfully Save");
+    setMessage("Image Captured Successfully");
     setErrModal(true);
+    setShowWebcam(false);
+    toggle();
     setTimeout(() => {
-      setShowWebcam(false);
-      toggle();
-    }, 2000);
+      setErrModal(false);
+    }, 1000);
   };
   const detectPoints = async () => {
     if (isOpen == false) return;
