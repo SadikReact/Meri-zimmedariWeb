@@ -8,16 +8,15 @@ const Forgototpverify = () => {
   const [count, setCount] = useState(60);
   const [isCountingComplete, setIsCountingComplete] = useState(false);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
-  const [otpMsg, setOtpMsg] = useState("");
+  // const [otpMsg, setOtpMsg] = useState("");
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const phoneNumber = location.state;
+  // const { newOTP } = location.state;
 
-  // useEffect(() => {
-  //   // let mobile = JSON.parse(localStorage.getItem("MobileNUM"));
-  //   // console.log(mobile);
-  // }, []);
+  useEffect(() => {
+    console.log("newOTP", location.state);
+  }, []);
 
   useEffect(() => {
     if (count > 0) {
@@ -48,23 +47,26 @@ const Forgototpverify = () => {
     }
   };
   const handleForgetPass = () => {
-    const phone = JSON.parse(localStorage.getItem("MobileNUM"));
-    const payload = {
-      // userId:userId,
-      mobileNo: phone,
-      otp: Number(otp),
-    };
-    axiosConfig
-      .post("/user/otp-verify", payload)
-      .then(response => {
-        // console.log(response.data.message);
-        navigate("/forgot/password");
-      })
-      .catch(error => {
-        console.log(error.response.data.error);
-        setOtpMsg(error.response.data.error);
-        setIsValidOtp(true);
-      });
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    if (location.state && location.state == otp) {
+      const payload = {
+        mobileNo: MobileNUM,
+        otp: Number(123400),
+      };
+      axiosConfig
+        .post("/user/otp-verify", payload)
+        .then(response => {
+          console.log(response.data.message);
+          navigate("/forgot/password");
+        })
+        .catch(error => {
+          console.log(error.response);
+          // setOtpMsg(error.response.data.error);
+          // setIsValidOtp(true);
+        });
+    } else {
+      setIsValidOtp(true);
+    }
   };
   return (
     <>
@@ -128,11 +130,10 @@ const Forgototpverify = () => {
                   <form>
                     {IsvalidOtp ? (
                       <span
-                      className="validationmobilefont"
+                        className="validationmobilefont"
                         style={{
                           color: "red",
                           padding: "2px",
-                         
                         }}
                       >
                         {/* {otpMsg} */}
@@ -223,7 +224,6 @@ const Forgototpverify = () => {
                       <span className="ml-1"></span>
                     </div>
                     <div className="mt-3">
-                      {/* <Link to={"/forgot/password"}> */}
                       <button
                         type="button"
                         class="btn "
@@ -237,7 +237,6 @@ const Forgototpverify = () => {
                       >
                         Submit
                       </button>
-                      {/* </Link> */}
                     </div>
                   </form>
                 </div>

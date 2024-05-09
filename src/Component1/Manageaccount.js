@@ -34,11 +34,11 @@ const Manageaccount = () => {
 
   const handleGeneratePassword = () => {
     let userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-
+    console.log(userData);
     setIsLoader(true);
     axiosConfig
       .post("/user/generate-password", {
-        email: userData.email,
+        email: userData?.email,
       })
       .then(response => {
         if (response.status == 200) {

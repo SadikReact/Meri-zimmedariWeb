@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import profile from "../image/myprofilepic.png";
 import { Link, useNavigate } from "react-router-dom";
 import Mynavbar from "./Mynavbar";
@@ -8,8 +8,12 @@ import EmailModal from "./nominee/EmailModal";
 import Spinner from "react-bootstrap/Spinner";
 import { ErrorModal } from "./ManageAccount/ErrorModal";
 const Myprofileedit1 = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [message, setMessage] = useState("");
   const [errModal, setErrModal] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
+  const [uploadFileName, setUploadFileName] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [modalShowmail, setModalShowmail] = useState(false);
   const [phoneNo, setPhoneNo] = useState(false);
@@ -22,6 +26,7 @@ const Myprofileedit1 = () => {
     dob: "",
     gender: "",
     mailVerifyStatus: "",
+    profilePic: null,
   });
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
@@ -30,12 +35,17 @@ const Myprofileedit1 = () => {
   }, []);
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    console.log(name, value);
+    const { name, value, files } = e.target;
+    console.log(name, value, files);
     setformDetails({
       ...formDetails,
       [name]: value,
     });
+  };
+  const handleUpload = e => {
+    const files = e.target.files[0];
+    setUploadFileName(files.name);
+    setProfilePic(files);
   };
 
   const handlePhoneModal = (e, myNumber) => {
@@ -57,16 +67,18 @@ const Myprofileedit1 = () => {
   const maxDate = `${yyyy}-${mm}-${dd}`;
 
   const handleSubmit = () => {
-    const payload = {
-      firstName: formDetails?.firstName,
-      mobileNo: formDetails?.mobileNo,
-      email: formDetails?.email,
-      dob: formDetails?.dob,
-      gender: formDetails?.gender,
-    };
+    console.log("formDetails", formDetails);
+    const formdata = new FormData();
+    formdata.append("firstName", formDetails?.firstName);
+    formdata.append("mobileNo", formDetails?.mobileNo);
+    formdata.append("email", formDetails?.email);
+    formdata.append("dob", formDetails?.dob);
+    formdata.append("gender", formDetails?.gender);
+    formdata.append("profileImage", formDetails?.profilePic);
+
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     axiosConfig
-      .put(`/user/edit-profile/${user?._id}`, payload)
+      .put(`/user/edit-profile/${user?._id}`, formDetails)
       .then(response => {
         if (response.data.updatedUser) {
           sessionStorage.setItem(
@@ -74,9 +86,13 @@ const Myprofileedit1 = () => {
             JSON.stringify(response.data.updatedUser)
           );
           setformDetails(response.data.updatedUser);
-
-          setErrModal(true);
           setMessage("User Data Update Successfully");
+          setErrModal(true);
+          setTimeout(() => {
+            // console.log(object)
+            setErrModal(false);
+            navigate("/myprofile");
+          }, 2000);
         }
       })
       .catch(error => {
@@ -85,6 +101,10 @@ const Myprofileedit1 = () => {
         console.log(error);
       });
   };
+  const handleIconClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <>
       <Mynavbar />
@@ -105,11 +125,46 @@ const Myprofileedit1 = () => {
       <div className="container">
         <div className="row mb-5 m-2">
           <div className="col-md-4 col-sm-4 col-lg-4 col-xl-4">
-            <div style={{ justifyContent: "center", display: "flex" }}>
-              <img src={profile} alt="profile" />
-            </div>
-            <div>
-              <Link style={{ textDecoration: "none" }}>
+            {formDetails?.image ? (
+              <div className="profileParent">
+                <img
+                  src={formDetails?.image}
+                  alt="profile"
+                  className="profilePicture"
+                />
+              </div>
+            ) : (
+              <div style={{ justifyContent: "center", display: "flex" }}>
+                <img src={profile} alt="profile" />
+              </div>
+            )}
+            <div className="iconStyle">
+              <span className="ml-1">
+                {/* <svg
+                  type="button"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  class="bi bi-upload"
+                  viewBox="0 0 16 16"
+                  onClick={handleIconClick}
+                  color="grey"
+                  width="40"
+                  height="30"
+                >
+                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+                </svg> */}
+
+                <input
+                  type="file"
+                  name="profilePic"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  value={formDetails?.profilePic}
+                  onChange={handleUpload}
+                  accept="image/png, image/jpeg,image/jpg,image/jpe"
+                />
+                {/* <Link style={{ textDecoration: "none" }}>
                 <p
                   style={{
                     color: "rgb(82, 114, 161)",
@@ -118,11 +173,17 @@ const Myprofileedit1 = () => {
                     textAlign: "center",
                   }}
                 >
-                  <span style={{ borderBottom: "1px solid rgb(82, 114, 161)" }}>
+                   <span style={{ borderBottom: "1px solid rgb(82, 114, 161)" }}>
                     Update
-                  </span>
+                  </span> 
+                 
                 </p>
-              </Link>
+              </Link> */}
+              </span>
+              <span className="uploadFileName">
+                {" "}
+                {uploadFileName && uploadFileName}
+              </span>
             </div>
           </div>
           <div className="col-md-8 col-sm-8 col-lg-8 col-xl-8 mt-4">
@@ -145,10 +206,10 @@ const Myprofileedit1 = () => {
                           marginBottom: "-5px",
                           fontSize: "16px",
                           paddingLeft: "5px",
-                          paddingRight: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
                           width: "auto",
+                          paddingRight: "5px",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"
@@ -194,8 +255,7 @@ const Myprofileedit1 = () => {
                               paddingLeft: "5px",
                               fontFamily: "Calibri",
                               marginLeft: "15px",
-                              width: "auto",
-                              paddingRight: "5px",
+                              width: "7.3rem",
                             }}
                             for="exampleInputPassword1"
                             class="form-label"
@@ -262,8 +322,7 @@ const Myprofileedit1 = () => {
                               fontSize: "16px",
                               fontFamily: "Calibri",
                               marginLeft: "15px",
-                              width: "auto",
-                              paddingRight: "5px",
+                              width: "7rem",
                               paddingLeft: "5px",
                             }}
                             for="exampleInputPassword1"
@@ -326,8 +385,7 @@ const Myprofileedit1 = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "auto",
-                          paddingRight: "5px",
+                          width: "6.5rem",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"
@@ -372,8 +430,7 @@ const Myprofileedit1 = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "auto",
-                          paddingRight: "5px",
+                          width: "4.5rem",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"
@@ -396,10 +453,9 @@ const Myprofileedit1 = () => {
                           marginTop: "-15px",
                           paddingBottom: "10px",
                           marginBottom: "5px",
-                          // width: "100%",
+                          width: "100%",
                         }}
                       >
-                        {/* <option selected>Select Gender</option> */}
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>

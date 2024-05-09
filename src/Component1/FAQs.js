@@ -5,7 +5,7 @@ import parse from "html-react-parser";
 import Accordion from "react-bootstrap/Accordion";
 import "../Component1/css/accordianfaq.css";
 import axiosConfig from "./../axiosConfig";
-const Faq = () => {
+const Faq = () => { 
   const [activeIndex, setActiveIndex] = useState(null);
   const [faqList, setFaqList] = useState([]);
 

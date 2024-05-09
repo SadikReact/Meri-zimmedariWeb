@@ -20,6 +20,8 @@ const CourseDetails = ({
   gotNomineeData,
 }) => {
   const [newOtp, setNewOtp] = useState(null);
+  const [phoneIndex, setPhoneIndex] = useState("");
+  const [mailIndex, setMailIndex] = useState("");
   const [model, setModel] = useState(null);
   const [formValues, setFormValues] = useState([
     {
@@ -28,6 +30,8 @@ const CourseDetails = ({
       percentageofShar: "",
       NomineePhoneNumber: null,
       relationWithNominee: "",
+      mailVerifyStatus: "not Verified",
+      mobileVerifyStatus: "not Verified",
     },
   ]);
   const [formError, setFormError] = useState({
@@ -50,10 +54,8 @@ const CourseDetails = ({
   const [modalShowauto, setModalShowauto] = useState(false);
 
   useEffect(() => {
-    debugger;
-    // console.log(showAsset);
     let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
-    console.log(AssetEditid.nominee);
+    // console.log(AssetEditid?.nominee);
     if (gotNomineeData?.length > 0) {
       setFormValues(gotNomineeData);
       setModel(false);
@@ -121,7 +123,6 @@ const CourseDetails = ({
 
   let addFormFields = (e, item) => {
     e.preventDefault();
-    // debugger;
     const newArr = [];
     let share = document.getElementById("percentageofShar").value;
     console.log("share", share);
@@ -132,7 +133,6 @@ const CourseDetails = ({
     );
 
     if (sum == 0 || sum == "") {
-      // debugger;
       setFormError({ IspercentageofShar: true });
       setShareError("Permissible value: 1 to 100 without decimal.");
     } else if (sum == 100) {
@@ -155,46 +155,10 @@ const CourseDetails = ({
           percentageofShar: "",
           NomineePhoneNumber: "",
           relationWithNominee: "",
-          nominee: 0,
+          mailVerifyStatus: "not Verified",
+          mobileVerifyStatus: "not Verified",
         },
       ]);
-      // if (item) {
-      //   setFormValues([
-      //     ...formValues,
-      //     {
-      //       nomineeName: item.name,
-      //       nomineeEmailId: "",
-      //       percentageofShar: null,
-      //       NomineePhoneNumber: "",
-      //       relationWithNominee: item.relation,
-      //       nominee: 0,
-      //     },
-      //   ]);
-      // }
-      // else {
-      // setFormValues([
-      //   ...formValues,
-      //   {
-      //     nomineeName: "",
-      //     nomineeEmailId: "",
-      //     percentageofShar: null,
-      //     NomineePhoneNumber: "",
-      //     relationWithNominee: "",
-      //     nominee: 0,
-      //   },
-      // ]);
-      // setNewArray([
-      //   ...formValues,
-      //   {
-      //     nomineeName: "",
-      //     nomineeEmailId: "",
-      //     percentageofShar: null,
-      //     NomineePhoneNumber: "",
-      //     relationWithNominee: "",
-      //     nominee: 0,
-      //   },
-      // ]);
-      // }
     }
   };
   let removeFormFields = i => {
@@ -227,9 +191,7 @@ const CourseDetails = ({
       }
 
       let share = document.getElementById("percentageofShar").value;
-      // debugger;
       if (!Number(sum)) {
-        debugger;
         allError.IspercentageofShar = true;
         setShareError("Permissible value: 1 to 100 without decimal.");
       } else if (sum < 100) {
@@ -288,7 +250,6 @@ const CourseDetails = ({
           // console.log(formValues);
           setShowNominee(formValues);
           nextStep();
-          //  navigate("/add-asset/step3");
         }
       }
       setFormError(allError);
@@ -307,29 +268,29 @@ const CourseDetails = ({
     console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
+
   const sendSMS = async number => {
     const newOTP = generateOTP();
     setNewOtp(newOTP);
     try {
-      const apiKey = OTP_main;
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
 
-      const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
-
-      // const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${newOTP}&route=otp&numbers=${number}`;
-
-      const response = await axiosConfig.get(url);
-      // setResponse(response.data);
+      const response = await axiosConfig.get(allUrl);
+      //  setResponse(response.data);
       console.log(response.data);
-      document.getElementById("alert").innerHTML = "";
+      //  document.getElementById("alert").innerHTML = "";
+      //  navigate("/login/otp", {
+      //    state: { phone, newOTP },
+      //  });
     } catch (error) {
-      if (error?.response?.data?.message) {
-        document.getElementById("alert").innerHTML =
-          "Sending multiple sms to same number is not allowed";
-      }
+      //  if (error?.response?.data?.message) {
+      //    document.getElementById("alert").innerHTML =
+      //      "Sending multiple sms to same number is not allowed";
+      //  }
     }
   };
-  const handlePhoneModal = number => {
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+  const handlePhoneModal = (index, number) => {
+    debugger;
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
@@ -343,6 +304,7 @@ const CourseDetails = ({
           sendSMS(number);
           setMyNumber(number);
           setModalShow(true);
+          setPhoneIndex(index);
           setModalShowmail(false);
           setFormError({ IsPhoneAvail: false });
         })
@@ -353,8 +315,7 @@ const CourseDetails = ({
       setFormError({ IsPhoneAvail: true });
     }
   };
-  const handleEmailModal = currentEmail => {
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+  const handleEmailModal = (index, currentEmail) => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
       let payload = {
@@ -364,10 +325,10 @@ const CourseDetails = ({
       axiosConfig
         .post("/asset/otp-email", payload)
         .then(response => {
-          // console.log("response", response.data.message);
           setModalShowmail(true);
           setModalShow(false);
           setMyEmail(currentEmail);
+          setMailIndex(index);
         })
         .catch(error => {
           console.log(error);
@@ -563,7 +524,7 @@ const CourseDetails = ({
             formValues?.map((ele, index) => (
               <div className="row" key={index}>
                 <div className="container-fluid">
-                  <div className="step2deletbutton" style={{}}>
+                  <div className="step2deletbutton">
                     {index ? (
                       <>
                         <fieldset
@@ -635,7 +596,6 @@ const CourseDetails = ({
                                 placeholder="XXXXXXXXXXXX"
                                 name="nomineeName"
                                 value={ele.nomineeName || ""}
-                                // pattern="[A-Za-z]+"
                                 onChange={e => handleChange(index, e)}
                                 style={{
                                   width: "95%",
@@ -896,10 +856,13 @@ const CourseDetails = ({
                                   <span>
                                     <a
                                       onClick={() =>
-                                        handlePhoneModal(ele.NomineePhoneNumber)
+                                        handlePhoneModal(
+                                          index,
+                                          ele.NomineePhoneNumber
+                                        )
                                       }
                                       className="btn"
-                                      id="alert"
+                                      // id="alert"
                                       style={{
                                         fontSize: "13px",
                                         width: "115%",
@@ -1005,7 +968,10 @@ const CourseDetails = ({
                                   <span>
                                     <a
                                       onClick={() =>
-                                        handleEmailModal(ele.nomineeEmailId)
+                                        handleEmailModal(
+                                          index,
+                                          ele.nomineeEmailId
+                                        )
                                       }
                                       className="btn "
                                       style={{
@@ -1131,6 +1097,8 @@ const CourseDetails = ({
             setModalShow={setModalShow}
             myNumber={myNumber}
             newOtp={newOtp}
+            phoneIndex={phoneIndex}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}
@@ -1140,6 +1108,8 @@ const CourseDetails = ({
             setModalShowmail={setModalShowmail}
             setModalShow={setModalShow}
             myEmail={myEmail}
+            mailIndex={mailIndex}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}

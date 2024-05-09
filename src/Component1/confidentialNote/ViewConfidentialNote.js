@@ -1,8 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Mynavbar from "../Mynavbar";
-
+import axiosConfig from "../../axiosConfig";
 export default function ViewConfidentialNote() {
+  const location = useLocation();
+  const [viewData, setViewData] = useState("");
+  useEffect(() => {
+    let id = location.state._id;
+    console.log(location.state._id);
+    axiosConfig
+      .get(`/confidential/view-confidential-by-id/${id}`)
+      .then(response => {
+        setViewData(response.data.Confidential);
+        console.log(response.data.Confidential);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
   return (
     <div>
       <Mynavbar />
@@ -37,14 +52,29 @@ export default function ViewConfidentialNote() {
                   color: "black",
                 }}
               >
-                <td style={{ borderRight: "2px solid white", color: "black" }}>
-                  <input type="text" disabled value=" Confidential Note" />
+                <td style={{ borderRight: "2px solid white", color: "#fff" }}>
+                  <input
+                    type="text"
+                    disabled
+                    value={viewData?.description}
+                    style={{ color: "#fff" }}
+                  />
                 </td>
                 <td style={{ borderRight: "2px solid white" }}>
-                  <input type="text" disabled value="abc" />
+                  <input
+                    type="text"
+                    disabled
+                    value={viewData?.nomineeName}
+                    style={{ color: "#fff" }}
+                  />
                 </td>
                 <td style={{ borderRight: "2px solid white" }}>
-                  <input type="text" disabled value="wife" />
+                  <input
+                    type="text"
+                    disabled
+                    value={viewData?.relationWithNominee}
+                    style={{ color: "#fff" }}
+                  />
                 </td>
               </tr>
             </tbody>
@@ -54,7 +84,7 @@ export default function ViewConfidentialNote() {
         <div className="container mt-2">
           <div style={{ float: "left", bottom: "0", position: "absolute" }}>
             <Link
-              to={"/confidentialnoteeditor"}
+              to={"/manageconfidentialnote"}
               style={{ textDecoration: "none" }}
             >
               <p

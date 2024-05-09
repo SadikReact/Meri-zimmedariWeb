@@ -233,9 +233,17 @@ const Forgotpassword = () => {
                       />
                     </fieldset>
                     {newPasswordError && (
-                      <p style={{ color: "red" }} className="validationmobilefont">{newPasswordError}</p>
+                      <p
+                        style={{ color: "red" }}
+                        className="validationmobilefont"
+                      >
+                        {newPasswordError}
+                      </p>
                     )}
-                    <span className="validationmobilefont" style={{ color: messageColor }} >
+                    <span
+                      className="validationmobilefont"
+                      style={{ color: messageColor }}
+                    >
                       {messageClass}
                     </span>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosConfig from "../axiosConfig";
 import NavBar from "./NavBar";
@@ -15,6 +15,35 @@ const Loginwithpassword = () => {
   const location = useLocation();
   const phoneNumber = location.state;
 
+  useEffect(() => {
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    console.log(location.state, MobileNUM);
+  }, []);
+  // const generateOTP = () => {
+  //   const myOtp = Math.floor(100000 + Math.random() * 900000);
+  //   console.log(myOtp);
+  //   return myOtp.toString(); // Convert number to string
+  // };
+  const sendSMS = async () => {
+    let newOTP = Math.floor(100000 + Math.random() * 900000);
+    // const newOTP = generateOTP();
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    console.log(newOTP, MobileNUM);
+    try {
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${MobileNUM}`;
+
+      const response = await axiosConfig.get(allUrl);
+      // setResponse(response.data);
+      navigate("/Forgot/password/otp", { state: newOTP });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      // if (error?.response?.data?.message) {
+      // document.getElementById("alert").innerHTML =
+      //   "Sending multiple sms to same number is not allowed";
+      // }
+    }
+  };
   const handleFormSubmit = e => {
     e.preventDefault();
     let payload = {
@@ -58,9 +87,8 @@ const Loginwithpassword = () => {
     axiosConfig
       .post("/user/forget-password", { mobileNo: Number(phoneNumber) })
       .then(response => {
-        console.log(response.data);
-        // navigate("/forgot/password");
-        navigate("/Forgot/password/otp");
+        console.log(response.data.message);
+        sendSMS();
       })
       .catch(error => {
         //  setIsValidOtp(true);
@@ -187,7 +215,7 @@ const Loginwithpassword = () => {
                     <div className="mt-2">
                       <span className="ml-1">
                         <span
-                          onClick={handleForgetPassword} // corrected function name
+                          onClick={handleForgetPassword}
                           style={{
                             textDecoration: "none",
                             color: "#007bff",

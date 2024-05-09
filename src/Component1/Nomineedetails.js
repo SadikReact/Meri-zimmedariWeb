@@ -16,7 +16,7 @@ const Nomineedetails = () => {
         .get(`/asset/nominee-list/${userData?._id}`)
         .then(response => {
           setModel(false);
-          console.log(response.data.Nominee);
+          // console.log(response.data.Nominee);
           setNomineeList(response.data.Nominee);
         })
         .catch(err => {

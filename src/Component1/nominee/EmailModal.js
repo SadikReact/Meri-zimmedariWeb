@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from "react";
-// import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
 import axiosConfig from "../../axiosConfig";
-const EmailOtp = ({ setModalShowmail, setModalShow, myEmail }) => {
+import UserContext from "../../context/Context";
+const EmailOtp = ({
+  setModalShowmail,
+  setModalShow,
+  myEmail,
+  setFormValues,
+  mailIndex,
+}) => {
+  const context = useContext(UserContext);
   const [otp, setOtp] = useState(null);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
   const [bool, setBool] = useState(null);
@@ -9,6 +16,7 @@ const EmailOtp = ({ setModalShowmail, setModalShow, myEmail }) => {
   const [isCountingComplete, setIsCountingComplete] = useState(false);
 
   useEffect(() => {
+    console.log(context);
     if (count > 0) {
       setIsCountingComplete(false);
       const timer = setTimeout(() => {
@@ -45,6 +53,7 @@ const EmailOtp = ({ setModalShowmail, setModalShow, myEmail }) => {
       otp: Number(otp),
       userId: user?._id,
       email: myEmail,
+
       // mailVerifyStatus: "Verify",
     };
     axiosConfig
@@ -52,7 +61,21 @@ const EmailOtp = ({ setModalShowmail, setModalShow, myEmail }) => {
       .then(response => {
         setModalShow(false);
         setModalShowmail(false);
-        // console.log("response", response.data.message);
+        context.setMailOtp(true);
+        console.log("mailIndex", mailIndex);
+        if (mailIndex) {
+          setFormValues(prevFormValues => {
+            const newFormValues = [...prevFormValues];
+            newFormValues[mailIndex]["mailVerifyStatus"] = "Verified";
+
+            return newFormValues;
+          });
+        } else {
+          setFormValues(prevState => ({
+            ...prevState,
+            mailVerifyStatus: "Verified", // Static value for name
+          }));
+        }
       })
       .catch(error => {
         console.log("response", error);

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import MyContext from "../context/Context.js";
+// import MyContext from "../context/Context.js";
 import Mynavbar from "./Mynavbar";
 import PersonalDetails from "./PersonalDetails";
 import CourseDetails from "./CourseDetails.js";
 import Summary from "./Summary.js";
-
+import axiosConfig from "./../axiosConfig";
 const StepperForm = () => {
-  const sharedValue = useContext(MyContext);
+  // const sharedValue = useContext(MyContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [step, setStep] = useState(1);
@@ -26,19 +26,36 @@ const StepperForm = () => {
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [error, setError] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [fileUrl, setFileUrl] = useState(null);
+  // const [fileUrl, setFileUrl] = useState(null);
   const [policyName, setPolicyName] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [reEnterPolicyNumber, setReEnterPolicyNumber] = useState("");
-  const [formError, setFormError] = useState({
-    // IspolicyFile: false,
-    IspolicyName: false,
-    IspolicyNumber: false,
-    IsreEnterPolicyNumber: false,
-    IsBothMatch: false,
-  });
+  // const [formError, setFormError] = useState({
+  //   // IspolicyFile: false,
+  //   IspolicyName: false,
+  //   IspolicyNumber: false,
+  //   IsreEnterPolicyNumber: false,
+  //   IsBothMatch: false,
+  // });
   const nextStep = () => {
-    // debugger;
+    if (step === 1) {
+      console.log("1", step);
+      let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+      let asset = JSON.parse(localStorage.getItem("ViewOne"));
+      // console.log(asset);
+      let payload = {
+        userId: user?._id,
+        assetsId: asset?.dynamicFields?._id,
+      };
+      axiosConfig
+        .post("/user/no-assets", payload)
+        .then(response => {
+          console.log("response", response.data.message);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
     setStep(step + 1);
   };
   const prevStep = () => {
@@ -51,7 +68,6 @@ const StepperForm = () => {
   };
 
   useEffect(() => {
-    console.log("showNominee", showNominee);
     if (location.state) {
       setdynamicFields(location?.state);
     }

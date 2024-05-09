@@ -12,12 +12,11 @@
   width: 100%;
   margin: 0 auto;
   background-color: #fafafa;
-  /* padding: 25px 15px; */
 }
 
-.form-group {
+/* .form-group {
   text-align: center;
-}
+} */
 
 .form-group__element {
   margin: 10px auto;
@@ -48,7 +47,7 @@
   width: 100px;
   padding: 10px;
   border-radius: 3px;
-  border: 1px solid #003487;
+  border: 1px solid rgb(182, 205, 236);
   margin: 5px 12px;
 }
 

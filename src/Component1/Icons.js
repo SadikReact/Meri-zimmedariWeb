@@ -5,24 +5,52 @@ import axiosConfig from "./../axiosConfig";
 const Icons = () => {
   const navigate = useNavigate();
   const [result, setResult] = useState([]);
+  const [noOfAsset, setNoOfAsset] = useState([]);
   const [num, setNum] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [AssetList, setAssetList] = useState([]);
   useEffect(() => {
-    axiosConfig
-      .get("/admin/get-list")
-      .then(response => {
-        // console.log(response.data.Field);
-        setResult(response.data.Field);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    let assests = [];
+    (async () => {
+      let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+      await axiosConfig
+        .get(`/user/no-of-assets/${userId?._id}`)
+        .then(res => {
+          assests = res.data.assets;
+          setNoOfAsset(res.data.assets);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      await axiosConfig
+        .get("/admin/get-list")
+        .then(response => {
+          // console.log(assests);
+          // console.log(response.data.Field);
+          let data = response.data.Field;
+
+          data?.forEach((ele, index) => {
+            let selectedassests;
+            if (assests?.length > 0) {
+              selectedassests = assests?.forEach((value, i) => {
+                if (value?.assetsId?.Asset_Type == ele?.Asset_Type) {
+                  ele["noOfAssets"] = value?.noOfAssets;
+                }
+              });
+            }
+            return selectedassests;
+          });
+
+          setResult(response.data.Field);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    })();
 
     axiosConfig
       .get("/asset/view-asset")
       .then(res => {
-        // console.log(res.data.Asset);
         setAssetList(res.data.Asset);
       })
       .catch(err => {
@@ -30,6 +58,7 @@ const Icons = () => {
       });
     FindAssetType();
   }, []);
+
   const FindAssetType = () => {
     const assetTypeCounts = [];
 
@@ -54,29 +83,26 @@ const Icons = () => {
     setNum(arraList);
   };
   const handlePlus = selectedData => {
-    console.log(selectedData);
-    const { Asset_Type, Field_1, Field_2, Field_3, Field_4 } = selectedData;
-    const payload = { Asset_Type, Field_1, Field_2, Field_3, Field_4 };
+    // console.log(selectedData);
+    const { _id, Asset_Type, Field_1, Field_2, Field_3, Field_4 } =
+      selectedData;
+    const payload = { Asset_Type, Field_1, Field_2, Field_3, Field_4, _id };
 
     localStorage.setItem("ViewOne", JSON.stringify(payload));
     localStorage.removeItem("assetDetails");
     localStorage.removeItem("nomineeDetails");
-    // navigate("/add-asset/policy", { state: selectedData });
     navigate("/add-aseets/nominee", { state: selectedData });
   };
-  // const handlePlus1 = selectedData => {
-  //   navigate("/StepperForm", { state: selectedData });
-  // };
+
   const handleView = selectedData => {
-    console.log(selectedData);
-    // localStorage.setItem("ViewOne", JSON.stringify(selectedData));
+    // console.log(selectedData);
     navigate("/assetType/view-asset", { state: selectedData });
   };
   const handleSearch = e => {
     setSearchQuery(e.target.value);
   };
   const filteredData = result.filter(item =>
-    item.Asset_Type.toLowerCase().includes(searchQuery.toLowerCase())
+    item?.Asset_Type?.toLowerCase().includes(searchQuery?.toLowerCase())
   );
   return (
     <>
@@ -216,7 +242,12 @@ const Icons = () => {
                             border: "1px solid  rgb(114, 158, 216)",
                           }}
                         >
-                          2 Added
+                          {ele?.noOfAssets && ele?.noOfAssets ? (
+                            <>{ele?.noOfAssets}</>
+                          ) : (
+                            0
+                          )}{" "}
+                          Added
                         </div>
                       </td>
                       <td
@@ -259,6 +290,7 @@ const Icons = () => {
                           </span>
                           <span className="icon-container cssfordesktopviewforicon">
                             <svg
+                              // style={{}}
                               xmlns="http://www.w3.org/2000/svg"
                               width="30"
                               height="30"
@@ -300,7 +332,7 @@ const Icons = () => {
                             </svg>
                             <span
                               className="icon-name"
-                              style={{ marginLeft: "7%" }}
+                              style={{ marginLeft: "7%", cursor: "pointer" }}
                             >
                               Add
                             </span>

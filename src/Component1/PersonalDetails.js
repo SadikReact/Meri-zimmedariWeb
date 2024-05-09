@@ -26,7 +26,6 @@ const PersonalDetails = ({
   const fileInputRef = useRef(null);
   const [model, setModel] = useState(null);
   const [dynamicFields, setdynamicFields] = useState(""); // for fields
-  // const [isUpload, setIsupload] = useState(false);
   const [formError, setFormError] = useState({
     IspolicyName: false,
     IspolicyNumber: false,
@@ -37,8 +36,7 @@ const PersonalDetails = ({
     let viewData = JSON.parse(localStorage.getItem("ViewOne"));
 
     let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
-    console.log(AssetEditid);
-    // console.log(viewData);
+
     if (
       viewData?.dynamicFields != undefined ||
       viewData?.dynamicFields != null
@@ -46,14 +44,13 @@ const PersonalDetails = ({
       setdynamicFields(viewData?.dynamicFields);
       setModel(false);
     } else if (viewData != null || viewData != undefined) {
-      // console.log(viewData);
       setdynamicFields(viewData);
       setModel(false);
     } else if (AssetEditid != null || AssetEditid != undefined) {
       axiosConfig
         .get(`/asset/view-asset-by-id/${AssetEditid._id}`)
         .then(res => {
-          console.log("personal", res.data.Asset);
+          // console.log("personal", res.data.Asset);
           setdynamicFields(res.data.Asset);
           setPolicyName(res?.data?.Asset?.policyIssuersName);
           setPolicyNumber(res?.data?.Asset?.policynumber);
@@ -266,7 +263,6 @@ const PersonalDetails = ({
                         name="uploadedFileName"
                         required
                         accept="application/pdf, image/png, image/jpeg,image/jpg,image/jpe"
-                        // onChange={handleFileChange}
                         onChange={handleFileChange("uploadedFileName")}
                       />
                       <p>Acceptable file - .jpg/.jpeg/.png/pdf</p>
@@ -498,14 +494,14 @@ const PersonalDetails = ({
                   </div>
                 </div>
               </div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <button
-                className="buttons__button buttons__button--next"
-                onClick={continueStep}
-              >
-                Next
-              </button>
+              <div style={{ textAlign: "right" }}>
+                <button
+                  className="buttons__button buttons__button--next"
+                  onClick={continueStep}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </>
         )}

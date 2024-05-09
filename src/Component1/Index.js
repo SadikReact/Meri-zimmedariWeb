@@ -19,6 +19,7 @@ const StyledText = styled("text")(({ theme }) => ({
 const Index = () => {
   let arr = [];
   const [PaymentStatus, setPaymentStatus] = useState({});
+  const [lifeDeclaration, setLifeDeclaration] = useState({});
   const [user, setUser] = useState("");
   const [userPercentage, setUserPercentage] = useState("");
   const [assetList, setAssetList] = useState("");
@@ -41,18 +42,17 @@ const Index = () => {
         // console.log(response.data.Nominee);
         let lengthSize = response.data.Nominee.filter(item =>
           item.mailVerifyStatus.includes("Not Verified")
-            ? item.mailVerifyStatus.length
+            ? item.mailVerifyStatus?.length
             : null
         );
         let lengthSize1 = response.data.Nominee.filter(item =>
           item.mobileVerifyStatus.includes("Not Verified")
-            ? item.mobileVerifyStatus.length
+            ? item.mobileVerifyStatus?.length
             : null
         );
-        // console.log(lengthSize.length);
-        setActionLength(lengthSize.length + lengthSize1.length);
+        setActionLength(lengthSize?.length + lengthSize1?.length);
         // console.log(lengthSize.length + lengthSize1.length);
-        setNomineeList(response.data.Nominee);
+        setNomineeList(response?.data?.Nominee);
       })
       .catch(err => {
         console.log("err", err);
@@ -83,7 +83,9 @@ const Index = () => {
     axiosConfig
       .get(`/life-declaration/view-life-declaration/${user?._id}`)
       .then(res => {
-        calculateFutureDate(res?.data?.Life.lastDeclarationDate);
+        console.log(res?.data?.Life);
+        setLifeDeclaration(res?.data?.Life);
+        calculateFutureDate(res?.data?.Life?.lastDeclarationDate);
       })
       .catch(err => {
         console.log(err);
@@ -95,20 +97,20 @@ const Index = () => {
     let totalPercenatage = 100;
     if (user) {
       // console.log(user)
-      if (user?.firstName.length > 1) {
+      if (user?.firstName?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.email.length > 1) {
+      if (user?.email?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
 
       if (user?.mobileNo || user?.mobileNo !== null) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.gender.length > 1) {
+      if (user?.gender?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.dob.length > 1) {
+      if (user?.dob?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
       if (user?.image) {
@@ -277,7 +279,11 @@ const Index = () => {
                         ) : (
                           "NA"
                         )} */}
-                        {futureDate ? <>{futureDate}</> : "NA"}
+                        {lifeDeclaration?.lastDeclarationDate ? (
+                          <>{lifeDeclaration.lastDeclarationDate}</>
+                        ) : (
+                          "NA"
+                        )}
                       </span>
 
                       <span
@@ -297,8 +303,13 @@ const Index = () => {
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        {PaymentStatus?.lastPaymentDate ? (
+                        {/* {PaymentStatus?.lastPaymentDate ? (
                           <>{PaymentStatus?.lastPaymentDate}</>
+                        ) : (
+                          "NA"
+                        )} */}
+                        {lifeDeclaration?.nextDeclarationDate ? (
+                          <>{lifeDeclaration.nextDeclarationDate}</>
                         ) : (
                           "NA"
                         )}
@@ -392,10 +403,11 @@ const Index = () => {
                 style={{ justifyContent: "center", display: "flex" }}
               >
                 <div
+                  className="cssforindexaction"
                   style={{
                     border: "1px solid rgb(43, 77, 129)",
                     width: "100%",
-                    borderBottomLeftRadius: "20px",
+
                     borderTopLeftRadius: "20px",
                   }}
                 >
@@ -439,7 +451,9 @@ const Index = () => {
                                     "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
                                 }}
                               >
-                                Renew Subscription, expiring in 15 days
+                                {PaymentStatus?.nextPaymentDate
+                                  ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
+                                  : "Renew Subscription, expiring in 15 days "}
                               </div>
                             )}
 
@@ -476,7 +490,7 @@ const Index = () => {
               </div>
             </div>
             <div className="col-md-5 col-xl-5 col-lg-5">
-              <div className="m-2">
+              <div className="m-2 cssformobileindexveiw">
                 <div
                   className="row "
                   style={{

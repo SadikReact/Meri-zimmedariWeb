@@ -1,18 +1,22 @@
-import React, { useState } from "react";
-import { LinkContainer } from "react-router-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Mynavbar from "./Mynavbar";
 import EmailModal from "./nominee/EmailModal";
+import axiosConfig from "../axiosConfig";
 import PhoneOtp from "./nominee/phoneOtp";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 import "../css/style.css";
 const Confidentialnote = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formValues, setFormValues] = useState({
     nomineeName: "",
     nomineeEmailId: "",
     NomineePhoneNumber: null,
     relationWithNominee: "",
   });
-
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [formError, setFormError] = useState({
     IsnomineeName: false,
     IsnomineeEmailId: false,
@@ -21,6 +25,7 @@ const Confidentialnote = () => {
   });
   const [modalShow, setModalShow] = useState(false);
   const [modalShowmail, setModalShowmail] = useState(false);
+
   const handlePhoneModal = () => {
     setModalShow(true);
   };
@@ -42,12 +47,18 @@ const Confidentialnote = () => {
       }
 
       const phoneNumberRegex = /^\d{10}$/;
+      // const phoneNumberRegex = /^[0-9]*$/;
       if (fieldName === "NomineePhoneNumber") {
+        // debugger;
         if (phoneNumberRegex.test(value)) {
+          // if (typeof value == Number) {
           updatedValues[fieldName] = Number(value); // Update NomineePhoneNumber as a number if it passes the regex test
           localStorage.setItem("UpdatedNo", Number(value)); // Store in localStorage
+          // }
         } else {
-          updatedValues[fieldName] = Number(value); // Otherwise, update NomineePhoneNumber as a number
+          // Clear the field if it contains non-numeric characters
+          updatedValues[fieldName] = "";
+          // localStorage.removeItem("UpdatedNo");
         }
       } else if (fieldName === "nomineeEmailId") {
         updatedValues[fieldName] = value; // Update nomineeEmailId
@@ -66,15 +77,32 @@ const Confidentialnote = () => {
     if (!formValues.relationWithNominee) errors.IsrelationWithNominee = true;
 
     if (Object.keys(errors)?.length === 0) {
-      console.log(formValues);
-      setFormValues({
-        nomineeName: "",
-        nomineeEmailId: "",
-        NomineePhoneNumber: "",
-        relationWithNominee: "",
-      });
+      formValues.description = location.state.editorState.blocks[0].text;
+
+      axiosConfig
+        .post(`/confidential/save-confidential`, formValues)
+        .then(response => {
+          setMessage(`${response?.data?.message}`);
+          setErrModal(true);
+          setTimeout(() => {
+            setErrModal(false);
+            navigate("/manageconfidentialnote");
+          }, 2000);
+          // }
+          setFormValues({
+            nomineeName: "",
+            nomineeEmailId: "",
+            NomineePhoneNumber: "",
+            relationWithNominee: "",
+          });
+        })
+        .catch(error => {
+          setMessage("Something went Wrong");
+          setErrModal(true);
+          console.log(error);
+        });
+
       setFormError("");
-      alert("Data Submitted Successfully!");
     } else {
       setFormError(errors);
     }
@@ -318,6 +346,7 @@ const Confidentialnote = () => {
                           </div>
                           <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 col-6">
                             <input
+                              maxLength={10}
                               type="tel"
                               placeholder="965XX50XX0"
                               style={{
@@ -515,6 +544,11 @@ const Confidentialnote = () => {
           </Link>
         </span>
       </div>
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

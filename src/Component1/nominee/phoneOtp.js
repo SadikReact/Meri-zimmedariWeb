@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axiosConfig from "../../axiosConfig";
+import UserContext from "../../context/Context";
 
-const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
+const PhoneOtp = ({
+  setModalShow,
+  myNumber,
+  newOtp,
+  setFormValues,
+  phoneIndex,
+}) => {
+  const context = useContext(UserContext);
   const [otp, setOtp] = useState(null);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
   const [bool, setBool] = useState(null);
@@ -9,6 +17,8 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
   const [isCountingComplete, setIsCountingComplete] = useState(false);
 
   useEffect(() => {
+    // console.log(context.setPhoneOtp);
+    // console.log("phoneIndex", phoneIndex);
     if (count > 0) {
       setIsCountingComplete(false);
       const timer = setTimeout(() => {
@@ -52,7 +62,26 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
         .post("/asset/otp-verify-mobile", payload)
         .then(response => {
           setModalShow(false);
+          context.setPhoneOtp(true);
           // console.log("response", response.data);
+          if (phoneIndex) {
+            setFormValues(prevFormValues => {
+              const newFormValues = [...prevFormValues];
+              newFormValues[phoneIndex]["mobileVerifyStatus"] = "Verified";
+              return newFormValues;
+            });
+          } else {
+            setFormValues(prevState => ({
+              ...prevState,
+              mobileVerifyStatus: "Verified", // Static value for name
+            }));
+
+            // setFormValues(prevFormValues => {
+            //   const newFormValues = [...prevFormValues];
+            //   newFormValues["mobileVerifyStatus"] = "Verified";
+            //   return newFormValues;
+            // });
+          }
         })
         .catch(error => {
           console.log("response", error);

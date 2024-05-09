@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import Webcam from "react-webcam";
 import * as tf from "@tensorflow/tfjs";
-
 import axiosConfig from "../axiosConfig";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Redirect } from "react-router-dom";
 
 import "./Otpveri";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import { OTP_main } from "./Api";
 import { ErrorModal } from "./ManageAccount/ErrorModal";
 const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detection");
 
@@ -17,6 +15,7 @@ const Login = () => {
 
   const webcamRef = useRef(null);
   const [response, setResponse] = useState(null);
+  const [isNumber, setIsNumber] = useState(false);
   const [errModal, setErrModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showWebcam, setShowWebcam] = useState(false);
@@ -33,19 +32,42 @@ const Login = () => {
 
   const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   debugger;
+  //   let accessToken = JSON.parse(
+  //     sessionStorage.getItem("UserZimmedari")
+  //   )?.token;
+  //   console.log(accessToken);
+  //   //  const isLoggedIn = false;
+  //   if (accessToken === null || accessToken === undefined) {
+  //     // alert("Testing");
+  //     window.location.replace("/");
+  //     // window.location.href = "/registration";
+  //     // navigate("/");
+  //     // window.location.reload();
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   let accessToken = JSON.parse(
+  //     sessionStorage.getItem("UserZimmedari")
+  //   )?.token;
+  //   if (accessToken === null || accessToken === undefined) {
+  //     let value = window.location.pathname !== "/#/";
+  //     if (value) {
+  //       window.location.replace("/#/"); // Redirect to login page if token is not found
+  //     }
+  //   }
+  // }, []);
+
   useEffect(() => {
     // Prevent the user from going back in history
     preventBackButton();
 
     // Get location and update state asynchronously
-    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    console.log(user);
-    // debugger
-    // if(user===null ||user===undefined){
-    //   debugger
-    //   navigate("/")
-    // }
-    // Cleanup function to allow back button when component unmounts
+    // let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    // console.log(user);
+
     return () => {
       allowBackButton();
     };
@@ -63,6 +85,7 @@ const Login = () => {
   const allowBackButton = popstateHandler => {
     window.removeEventListener("popstate", popstateHandler);
   };
+
   useEffect(() => {
     tf.setBackend("webgl");
     loadModel();
@@ -294,6 +317,7 @@ const Login = () => {
     }
   };
   const handleWithPassword = () => {
+    localStorage.setItem("MobileNUM", JSON.stringify(Number(phone)));
     if (phone?.length == 10) {
       setIsError(false);
 
@@ -303,7 +327,13 @@ const Login = () => {
     }
   };
   const handleChange = e => {
+    // debugger;
     const value = e.target.value;
+    if (value) {
+      setIsNumber(true);
+    } else {
+      setIsNumber(false);
+    }
     setPhone(value);
   };
   return (
@@ -448,6 +478,8 @@ const Login = () => {
                     <div className="mt-5">
                       <button
                         type="button"
+                        disabled={isNumber ? false : true}
+                        // isNumber
                         class="btn "
                         style={{
                           width: "100%",

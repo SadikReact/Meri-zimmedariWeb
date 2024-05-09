@@ -9,11 +9,11 @@ import axiosConfig from "./../axiosConfig";
 import "./loader.css";
 
 const AssetDetails = () => {
+  const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
   const [assetList, setAssetList] = useState([]);
   const [nominees, setNominees] = useState(null);
   const [model, setModel] = useState(null);
-  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [assetId, setAssetId] = useState("");
   useEffect(() => {

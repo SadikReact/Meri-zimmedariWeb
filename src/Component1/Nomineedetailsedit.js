@@ -17,14 +17,12 @@ const Nomineedetailsedit = () => {
   const [nomineedetail, setNomineedetails] = useState("");
   const [modalSendOtp, setModalSendOtp] = useState(false);
   const [myEmail, setMyEmail] = useState("");
-  const [formValues, setFormValues] = useState([
-    {
-      nomineeName: "",
-      nomineeEmailId: "",
-      NomineePhoneNumber: null,
-      relationWithNominee: "",
-    },
-  ]);
+  const [formValues, setFormValues] = useState({
+    nomineeName: "",
+    nomineeEmailId: "",
+    NomineePhoneNumber: null,
+    relationWithNominee: "",
+  });
   const [formError, setFormError] = useState({
     IsnomineeName: false,
     IsnomineeEmailId: false,
@@ -104,12 +102,12 @@ const Nomineedetailsedit = () => {
       const response = await axiosConfig.get(url);
       // setResponse(response.data);
       console.log(response.data);
-      document.getElementById("alert").innerHTML = "";
+      // document.getElementById("alert").innerHTML = "";
     } catch (error) {
-      if (error?.response?.data?.message) {
-        document.getElementById("alert").innerHTML =
-          "Sending multiple sms to same number is not allowed";
-      }
+      // if (error?.response?.data?.message) {
+      //   document.getElementById("alert").innerHTML =
+      //     "Sending multiple sms to same number is not allowed";
+      // }
     }
   };
   const handlePhoneModal = number => {
@@ -582,6 +580,7 @@ const Nomineedetailsedit = () => {
             setModalShow={setModalShow}
             myNumber={myNumber}
             newOtp={newOtp}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}
@@ -591,6 +590,7 @@ const Nomineedetailsedit = () => {
             setModalShowmail={setModalShowmail}
             setModalShow={setModalShow}
             myEmail={myEmail}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}

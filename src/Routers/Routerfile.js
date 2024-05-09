@@ -56,6 +56,7 @@ import Faqpageweb from "../Component1/Faqpageweb";
 import FAQs from "../Component1/FAQs";
 import TermsAndConditions from "../Component1/TermsAndConditions";
 import PrivacyandPolicy from "../Component1/PrivacyandPolicy";
+import Faq1 from "../Component1/FAQ";
 
 const Routerfile = () => {
   const [loading, setLoading] = useState(false);
@@ -82,6 +83,17 @@ const Routerfile = () => {
     //   window.location.replace("/404");
     // }
   }, []);
+  // let accessToken = JSON.parse(sessionStorage.getItem("UserZimmedari"))?.token;
+  // useEffect(() => {
+  //   if (accessToken === null || accessToken === undefined) {
+  //     let value = window.location.hash !== "#/";
+  //     if (value) {
+  //       // debugger;
+  //       window.location.replace("/#/");
+  //       window.location.reload(); // Redirect to login page if token is not found
+  //     }
+  //   }
+  // }, [accessToken]);
   return (
     <>
       <Router>
@@ -95,7 +107,8 @@ const Routerfile = () => {
                 path="/termsandcondition"
                 element={<Termsandcondition />}
               />
-              <Route path="/FAQ" element={<Faqpageweb />} />
+              <Route path="/FAQ" element={<Faq1 />} />
+              // <Route path="/FAQ" element={<Faqpageweb />} />
               <Route path="/Preview" element={<Preview />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/face" element={<Loginform />} />

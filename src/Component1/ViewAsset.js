@@ -14,28 +14,30 @@ export default function ViewAsset() {
     <div>
       <Mynavbar />
 
-      <div className="ViewAsset">
-        <div
-          style={{
-            marginTop: "-5px",
-            padding: "10px",
-            borderRadius: "10px",
-            border: "1px solid  rgb(114, 158, 216)",
-            width: "100%",
-          }}
-        >
-          {location.state.Asset_Type}
-        </div>
-        <div
-          style={{
-            marginTop: "-5px",
-            padding: "10px",
-            borderRadius: "10px",
-            border: "1px solid  rgb(114, 158, 216)",
-            width: "100%",
-          }}
-        >
-          2 Added
+      <div className="container mt-5">
+        <div className="ViewAsset">
+          <div
+            style={{
+              marginTop: "-5px",
+              padding: "10px",
+              borderRadius: "10px",
+              border: "1px solid  rgb(114, 158, 216)",
+              width: "100%",
+            }}
+          >
+            {location.state.Asset_Type}
+          </div>
+          <div
+            style={{
+              marginTop: "-5px",
+              padding: "10px",
+              borderRadius: "10px",
+              border: "1px solid  rgb(114, 158, 216)",
+              width: "100%",
+            }}
+          >
+            0 Added
+          </div>
         </div>
         <div className="back">
           <Button className="danger" onClick={handleBack}>
