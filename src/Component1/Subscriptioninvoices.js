@@ -385,11 +385,6 @@ const Subscriptioninvoices = args => {
               </p>
             </Link>
           </div>
-          {/* {selectedPlan?.price > 0 && (
-            <div style={{ float: "right" }}>
-              <Payment selectedPlan={selectedPlan} USer={USer} />
-            </div>
-          )} */}
         </div>
         <Modal isOpen={modal} toggle={toggle} {...args}>
           <ModalHeader toggle={toggle}>Change Payment Plan</ModalHeader>

@@ -60,12 +60,12 @@ export default function NavBar() {
                   </a>
                 </li>
 
-                <li class="nav-item ">
+                <li class="nav-item">
                   <a
                     class="nav-link"
                     href="https://user.merizimmedari.com/#/FAQ"
                   >
-                    FAQ{" "}
+                    FAQ
                   </a>
                 </li>
 
