@@ -43,11 +43,6 @@ const LifeDeclaration = args => {
   };
 
   useEffect(() => {
-    // let payment = JSON.parse(localStorage.getItem("PaymentList"));
-    // if (payment?.length > 0) {
-    //   let index = payment?.length - 1;
-    //   setDeclarationDate(payment[index]);
-    // }
     tf.setBackend("webgl");
     loadModel();
   }, []);
@@ -65,12 +60,6 @@ const LifeDeclaration = args => {
       }, 1500);
     }
   }, [isOpen]);
-  // const calculateFutureDate = currectDates => {
-  //   const currentDateNew = new Date(currectDates);
-  //   currentDateNew.setDate(currentDateNew.getDate() + 15);
-  //   const futureDates = currentDateNew.toISOString().split("T")[0];
-  //   setFutureDate(futureDates);
-  // };
 
   const loadModel = async () => {
     faceLandmarksDetection
@@ -79,7 +68,7 @@ const LifeDeclaration = args => {
       })
       .then(model => {
         setModel(model);
-        // console.log(model);
+        // console.log("modelllll", model);
         setText("ready for capture");
       })
       .catch(err => {
@@ -340,6 +329,7 @@ const LifeDeclaration = args => {
               <select
                 name="Date"
                 onChange={handleChange}
+                value={DeclarationDate?.day}
                 required
                 class="form-select"
                 aria-label="Default select example"
@@ -408,6 +398,7 @@ const LifeDeclaration = args => {
                 type="text"
                 id="dateInput"
                 class="form-control"
+                disabled
                 value={DeclarationDate?.lastDeclarationDate}
                 style={{
                   border: "1px solid rgb(114, 158, 216)",
@@ -432,7 +423,7 @@ const LifeDeclaration = args => {
             <div style={{ justifyContent: "center", display: "flex" }}>
               <input
                 type="text"
-                // value={futureDate}
+                disabled
                 value={DeclarationDate?.nextDeclarationDate}
                 id="dateInput"
                 class="form-control"
@@ -495,23 +486,24 @@ const LifeDeclaration = args => {
         </div>
       </div>
       <Modal isOpen={modal} toggle={toggle} {...args}>
-        <ModalHeader toggle={toggle}>Submit Your Details here</ModalHeader>
+        <ModalHeader toggle={toggle}>
+          <div
+            className="mainDiv text-center"
+            style={{ fontSize: "20px", fontWeight: "600" }}
+          >
+            <span className="mx-2"> Blink Eyes</span>
+            <img
+              className="blinkEye"
+              src={BlinkEye}
+              alt="aa"
+              style={{ height: "50px" }}
+            />
+            <span className="mx-2"> to capture selfie</span>
+          </div>
+        </ModalHeader>
         <div className="p-3">
           <Row>
             <Col lg="12" sm="12" md="12">
-              <div
-                className="mainDiv text-center"
-                style={{ fontSize: "20px", fontWeight: "600" }}
-              >
-                <span className="mx-2"> Blink Eyes</span>
-                <img
-                  className="blinkEye"
-                  src={BlinkEye}
-                  alt="aa"
-                  style={{ height: "50px" }}
-                />
-                <span className="mx-2"> to capture selfie</span>
-              </div>
               {model == null ? (
                 <>
                   <div className="d-flex justify-content-center mt-5 mb-5">
@@ -529,7 +521,6 @@ const LifeDeclaration = args => {
                           audio={false}
                           ref={webcamRef}
                           screenshotFormat="image/jpeg"
-                          // className="mb-2"
                           style={{ borderRadius: "8px" }}
                         />
                       </div>

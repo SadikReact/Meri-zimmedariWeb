@@ -63,7 +63,6 @@ const PersonalDetails = ({
     }
   }, []);
   const continueStep = e => {
-    // debugger;
     e.preventDefault();
     let errors = {};
     if (!policyName) errors.IspolicyName = true;

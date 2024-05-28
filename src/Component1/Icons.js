@@ -163,36 +163,16 @@ const Icons = () => {
           <table className="table">
             <thead>
               <tr style={{ backgroundColor: "rgb(182, 204, 230)" }}>
+                <th className="assettablehead">Asset Type</th>
+                <th className="assettablehead">Number of Asset Added</th>
                 <th
-                  className="text-center"
-                  style={{
-                    color: "rgb(47, 80, 119)",
-                    fontSize: "18px",
-                    fontFamily: "Calibri",
-                    borderRight: "2px solid white",
-                  }}
-                >
-                  Asset Type
-                </th>
-                <th
-                  className="text-center"
-                  style={{
-                    color: "rgb(47, 80, 119)",
-                    fontSize: "18px",
-                    fontFamily: "Calibri",
-                    borderRight: "2px solid white",
-                  }}
-                >
-                  Number of Asset Added
-                </th>
-                <th
-                  className="text-center"
-                  style={{
-                    color: "rgb(47, 80, 119)",
-                    fontSize: "18px",
-                    fontFamily: "Calibri",
-                    borderRight: "2px solid white",
-                  }}
+                  className="assettablehead "
+                  // style={{
+                  //   color: "rgb(47, 80, 119)",
+                  //   fontSize: "18px",
+                  //   fontFamily: "Calibri",
+                  //   borderRight: "2px solid white",
+                  // }}
                 >
                   Action
                 </th>
@@ -290,7 +270,6 @@ const Icons = () => {
                           </span>
                           <span className="icon-container cssfordesktopviewforicon">
                             <svg
-                              // style={{}}
                               xmlns="http://www.w3.org/2000/svg"
                               width="30"
                               height="30"

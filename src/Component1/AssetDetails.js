@@ -11,6 +11,7 @@ import "./loader.css";
 const AssetDetails = () => {
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
+  const [myModal, setMyModal] = useState(false);
   const [assetList, setAssetList] = useState([]);
   const [nominees, setNominees] = useState(null);
   const [model, setModel] = useState(null);
@@ -34,10 +35,30 @@ const AssetDetails = () => {
         console.log(error.response?.data);
       });
   };
-  const handleClose = () => setShow(false);
+  // const handleClose = () => setShow(false);
   const handleDelete = id => {
+    setMyModal(true);
     setAssetId(id);
     setShow(true);
+  };
+  const handleYes = () => {
+    axiosConfig
+      .delete(`/asset/delete-asset/${assetId}`)
+      .then(response => {
+        AllAssetList();
+        setShow(false);
+        setMyModal(false);
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+  };
+  const handleCloseModal1 = () => {
+    setMyModal(false);
+  };
+
+  const handleNo = () => {
+    setMyModal(false);
   };
   const handlePermanentDelete = () => {
     axiosConfig
@@ -380,7 +401,96 @@ const AssetDetails = () => {
           </div>
         </>
       )}
-      <Modal show={show}>
+      {myModal != false ? (
+        <>
+          <div className="custommodal">
+            <div className="gdfhagfjhagjhfgagfjhaf modalmaincss">
+              <div
+                style={{
+                  backgroundColor: "rgb(194, 215, 233)",
+                  width: "100%",
+                  borderTopLeftRadius: "20px",
+                  borderTopRightRadius: "20px",
+                  paddingTop: "10px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    marginLeft: "1rem",
+                    // color: "#fff",
+                  }}
+                >
+                  Delete Asset
+                </span>
+
+                <span
+                  onClick={handleCloseModal1}
+                  style={{
+                    float: "right",
+                    marginRight: "1rem",
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    color: "red",
+                    cursor: "pointer",
+                  }}
+                >
+                  X
+                </span>
+              </div>
+
+              <div style={{ margin: "1rem" }}>
+                <div className=" mt-1">
+                  <div className="mb-3">
+                    Are you sure to permanently delete Asset Details ?
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <form>
+                    <div className="mt-3 buttons1">
+                      <button
+                        type="button"
+                        class="btn "
+                        //   disabled={bool ? false : true}
+                        style={{
+                          backgroundColor: "red",
+                          color: "white",
+                          height: "2.8rem",
+                          width: "55px",
+                          margin: "5px",
+                        }}
+                        onClick={handleYes}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        class="btn "
+                        //   disabled={bool ? false : true}
+                        style={{
+                          backgroundColor: "#4478c7",
+                          color: "white",
+                          height: "2.8rem",
+                          width: "55px",
+                          margin: "5px",
+                        }}
+                        onClick={handleNo}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {/* </div>
+            </div> */}
+          </div>
+        </>
+      ) : null}
+
+      {/* <Modal show={show} className="cssformoduleassetsd">
         <Modal.Header>
           <Modal.Title>
             <span>Delete Asset Details</span>
@@ -413,7 +523,7 @@ const AssetDetails = () => {
             No
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

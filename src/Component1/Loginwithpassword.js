@@ -15,15 +15,6 @@ const Loginwithpassword = () => {
   const location = useLocation();
   const phoneNumber = location.state;
 
-  useEffect(() => {
-    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
-    console.log(location.state, MobileNUM);
-  }, []);
-  // const generateOTP = () => {
-  //   const myOtp = Math.floor(100000 + Math.random() * 900000);
-  //   console.log(myOtp);
-  //   return myOtp.toString(); // Convert number to string
-  // };
   const sendSMS = async () => {
     let newOTP = Math.floor(100000 + Math.random() * 900000);
     // const newOTP = generateOTP();
@@ -38,10 +29,6 @@ const Loginwithpassword = () => {
       console.log(response.data);
     } catch (error) {
       console.log(error);
-      // if (error?.response?.data?.message) {
-      // document.getElementById("alert").innerHTML =
-      //   "Sending multiple sms to same number is not allowed";
-      // }
     }
   };
   const handleFormSubmit = e => {
@@ -182,7 +169,7 @@ const Loginwithpassword = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "7.5rem",
+                          width: "auto",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"

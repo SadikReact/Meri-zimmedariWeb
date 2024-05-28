@@ -1,3 +1,21 @@
+/* .modalmaincss {
+  border-radius: 20px;
+  background-color: white;
+  padding-bottom: 1rem;
+  width: 400px;
+} */
+.table .assettablehead {
+  color: rgb(47, 80, 119);
+  font-size: 18px;
+  font-family: 'Calibri';
+  border-right: 2px solid white;
+  text-align: center;
+}
+.custommodal {
+  position: absolute;
+  top: 23%;
+  left: 35%;
+}
 .iconStyle {
   margin-left: 150px;
   margin-top: 10px;
@@ -6,7 +24,8 @@
   padding-left: 31px;
 }
 .profileParent {
-  margin-top: 100px;
+  margin-top: 66px;
+  height: 59%;
 }
 .profileParent .profilePicture {
   width: 100%;
@@ -802,9 +821,15 @@ ul.social_icon li a:hover {
 /** end contact **/
 
 @media (min-width: 1200px) and (max-width: 1342px) {
+  .table .assettablehead {
+    font-size: 12px;
+  }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
+  .table .assettablehead {
+    font-size: 15px;
+  }
   .slider_main {
     padding-top: 9%;
   }
@@ -840,6 +865,9 @@ ul.social_icon li a:hover {
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
+  .table .assettablehead {
+    font-size: 12px;
+  }
   .slider_main {
     padding-top: 14%;
   }
@@ -904,6 +932,9 @@ ul.social_icon li a:hover {
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
+  .table .assettablehead {
+    font-size: 12px;
+  }
   .cssforfontsizeinheading {
     font-size: 17px;
   }
@@ -1158,6 +1189,12 @@ ul.social_icon li a:hover {
   cursor: pointer;
 }
 @media screen and (min-width: 1024px) {
+  .custommodal .modalmaincss {
+    border-radius: 20px;
+    background-color: white;
+    padding-bottom: 1rem;
+    width: 400px;
+  }
   .actionItem {
     font-size: 16px;
     font-weight: 400;
@@ -1240,6 +1277,29 @@ ul.social_icon li a:hover {
 }
 
 @media only screen and (max-width: 767px) {
+  .SubscriptioninvoicesHistory {
+    font-size: 14px;
+  }
+  .custommodal .modalmaincss {
+    border-radius: 20px;
+    background-color: white;
+    padding-bottom: 1rem;
+    width: 257px;
+  }
+  .custommodal {
+    position: absolute;
+    top: 27%;
+    left: 10%;
+  }
+
+  /* .modalmaincss {
+    width: 257px;
+    margin-left: -100px;
+  } */
+
+  .cssformoduleassetsd {
+    width: 20rem;
+  }
   .actionItem {
     font-size: 14px;
     font-weight: 400;

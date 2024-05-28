@@ -16,7 +16,7 @@ const EmailOtp = ({
   const [isCountingComplete, setIsCountingComplete] = useState(false);
 
   useEffect(() => {
-    console.log(context);
+    // console.log(context);
     if (count > 0) {
       setIsCountingComplete(false);
       const timer = setTimeout(() => {
@@ -48,7 +48,7 @@ const EmailOtp = ({
 
   const handleOtpVerify = () => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    console.log(user);
+    // console.log(user);
     let payload = {
       otp: Number(otp),
       userId: user?._id,
@@ -63,7 +63,7 @@ const EmailOtp = ({
         setModalShowmail(false);
         context.setMailOtp(true);
         console.log("mailIndex", mailIndex);
-        if (mailIndex) {
+        if (mailIndex >= 0) {
           setFormValues(prevFormValues => {
             const newFormValues = [...prevFormValues];
             newFormValues[mailIndex]["mailVerifyStatus"] = "Verified";

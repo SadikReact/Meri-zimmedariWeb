@@ -21,6 +21,7 @@ import Loginwithpassword from "../Component1/Loginwithpassword";
 import Otpveri from "../Component1/Otpveri";
 // import PhoneAuth from "../Component1/PhoneAuth";
 import Login from "../Component1/Login";
+// import Login from "../Component1/Logintest";
 import MyProfile from "../Component1/MyProfile";
 import LifeDeclaration from "../Component1/LifeDeclaration";
 import Assetstep3confirm from "../Component1/Assetstep3confirm";
@@ -32,6 +33,7 @@ import ViewAsset from "../Component1/ViewAsset";
 import Icons from "../Component1/Icons";
 import Index from "../Component1/Index";
 import SubscriptionInvoices1 from "../Component1/SubscriptionInvoices1";
+import Invoice from "../Component1/Invoice";
 
 import Help from "../Component1/Help";
 import TermsConditions from "../Component1/termsConditions";
@@ -151,6 +153,7 @@ const Routerfile = () => {
             path="/Subscriptioninvoices/history"
             element={<SubscriptionInvoices1 />}
           />
+          <Route path="/Subscriptioninvoices/Invoice" element={<Invoice />} />
           <Route path="/manageaccount" element={<Manageaccount />} />
           <Route
             path="/Subscriptioninvoices"

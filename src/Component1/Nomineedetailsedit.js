@@ -15,7 +15,7 @@ const Nomineedetailsedit = () => {
   const [myNumber, setMyNumber] = useState("");
   const [modalShowmail, setModalShowmail] = useState(false);
   const [nomineedetail, setNomineedetails] = useState("");
-  const [modalSendOtp, setModalSendOtp] = useState(false);
+  // const [modalSendOtp, setModalSendOtp] = useState(false);
   const [myEmail, setMyEmail] = useState("");
   const [formValues, setFormValues] = useState({
     nomineeName: "",
@@ -92,24 +92,51 @@ const Nomineedetailsedit = () => {
     console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
+
   const sendSMS = async number => {
     const newOTP = generateOTP();
     setNewOtp(newOTP);
     try {
-      const apiKey = OTP_main;
-      const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${newOTP}&route=otp&numbers=${number}`;
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
 
-      const response = await axiosConfig.get(url);
-      // setResponse(response.data);
+      const response = await axiosConfig.get(allUrl);
+      //  setResponse(response.data);
       console.log(response.data);
-      // document.getElementById("alert").innerHTML = "";
+      //  document.getElementById("alert").innerHTML = "";
+      //  navigate("/login/otp", {
+      //    state: { phone, newOTP },
+      //  });
     } catch (error) {
-      // if (error?.response?.data?.message) {
-      //   document.getElementById("alert").innerHTML =
-      //     "Sending multiple sms to same number is not allowed";
-      // }
+      //  if (error?.response?.data?.message) {
+      //    document.getElementById("alert").innerHTML =
+      //      "Sending multiple sms to same number is not allowed";
+      //  }
     }
   };
+  // const generateOTP = () => {
+  //   // Generate a random 6-digit number
+  //   const myOtp = Math.floor(100000 + Math.random() * 900000);
+  //   console.log(myOtp);
+  //   return myOtp.toString(); // Convert number to string
+  // };
+  // const sendSMS = async number => {
+  //   const newOTP = generateOTP();
+  //   setNewOtp(newOTP);
+  //   try {
+  //     const apiKey = OTP_main;
+  //     const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${newOTP}&route=otp&numbers=${number}`;
+
+  //     const response = await axiosConfig.get(url);
+  //     // setResponse(response.data);
+  //     console.log(response.data);
+  //     // document.getElementById("alert").innerHTML = "";
+  //   } catch (error) {
+  //     // if (error?.response?.data?.message) {
+  //     //   document.getElementById("alert").innerHTML =
+  //     //     "Sending multiple sms to same number is not allowed";
+  //     // }
+  //   }
+  // };
   const handlePhoneModal = number => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {

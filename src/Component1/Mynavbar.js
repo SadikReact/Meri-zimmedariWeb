@@ -12,7 +12,7 @@ const Mynavbar = () => {
   const handleLogOut = () => {
     let token = JSON.parse(localStorage.getItem("user_token"));
     // if (token) {
-sessionStorage.clear();
+    sessionStorage.clear();
     localStorage.removeItem("ad-token");
     localStorage.removeItem("UserZimmedari");
     localStorage.removeItem("user_token");
@@ -110,7 +110,7 @@ sessionStorage.clear();
                   Help
                 </a>
               </div>
-              <LinkContainer to={""}>
+              {/* <LinkContainer to={""}>
                 <Nav.Link className="cssfornavbarpadding">
                   <span>
                     <svg
@@ -125,7 +125,7 @@ sessionStorage.clear();
                     </svg>
                   </span>
                 </Nav.Link>
-              </LinkContainer>
+              </LinkContainer> */}
               <LinkContainer to={""}>
                 <Nav.Link className="cssfornavbarpadding">
                   <span>

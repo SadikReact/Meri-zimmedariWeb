@@ -7,7 +7,6 @@ import EmailModal from "./nominee/EmailModal";
 import PhoneOtp from "./nominee/phoneOtp";
 import PhoneBox from "./nominee/PhoneBox";
 import axiosConfig from "./../axiosConfig";
-import { OTP_main } from "./Api";
 import { AutoSaveModal } from "./assetDetail/AutoSaveModal";
 import "./StepperStyle.css";
 
@@ -55,7 +54,6 @@ const CourseDetails = ({
 
   useEffect(() => {
     let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
-    // console.log(AssetEditid?.nominee);
     if (gotNomineeData?.length > 0) {
       setFormValues(gotNomineeData);
       setModel(false);
@@ -63,7 +61,6 @@ const CourseDetails = ({
       setFormValues(AssetEditid.nominee);
       setModel(false);
     }
-    // setShowAsset(showAsset);
   }, [gotNomineeData]);
 
   const handleChange = (i, e) => {
@@ -100,9 +97,6 @@ const CourseDetails = ({
   };
   const handleInputClick = () => {
     allError.IspercentageofShar = true;
-    // formValues?.map((value, i) =>
-    //   value?.percentageofShar.length > 1
-    // );
     let share = document.getElementById("percentageofShar").value;
 
     if (share == 100) {
@@ -155,8 +149,8 @@ const CourseDetails = ({
           percentageofShar: "",
           NomineePhoneNumber: "",
           relationWithNominee: "",
-          mailVerifyStatus: "not Verified",
-          mobileVerifyStatus: "not Verified",
+          mailVerifyStatus: "Not Verified",
+          mobileVerifyStatus: "Not Verified",
         },
       ]);
     }
@@ -176,7 +170,6 @@ const CourseDetails = ({
       (previousValue, currentValue) => previousValue + currentValue,
       0
     );
-    // console.log(sum);
     formValues?.forEach((value, key) => {
       if (!value.nomineeName) {
         allError.IsnomineeName = true;
@@ -274,9 +267,7 @@ const CourseDetails = ({
     setNewOtp(newOTP);
     try {
       const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
-
       const response = await axiosConfig.get(allUrl);
-      //  setResponse(response.data);
       console.log(response.data);
       //  document.getElementById("alert").innerHTML = "";
       //  navigate("/login/otp", {
@@ -290,7 +281,6 @@ const CourseDetails = ({
     }
   };
   const handlePhoneModal = (index, number) => {
-    debugger;
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
@@ -300,7 +290,6 @@ const CourseDetails = ({
       axiosConfig
         .post("/asset/otp-mobile", payload)
         .then(response => {
-          // console.log("response", response.data.message);
           sendSMS(number);
           setMyNumber(number);
           setModalShow(true);
@@ -862,7 +851,6 @@ const CourseDetails = ({
                                         )
                                       }
                                       className="btn"
-                                      // id="alert"
                                       style={{
                                         fontSize: "13px",
                                         width: "115%",
@@ -1099,6 +1087,7 @@ const CourseDetails = ({
             newOtp={newOtp}
             phoneIndex={phoneIndex}
             setFormValues={setFormValues}
+            formValues={formValues}
           />
         </div>
       ) : null}

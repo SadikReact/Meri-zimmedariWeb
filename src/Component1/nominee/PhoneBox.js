@@ -12,7 +12,7 @@ const PhoneBox = ({
   const phoneNumber = location.state;
   const [otp, setOtp] = useState(null);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
-  const [bool, setBool] = useState(null);
+  const [newOtp, setNewOtp] = useState(null);
   const [count, setCount] = useState(60);
   const [isCountingComplete, setIsCountingComplete] = useState(false);
 
@@ -52,43 +52,41 @@ const PhoneBox = ({
     setModalSendOtp(false);
     setPhoneModalNotify(false);
   };
+  const generateOTP = () => {
+    // Generate a random 6-digit number
+    const myOtp = Math.floor(100000 + Math.random() * 900000);
+    console.log(myOtp);
+    return myOtp.toString(); // Convert number to string
+  };
+
+  const sendSMS = async () => {
+    let number = localStorage.getItem("UpdatedNo");
+    const newOTP = generateOTP();
+    localStorage.setItem("newOTP", newOTP);
+    setNewOtp(newOTP);
+    try {
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
+      // const response =
+      await axiosConfig.get(allUrl);
+      // console.log(response.data);
+    } catch (error) {
+      //  if (error?.response?.data?.message) {
+      //    document.getElementById("alert").innerHTML =
+      //      "Sending multiple sms to same number is not allowed";
+      //  }
+    }
+  };
   const handleOtpVerifyNow = () => {
+    sendSMS();
     setModalShow(true);
     setPhoneRemark(true);
     setModalSendOtp(false);
     setPhoneModalNotify(false);
   };
-  const handleOtpVerify = () => {
-    let payload = {
-      otp: Number(otp),
-      mobileNo: Number(phoneNumber),
-    };
-    // axiosConfig
-    //   .post("/otp-verify", payload)
-    //   .then(response => {
-    //     if (response.data.success == "ok") {
-    //       console.log(response.data.User);
-    //       setIsValidOtp(false);
-    //       localStorage.setItem(
-    //         "user_token",
-    //         JSON.stringify(response.data.User.token)
-    //       );
-    //       localStorage.setItem(
-    //         "UserZimmedari",
-    //         JSON.stringify(response.data.User)
-    //       );
-    //       navigate("/dashboard", { replace: true });
-    //     } else {
-    //       navigate("/registration", { replace: true });
-    //     }
-    //   })
-    //   .catch(error => {
-    //     setIsValidOtp(true);
-    //   });
-  };
+
   return (
     <>
-      <div className="row " style={{ paddingTop: "5rem" }}>
+      <div className="row" style={{ paddingTop: "5rem" }}>
         <div className="col-md-12 col-sm-2 col-lg-12 col-xl-12">
           <div
             className="gdfhagfjhagjhfgagfjhaf"

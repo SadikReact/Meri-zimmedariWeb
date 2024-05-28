@@ -7,6 +7,7 @@ const PhoneOtp = ({
   myNumber,
   newOtp,
   setFormValues,
+  formValues,
   phoneIndex,
 }) => {
   const context = useContext(UserContext);
@@ -17,8 +18,6 @@ const PhoneOtp = ({
   const [isCountingComplete, setIsCountingComplete] = useState(false);
 
   useEffect(() => {
-    // console.log(context.setPhoneOtp);
-    // console.log("phoneIndex", phoneIndex);
     if (count > 0) {
       setIsCountingComplete(false);
       const timer = setTimeout(() => {
@@ -49,42 +48,28 @@ const PhoneOtp = ({
   };
   const handleOtpVerify = () => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    const updatedNo = localStorage.getItem("UpdatedNo");
+    const newOTPData = localStorage.getItem("newOTP");
     let payload = {
       userId: user?._id,
-      mobileNo: Number(myNumber),
+      mobileNo: Number(updatedNo),
       otp: 123400,
-      // mobileVerifyStatus: "verify",
       // otp: Number(otp),
     };
 
-    if (newOtp === otp) {
+    if (newOtp ? newOtp : newOTPData === otp) {
       axiosConfig
         .post("/asset/otp-verify-mobile", payload)
         .then(response => {
           setModalShow(false);
-          context.setPhoneOtp(true);
-          // console.log("response", response.data);
-          if (phoneIndex) {
-            setFormValues(prevFormValues => {
-              const newFormValues = [...prevFormValues];
-              newFormValues[phoneIndex]["mobileVerifyStatus"] = "Verified";
-              return newFormValues;
-            });
-          } else {
-            setFormValues(prevState => ({
-              ...prevState,
-              mobileVerifyStatus: "Verified", // Static value for name
-            }));
+          let newvalue = [...formValues];
 
-            // setFormValues(prevFormValues => {
-            //   const newFormValues = [...prevFormValues];
-            //   newFormValues["mobileVerifyStatus"] = "Verified";
-            //   return newFormValues;
-            // });
-          }
+          newvalue?.forEach(ele => {
+            ele["mobileVerifyStatus"] = "Verified";
+          });
         })
         .catch(error => {
-          console.log("response", error);
+          // console.log("response", error);
           setIsValidOtp(true);
         });
     } else {
@@ -141,7 +126,10 @@ const PhoneOtp = ({
               <div className=" mt-2">
                 <div className="mb-3">
                   Please enter 6 digit OTP sent on mobile number
-                  <span className="px-2">{myNumber && myNumber}</span>.
+                  <span className="px-2">
+                    {localStorage.getItem("UpdatedNo")}
+                  </span>
+                  .
                 </div>
                 <div
                   style={{
