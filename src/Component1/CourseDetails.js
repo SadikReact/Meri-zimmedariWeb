@@ -66,12 +66,15 @@ const CourseDetails = ({
   const handleChange = (i, e) => {
     const value = e.target.value;
     const fieldName = e.target.name;
+    // console.log(fieldName, value);
 
     setFormValues(prevFormValues => {
       const newFormValues = [...prevFormValues];
-
       if (fieldName === "nomineeName") {
-        if (/^[A-Za-z]*$/.test(value)) {
+        // if (/^[A-Za-z]*$/.test(value)) {
+        //   newFormValues[i][fieldName] = value;
+        // }
+        if (/^[a-zA-Z0-9_ ]*$/.test(value)) {
           newFormValues[i][fieldName] = value;
         }
       } else if (fieldName === "relationWithNominee") {
@@ -119,7 +122,6 @@ const CourseDetails = ({
     e.preventDefault();
     const newArr = [];
     let share = document.getElementById("percentageofShar").value;
-    console.log("share", share);
     formValues.filter(el => newArr.push(Number(el.percentageofShar)));
     const sum = newArr.reduce(
       (previousValue, currentValue) => previousValue + currentValue,
@@ -240,7 +242,6 @@ const CourseDetails = ({
         if (phoneRemark) {
           setPhoneModalNotify(false);
           localStorage.setItem("nomineeDetails", JSON.stringify(formValues));
-          // console.log(formValues);
           setShowNominee(formValues);
           nextStep();
         }
@@ -251,14 +252,11 @@ const CourseDetails = ({
 
   const goBack = e => {
     e.preventDefault();
-    // console.log(showAsset)
-    // setShowAsset(showAsset);
     prevStep();
   };
   const generateOTP = () => {
     // Generate a random 6-digit number
     const myOtp = Math.floor(100000 + Math.random() * 900000);
-    console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
 
@@ -268,7 +266,6 @@ const CourseDetails = ({
     try {
       const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
       const response = await axiosConfig.get(allUrl);
-      console.log(response.data);
       //  document.getElementById("alert").innerHTML = "";
       //  navigate("/login/otp", {
       //    state: { phone, newOTP },
@@ -335,7 +332,7 @@ const CourseDetails = ({
         // addFormFields={addFormFields}
         onHide={() => setModalShowauto(false)}
       />
-      <form>
+      <form className="cssformobilenominee">
         <div style={{ backgroundColor: "rgb(182, 205, 236)" }}>
           <div className="container-fluid">
             <div className="row">

@@ -72,7 +72,12 @@ const Nomineedetails = () => {
           <div style={{ overflowX: "auto" }}>
             <table class="table">
               <thead>
-                <tr className="rowColorHead">
+                <tr
+                  className="rowColorHead"
+                  // style={{
+                  //   backgroundColor: " #4472c4",
+                  // }}
+                >
                   <th
                     scope="col"
                     style={{
@@ -166,7 +171,7 @@ const Nomineedetails = () => {
                           fontWeight: "normal",
                           fontSize: "18px",
                           fontFamily: "Calibri",
-                          color: "white",
+                          color: "black",
                           width: "22%",
                           borderRight: "2px solid white",
                           textAlign: "center",
@@ -182,7 +187,7 @@ const Nomineedetails = () => {
                           fontWeight: "normal",
                           fontSize: "18px",
                           fontFamily: "Calibri",
-                          color: "white",
+                          color: "black",
                           width: "18%",
                           borderRight: "2px solid white",
                           textAlign: "center",
@@ -198,8 +203,7 @@ const Nomineedetails = () => {
                           fontWeight: "normal",
                           fontSize: "18px",
                           fontFamily: "Calibri",
-                          color: "white",
-
+                          color: "black",
                           width: "30%",
                           borderRight: "2px solid white",
                           textAlign: "center",
@@ -216,7 +220,7 @@ const Nomineedetails = () => {
                           fontWeight: "normal",
                           fontSize: "18px",
                           fontFamily: "Calibri",
-                          color: "white",
+                          color: "black",
 
                           width: "30%",
                           borderRight: "2px solid white",
@@ -237,7 +241,7 @@ const Nomineedetails = () => {
                           fontWeight: "normal",
                           fontSize: "18px",
                           fontFamily: "Calibri",
-                          // color: "black",
+                          color: "black",
                           width: "30%",
                           borderRight: "2px solid white",
                           textAlign: "center",
@@ -248,7 +252,7 @@ const Nomineedetails = () => {
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             // color="rgb(43, 77, 129)"
-                            color="green"
+                            color="#3465a4"
                             width="30"
                             height="30"
                             fill="currentColor"

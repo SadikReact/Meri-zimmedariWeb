@@ -13,8 +13,6 @@ import Mynavbar from "./Mynavbar";
 
 const Manageaccount = () => {
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [modalShow, setModalShow] = useState(false);
   const [modalShow1, setModalShow1] = useState(false);
@@ -31,10 +29,21 @@ const Manageaccount = () => {
 
   const [isError, setIsError] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
+  const handleDeleteUser = () => {
+    axiosConfig
+      .delete(`/user/$csdcds`)
+      .then(response => {})
+      .catch(error => {
+        setErrModal(true);
+        setMessage("Something Went wrong");
+      });
+  };
+  const handleClose = () => {
+    setShow(false);
+  };
 
   const handleGeneratePassword = () => {
     let userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    console.log(userData);
     setIsLoader(true);
     axiosConfig
       .post("/user/generate-password", {
@@ -60,7 +69,6 @@ const Manageaccount = () => {
   const handleSavePassWord = e => {
     e.preventDefault();
 
-    // Reset previous errors
     setOldPasswordError("");
     setNewPasswordError("");
     setConfirmPasswordError("");
@@ -98,7 +106,6 @@ const Manageaccount = () => {
         setConfirmPassword("");
       })
       .catch(error => {
-        // console.log(error);
         setErrModal(true);
         setMessage("Something Went wrong");
       });
@@ -134,7 +141,7 @@ const Manageaccount = () => {
             Are you sure to permanently delete the account?
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={handleClose}>
+            <Button variant="danger" onClick={handleDeleteUser}>
               Yes
             </Button>
             <Button variant="secondary" onClick={handleClose}>

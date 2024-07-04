@@ -37,20 +37,6 @@ const StepperForm = () => {
   //   IsBothMatch: false,
   // });
   const nextStep = () => {
-    // if (step === 1) {
-    //   let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    //   let asset = JSON.parse(localStorage.getItem("ViewOne"));
-    //   let payload = {
-    //     userId: user?._id,
-    //     assetsId: asset?.dynamicFields?._id,
-    //   };
-    //   axiosConfig
-    //     .post("/user/no-assets", payload)
-    //     .then(response => {})
-    //     .catch(error => {
-    //       console.log(error);
-    //     });
-    // }
     setStep(step + 1);
   };
   const prevStep = () => {

@@ -79,7 +79,7 @@ const PhoneOtp = ({
   return (
     <>
       <div className="row " style={{ paddingTop: "5rem" }}>
-        <div className="col-md-12 col-sm-2 col-lg-12 col-xl-12">
+        <div className="col-md-12 col-sm-2 col-lg-12 col-xl-12 col-xs-12 gdfhagfjhagjhfgagfjhaf1">
           <div
             className="gdfhagfjhagjhfgagfjhaf"
             style={{

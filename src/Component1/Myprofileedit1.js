@@ -31,13 +31,13 @@ const Myprofileedit1 = () => {
   });
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    // console.log(user);
     setFormValues(user || {});
   }, []);
 
   const handleChange = e => {
-    const { name, value, files } = e.target;
-    console.log(name, value, files);
+    console.log(e.target.name, e.target.value);
+    const { name, value } = e.target;
+
     setFormValues({
       ...formValues,
       [name]: value,
@@ -51,7 +51,6 @@ const Myprofileedit1 = () => {
   const generateOTP = () => {
     // Generate a random 6-digit number
     const myOtp = Math.floor(100000 + Math.random() * 900000);
-    console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
 
@@ -62,17 +61,8 @@ const Myprofileedit1 = () => {
       const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
 
       const response = await axiosConfig.get(allUrl);
-      //  setResponse(response.data);
-      console.log(response.data);
-      //  document.getElementById("alert").innerHTML = "";
-      //  navigate("/login/otp", {
-      //    state: { phone, newOTP },
-      //  });
     } catch (error) {
-      //  if (error?.response?.data?.message) {
-      //    document.getElementById("alert").innerHTML =
-      //      "Sending multiple sms to same number is not allowed";
-      //  }
+      console.log(error);
     }
   };
   const handlePhoneModal = (e, number) => {
@@ -97,16 +87,10 @@ const Myprofileedit1 = () => {
         });
     }
   };
-  // const handlePhoneModal = (e, myNumber) => {
-  //   e.preventDefault();
-  //   setPhoneNo(myNumber);
-  //   setModalShow(true);
-  // };
 
   const handleEmailOtp = (e, currentEmail) => {
     debugger;
     e.preventDefault();
-    // console.log(currentEmail);
 
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
@@ -117,7 +101,6 @@ const Myprofileedit1 = () => {
       axiosConfig
         .post("/asset/otp-email", payload)
         .then(response => {
-          console.log("response", response.data.message);
           setModalShowmail(true);
           setModalShow(false);
           setMyEmail(currentEmail);
@@ -136,7 +119,6 @@ const Myprofileedit1 = () => {
   const maxDate = `${yyyy}-${mm}-${dd}`;
 
   const handleSubmit = () => {
-    console.log("formValues", formValues);
     const formdata = new FormData();
     formdata.append("firstName", formValues?.firstName);
     formdata.append("mobileNo", formValues?.mobileNo);
@@ -158,7 +140,6 @@ const Myprofileedit1 = () => {
           setMessage("User Data Update Successfully");
           setErrModal(true);
           setTimeout(() => {
-            // console.log(object)
             setErrModal(false);
             navigate("/myprofile");
           }, 2000);
@@ -233,24 +214,8 @@ const Myprofileedit1 = () => {
                   onChange={handleUpload}
                   accept="image/png, image/jpeg,image/jpg,image/jpe"
                 />
-                {/* <Link style={{ textDecoration: "none" }}>
-                <p
-                  style={{
-                    color: "rgb(82, 114, 161)",
-                    fontSize: "20px",
-                    fontWeight: "400",
-                    textAlign: "center",
-                  }}
-                >
-                   <span style={{ borderBottom: "1px solid rgb(82, 114, 161)" }}>
-                    Update
-                  </span> 
-                 
-                </p>
-              </Link> */}
               </span>
               <span className="uploadFileName">
-                {" "}
                 {uploadFileName && uploadFileName}
               </span>
             </div>

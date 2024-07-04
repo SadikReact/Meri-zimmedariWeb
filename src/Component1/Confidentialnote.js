@@ -40,13 +40,10 @@ const Confidentialnote = () => {
 
   const sendSMS = async number => {
     const newOTP = generateOTP();
-    console.log(newOTP,number)
     setNewOtp(newOTP);
     try {
       const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
       const response = await axiosConfig.get(allUrl);
-      console.log(response.data);
-    
     } catch (error) {
       //  if (error?.response?.data?.message) {
       //    document.getElementById("alert").innerHTML =
@@ -55,10 +52,9 @@ const Confidentialnote = () => {
     }
   };
   // const handlePhoneModal1 = (number) => {
-   
-  // };
-  const handlePhoneModal = (number) => {
 
+  // };
+  const handlePhoneModal = number => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
@@ -82,14 +78,14 @@ const Confidentialnote = () => {
       setFormError({ IsPhoneAvail: true });
     }
   };
-  const handleEmailModal = (currentEmail) => {
+  const handleEmailModal = currentEmail => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
       let payload = {
         userId: user?._id,
         email: currentEmail,
       };
-      debugger
+      debugger;
       axiosConfig
         .post("/asset/otp-email", payload)
         .then(response => {
@@ -104,12 +100,12 @@ const Confidentialnote = () => {
     }
   };
 
- const handleChange = e => {
+  const handleChange = e => {
     const value = e.target.value;
     const fieldName = e.target.name;
 
- // Regular expression to allow only numbers
- const regex = /^[0-9\b]+$/;
+    // Regular expression to allow only numbers
+    const regex = /^[0-9\b]+$/;
     setFormValues(prevValues => {
       let updatedValues = { ...prevValues }; // Create a copy of the previous form values
       if (fieldName === "nomineeName") {
@@ -117,20 +113,16 @@ const Confidentialnote = () => {
           updatedValues[fieldName] = value; // Update nomineeName if value passes the test
         }
       } else if (fieldName === "relationWithNominee") {
-        updatedValues[fieldName] = value; 
-      }
-      else if (fieldName === "NomineePhoneNumber") {
-
-        if (value === '' || regex.test(value)) {
-        // if (isPhoneValid) {
+        updatedValues[fieldName] = value;
+      } else if (fieldName === "NomineePhoneNumber") {
+        if (value === "" || regex.test(value)) {
+          // if (isPhoneValid) {
           updatedValues[fieldName] = value; // Update NomineePhoneNumber as a number if it passes the regex test
           localStorage.setItem("UpdatedNo", Number(value));
-        } 
-       
+        }
       } else if (fieldName === "nomineeEmailId") {
         updatedValues[fieldName] = value; // Update nomineeEmailId
       }
-      console.log(updatedValues);
       return updatedValues; // Return the updated form values
     });
   };
@@ -165,7 +157,6 @@ const Confidentialnote = () => {
         .catch(error => {
           setMessage("Something went Wrong");
           setErrModal(true);
-          console.log(error);
         });
 
       setFormError("");
@@ -178,15 +169,21 @@ const Confidentialnote = () => {
       <Mynavbar />
       {modalShow ? (
         <div className="myModal1">
-          <PhoneOtp setModalShow={setModalShow}  myNumber={phoneNo} newOtp={newOtp} setFormValues ={setFormValues}/>
+          <PhoneOtp
+            setModalShow={setModalShow}
+            myNumber={phoneNo}
+            newOtp={newOtp}
+            setFormValues={setFormValues}
+          />
         </div>
       ) : null}
       {modalShowmail ? (
         <div className="myModal1">
-          <EmailModal setModalShowmail={setModalShowmail}  
-          setModalShow={setModalShow}
-          myEmail={myEmail}
-          setFormValues={setFormValues}
+          <EmailModal
+            setModalShowmail={setModalShowmail}
+            setModalShow={setModalShow}
+            myEmail={myEmail}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}
@@ -442,7 +439,11 @@ const Confidentialnote = () => {
                           >
                             <span>
                               <a
-                                onClick={()=>handlePhoneModal(formValues.NomineePhoneNumber)}
+                                onClick={() =>
+                                  handlePhoneModal(
+                                    formValues.NomineePhoneNumber
+                                  )
+                                }
                                 className="btn"
                                 style={{
                                   fontSize: "13px",
@@ -531,7 +532,9 @@ const Confidentialnote = () => {
                           >
                             <span>
                               <a
-                                onClick={()=>handleEmailModal(formValues.nomineeEmailId)}
+                                onClick={() =>
+                                  handleEmailModal(formValues.nomineeEmailId)
+                                }
                                 className="btn "
                                 style={{
                                   fontSize: "13px",

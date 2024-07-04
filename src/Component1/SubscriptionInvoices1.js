@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Mynavbar from "./Mynavbar";
-import axiosConfig from "../axiosConfig";
+
 import {
   Modal,
   ModalHeader,
@@ -12,6 +11,8 @@ import {
   Label,
   Row,
 } from "reactstrap";
+import Mynavbar from "./Mynavbar";
+import axiosConfig from "../axiosConfig";
 import PdfView from ".././Component1/PdfView";
 const SubscriptionInvoices1 = () => {
   const [selectedPlan, setselectedPlan] = useState([]);
@@ -27,21 +28,12 @@ const SubscriptionInvoices1 = () => {
         }
       })
       .catch(err => {
-        console.log(err.response);
+        // console.log(err.response);
       });
   }, []);
   const toggle = () => {
     setModal(!modal);
   };
-  // const handleClick = () => {
-  //    setModal(!modal);
-  //   // return (
-  //   //   <>
-  //   //     <PdfView />
-  //   //   </>
-  //   // );
-  //   // Invoice
-  // };
 
   return (
     <>
@@ -151,7 +143,13 @@ const SubscriptionInvoices1 = () => {
                         <span>{ele?.price} </span>
                       </td>
 
-                      <td style={{ justifyContent: "center", display: "flex" }}>
+                      <td
+                        style={{
+                          justifyContent: "center",
+                          display: "flex",
+                          cursor: "pointer",
+                        }}
+                      >
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -225,6 +223,7 @@ const SubscriptionInvoices1 = () => {
             <span className="mx-2">Download Invoice</span>
           </div>
         </ModalHeader>
+
         <div className="p-3">
           <PdfView
             tableData={selectedPlan}

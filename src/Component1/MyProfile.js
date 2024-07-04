@@ -11,6 +11,7 @@ const MyProfile = () => {
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (user) {
+      console.log(user);
       setUser(user);
     }
   }, []);
@@ -265,8 +266,6 @@ const MyProfile = () => {
                         name="gender"
                         readOnly
                         value={user.gender}
-                        // class="form-select"
-                        // aria-label="Default select example"
                         style={{
                           border: "none",
                           color: "#C4A484",

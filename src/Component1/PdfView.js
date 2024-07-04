@@ -114,32 +114,7 @@ const Invoice = ({ tableData, userdetails }) => {
                 </Text>
                 <Text style={styles.header}>MobileNo :0731100001</Text>
                 <Text style={styles.GSTIN}>GSTIN :25AAACH7409R1ZP</Text>
-                {/* <Text style={styles.GSTIN}>
-                  {`BankName :${
-                    BilData?.CompanyDetails?.bankName &&
-                    BilData?.CompanyDetails?.bankName
-                  } 
-                         Bank IFSC : :${
-                           BilData?.CompanyDetails?.bankIFSC &&
-                           BilData?.CompanyDetails?.bankIFSC
-                         }
-                         AccountNumber : :${
-                           BilData?.CompanyDetails?.accountNumber &&
-                           BilData?.CompanyDetails?.accountNumber
-                         } `}
-                </Text> */}
               </View>
-              {/* <View>
-                <Text
-                  style={{
-                    fontSize: "8px",
-                    padding: "12px",
-                    color: "black",
-                  }}
-                >
-                  Meri Zimmedari
-                </Text>
-              </View> */}
             </View>
             <View
               style={{
@@ -153,9 +128,7 @@ const Invoice = ({ tableData, userdetails }) => {
               }}
             >
               <View style={{ width: "50%" }}>
-                <Text>
-                  UserName:{userdetails?.firstName + userdetails?.lastName}
-                </Text>
+                <Text>UserName:{userdetails?.firstName}</Text>
                 <Text>Email:{userdetails?.email}</Text>
               </View>
               <View style={{ width: "50%" }}>
@@ -168,7 +141,6 @@ const Invoice = ({ tableData, userdetails }) => {
               style={{
                 flexDirection: "row",
                 backgroundColor: "#b4b6baad",
-                // borderBottom: "1px solid black",
                 borderRight: "1px solid black",
                 borderLeft: "1px solid black",
                 height: "23px",
@@ -415,23 +387,23 @@ const Invoice = ({ tableData, userdetails }) => {
                 borderBottom: "1px solid black",
               }}
             >
-              <View
+              {/* <View
                 style={{
                   width: "50%",
                   padding: "10px 10px",
                   borderRight: "1px solid black",
                 }}
-              ></View>
+              ></View> */}
 
               <View
                 style={{
                   borderBottom: "1px solid black",
-                  width: "50%",
-                  height: "140px",
+                  width: "100%",
+                  height: "100px",
                 }}
               >
                 <View>
-                  <View style={{ padding: "3px 3px ", height: "180px" }}>
+                  <View style={{ padding: " 15px 5px  2px ", height: "100px" }}>
                     <Text style={{ fontSize: "11px" }}> For</Text>
                     <Text
                       style={{
@@ -444,10 +416,10 @@ const Invoice = ({ tableData, userdetails }) => {
                     </Text>
                     <View>
                       <Image
-                        style={{ height: "50px", marginTop: "15px" }}
+                        style={{ height: "50px" }}
                         src={signature}
                         width="200px"
-                        height="200px"
+                        height="100px"
                       ></Image>
                     </View>
                     <View

@@ -7,6 +7,7 @@ import axiosConfig from "../axiosConfig";
 import Mynavbar from "./Mynavbar";
 
 import "./dashboard.css";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 
 const StyledText = styled("text")(({ theme }) => ({
   fill: theme.palette.text.primary,
@@ -25,6 +26,8 @@ const Index = () => {
   const [userPercentage, setUserPercentage] = useState("");
   const [assetList, setAssetList] = useState("");
   const [actionLength, setActionLength] = useState("");
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [nomineeList, setNomineeList] = useState([]);
   const pieParams = {
     width: 160,
@@ -79,7 +82,7 @@ const Index = () => {
     axiosConfig
       .get("/payment/view-payment-by-userId/" + user?._id)
       .then(res => {
-        console.log(res?.data?.Payment);
+        // console.log(res?.data?.Payment);
         let length = res?.data?.Payment?.length - 1;
         localStorage.setItem("PaymentList", JSON.stringify(res?.data?.Payment));
         if (res?.data?.Payment) {
@@ -104,20 +107,17 @@ const Index = () => {
           const newDateString = `${parts[0]}-${monthNumber}-${parts[2]}`;
           const todayDateString = `${parts1[0]}-${CurrentmonthNumber}-${parts1[2]}`;
 
-          // Output the result
-          // console.log("New date string:", newDateString, todayDateString);
           const date1 = new Date(todayDateString);
           const date2 = new Date(newDateString);
           const differenceInMilliseconds = Math.abs(date2 - date1); // Difference in milliseconds
           const differenceInDays = Math.ceil(
             differenceInMilliseconds / (1000 * 60 * 60 * 24)
-          ); // Convert milliseconds to days
+          );
           setCurrentDateAdd(differenceInDays);
-          // console.log("Difference in days:", differenceInDays);
         }
       })
       .catch(err => {
-        // console.log("PaymentError", err?.response?.data?.message);
+        console.log("PaymentError", err?.response?.data?.message);
       });
 
     axiosConfig
@@ -449,23 +449,34 @@ const Index = () => {
                     </div>
                     <div className="col-md-8 col-xl-8 col-lg-8 col-12 col-sm-8">
                       <div style={{ overflow: "auto", height: "10.1rem" }}>
-                        {/* {console.log("kll",PaymentStatus.nextPaymentDate)}*/}
-
+                        {/* (
+                        <div
+                          className="actionItem"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
+                          }}
+                        >
+                          {PaymentStatus?.nextPaymentDate
+                            ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
+                            : "Renew Subscription, expiring in 15 days "}
+                        </div>
+                        ) */}
+                        {PaymentStatus?.status !== "Active" && (
+                          <div
+                            className="actionItem"
+                            style={{
+                              backgroundImage:
+                                "linear-gradient(to right, rgb(243, 206, 175) , rgb(250, 252, 253))",
+                            }}
+                          >
+                            {PaymentStatus?.nextPaymentDate
+                              ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
+                              : "Renew Subscription, expiring in 15 days "}
+                          </div>
+                        )}
                         {nomineeList.map((item, ind) => (
                           <>
-                            {item?.remainingDays > 0 && (
-                              <div
-                                className="actionItem"
-                                style={{
-                                  backgroundImage:
-                                    "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
-                                }}
-                              >
-                                {PaymentStatus?.nextPaymentDate
-                                  ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
-                                  : "Renew Subscription, expiring in 15 days "}
-                              </div>
-                            )}
                             {item?.mailVerifyStatus?.includes(
                               "ot Verified"
                             ) && (
@@ -574,6 +585,11 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

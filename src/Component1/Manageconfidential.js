@@ -115,17 +115,17 @@ const Manageconfidential = () => {
                     }}
                   >
                     <td
-                      style={{ borderRight: "2px solid white", color: "white" }}
+                      style={{ borderRight: "2px solid white", color: "black" }}
                     >
                       {item?.description}
                     </td>
                     <td
-                      style={{ borderRight: "2px solid white", color: "white" }}
+                      style={{ borderRight: "2px solid white", color: "black" }}
                     >
                       {item?.nomineeName}
                     </td>
                     <td
-                      style={{ borderRight: "2px solid white", color: "white" }}
+                      style={{ borderRight: "2px solid white", color: "black" }}
                     >
                       {item?.relationWithNominee}
                     </td>
@@ -134,7 +134,7 @@ const Manageconfidential = () => {
                         <span className=" btn icon-container">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            color="blue"
+                            color="#3465a4"
                             width="30"
                             height="30"
                             fill="currentColor"
@@ -161,7 +161,7 @@ const Manageconfidential = () => {
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             style={{ cursor: "pointer" }}
-                            color="green"
+                            color="#3465a4"
                             width="30"
                             height="30"
                             fill="currentColor"
@@ -189,7 +189,7 @@ const Manageconfidential = () => {
                         <span className="ml-1 btn icon-container">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            color="red"
+                            color="#3465a4"
                             width="30"
                             height="30"
                             fill="currentColor"

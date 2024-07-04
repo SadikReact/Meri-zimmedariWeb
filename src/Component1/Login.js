@@ -322,7 +322,6 @@ const Login = () => {
 
   const generateOTP = () => {
     const myOtp = Math.floor(100000 + Math.random() * 900000);
-    console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
 
@@ -456,43 +455,6 @@ const Login = () => {
                   />
                 </div>
               )}
-              {/* {IsWaiting == false ? (
-                <>
-                  <div className="d-flex justify-content-center mt-5 mb-5">
-                    <div className="loader"></div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    {showWebcam && (
-                      <div className="mb-2" style={{ borderRadius: "12px" }}>
-                        <div
-                          className="mainDiv text-center"
-                          style={{ fontSize: "20px", fontWeight: "600" }}
-                        >
-                          <span className="mx-2"> Blink Eyes</span>
-                          <img
-                            className="blinkEye"
-                            src={BlinkEye}
-                            alt="aa"
-                            style={{ height: "50px" }}
-                          />
-                          <span className="mx-2"> to capture selfie</span>
-                        </div>
-                        <Webcam
-                          height="auto"
-                          width="100%"
-                          audio={false}
-                          ref={webcamRef}
-                          screenshotFormat="image/jpeg"
-                          className="mb-1"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </>
-              )} */}
 
               <div style={{ margin: "2rem" }}>
                 <div className="mt-3">

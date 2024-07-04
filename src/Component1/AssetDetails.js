@@ -1,8 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
-import Spinner from "react-bootstrap/Spinner";
-import { Button } from "react-bootstrap";
 import Mynavbar from "./Mynavbar";
 import { NomineesDetails } from "./assetDetail/NomineesDetails";
 import axiosConfig from "./../axiosConfig";
@@ -26,7 +23,7 @@ const AssetDetails = () => {
     axiosConfig
       .get(`/asset/view-assets-userId/${userData?._id}`)
       .then(response => {
-        console.log(response.data.Asset);
+        // console.log(response.data.Asset);
         setModel(false);
         setAssetList(response.data.Asset);
       })
@@ -35,7 +32,6 @@ const AssetDetails = () => {
         console.log(error.response?.data);
       });
   };
-  // const handleClose = () => setShow(false);
   const handleDelete = id => {
     setMyModal(true);
     setAssetId(id);
@@ -59,18 +55,6 @@ const AssetDetails = () => {
 
   const handleNo = () => {
     setMyModal(false);
-  };
-  const handlePermanentDelete = () => {
-    axiosConfig
-      .delete(`/asset/delete-asset/${assetId}`)
-      .then(response => {
-        AllAssetList();
-        setShow(false);
-        // console.log(response.data.message);
-      })
-      .catch(error => {
-        console.log(error.response);
-      });
   };
 
   const handleEdit = item => {
@@ -225,6 +209,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.assetType}
@@ -237,6 +222,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.policyIssuersName}
@@ -249,6 +235,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.Field_3}
@@ -262,6 +249,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.policynumber}
@@ -273,6 +261,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           NA
@@ -292,6 +281,7 @@ const AssetDetails = () => {
                               cursor: "pointer",
                               borderBottom: "1px solid rgb(43, 77, 129)",
                               fontWeight: "600",
+                              color: "#000",
                             }}
                             onClick={() => handleNomineeDetails(item.nominee)}
                           >
@@ -315,7 +305,7 @@ const AssetDetails = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 style={{ cursor: "pointer" }}
                                 // color="rgb(43, 77, 129)"
-                                color="blue"
+                                color="#3465a4"
                                 width="30"
                                 height="30"
                                 fill="currentColor"
@@ -344,7 +334,7 @@ const AssetDetails = () => {
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 // color="rgb(43, 77, 129)"
-                                color="red"
+                                color="#3465a4"
                                 width="30"
                                 height="30"
                                 fill="currentColor"
