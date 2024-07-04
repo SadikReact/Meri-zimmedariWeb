@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Mynavbar from "./Mynavbar";
 import { ErrorModal } from "./ManageAccount/ErrorModal";
 import axiosConfig from "./../axiosConfig";
 import "./StepperStyle.css";
+import UserContext from "../context/Context";
 
 const Summary = ({
   EditStepPage,
@@ -13,8 +13,10 @@ const Summary = ({
   showNominee,
   nextStep,
   prevStep,
+  uploadedFile,
   submitData,
 }) => {
+  const context = useContext(UserContext);
   const [AssetData, setAssetData] = useState({});
   const [nomineeData, setNomineeData] = useState([]);
   const [errModal, setErrModal] = useState(false);
@@ -22,21 +24,82 @@ const Summary = ({
   const navigate = useNavigate();
   useEffect(() => {
     let assetDetails = JSON.parse(localStorage.getItem("ViewOne"));
+    // let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
     if (assetDetails) {
       console.log(assetDetails);
       setAssetData(assetDetails);
     }
     if (showNominee) {
+      console.log(showNominee);
       setNomineeData(showNominee);
     }
   }, []);
 
   const handleSubmit = () => {
     const formData = new FormData();
-    let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"))._id;
-    formData.append("userId", userId);
-    formData.append("file", AssetData?.uploadedFile);
-    formData.append("assetType", AssetData?.dynamicFields?.Asset_Type);
+    let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    formData.append("userId", userId?._id);
+    formData.append("file", uploadedFile);
+    formData.append(
+      "assetType",
+      AssetData?.dynamicFields?.assetType
+        ? AssetData?.dynamicFields?.assetType
+        : AssetData?.dynamicFields?.Asset_Type
+    );
+    formData.append("policyIssuersName", AssetData?.policyName);
+    formData.append("policynumber", AssetData?.policyNumber);
+    formData.append("Field_1", AssetData?.dynamicFields?.Field_1);
+    formData.append("Field_2", AssetData?.dynamicFields?.Field_2);
+    formData.append("Field_3", AssetData?.dynamicFields?.Field_3);
+    formData.append("Field_4", AssetData?.dynamicFields?.Field_4);
+    formData.append("ReEnterPolicyNumber", AssetData?.reEnterPolicyNumber);
+    formData.append("nominee", JSON.stringify(nomineeData));
+    let asset = JSON.parse(localStorage.getItem("ViewOne"));
+
+    axiosConfig
+      .post("/asset/save-asset", formData)
+      .then(response => {
+        setErrModal(true);
+        setMessage(response.data.message);
+        localStorage.removeItem("assetDetails");
+        localStorage.removeItem("nomineeDetails");
+        localStorage.removeItem("ViewOne");
+        localStorage.removeItem("AssetEditData");
+        let payload = {
+          userId: userId?._id,
+          assetsId: asset?.dynamicFields?._id,
+        };
+        axiosConfig
+          .post("/user/no-assets", payload)
+          .then(response => {})
+          .catch(error => {
+            console.log(error);
+          });
+        setTimeout(() => {
+          navigate("/add-asset/setp3/confirm");
+        }, 1000);
+      })
+      .catch(error => {
+        setErrModal(true);
+        setMessage("first you take a subcription plan");
+      });
+  };
+
+  const handleEdit = () => {
+    debugger;
+    let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
+    console.log(AssetEditid?._id);
+    const formData = new FormData();
+    let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    formData.append("userId", userId?._id);
+    formData.append("file", uploadedFile);
+    // formData.append("assetType", AssetData?.dynamicFields?.Asset_Type);
+    formData.append(
+      "assetType",
+      AssetData?.dynamicFields?.assetType
+        ? AssetData?.dynamicFields?.assetType
+        : AssetData?.dynamicFields?.Asset_Type
+    );
     formData.append("policyIssuersName", AssetData?.policyName);
     formData.append("policynumber", AssetData?.policyNumber);
     formData.append("Field_1", AssetData?.dynamicFields?.Field_1);
@@ -47,22 +110,25 @@ const Summary = ({
     formData.append("nominee", JSON.stringify(nomineeData));
 
     axiosConfig
-      .post("/asset/save-asset", formData)
+      .put(`/asset/update-asset/${AssetEditid?._id}`, formData)
       .then(response => {
-        console.log(response.data.message);
-        navigate("/add-asset/setp3/confirm");
         localStorage.removeItem("assetDetails");
         localStorage.removeItem("nomineeDetails");
         localStorage.removeItem("ViewOne");
         localStorage.removeItem("AssetEditData");
+        // console.log(response.data.message);
+        setErrModal(true);
+        setMessage(response.data.message);
+        setTimeout(() => {
+          navigate("/add-asset/setp3/confirm");
+        }, 1000);
       })
       .catch(error => {
         setErrModal(true);
-        setMessage(error.response.data.message);
-        console.log(error.response.data.message);
+        setMessage("first you take a subcription plan");
+        // console.log(error.response.data.message);
       });
   };
-
   const goBack = e => {
     e.preventDefault();
     prevStep();
@@ -315,9 +381,10 @@ const Summary = ({
                       style={{ border: "2px solid rgb(201, 198, 198)" }}
                       colSpan="2"
                     >
+                      {uploadedFile && uploadedFile.name}
                       {/* Policy212414242 */}
                       {/* <embed
-                      src={AssetData.uploadedFile}
+                      src={uploadedFile}
                       type="application/pdf"
                       width="50%"
                       height="100px"
@@ -498,68 +565,73 @@ const Summary = ({
               </table>
             </div>
           </div>
-
-          <div className="buttons">
-            <button
-              className="buttons__button buttons__button--back"
-              onClick={goBack}
-            >
-              Back
-            </button>
-            <div style={{ float: "right" }}>
-              <span className="icon-container">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ cursor: "pointer" }}
-                  color="rgb(43, 77, 129)"
-                  width="40"
-                  height="40"
-                  fill="currentColor"
-                  class="bi bi-pencil-square hoverable-image"
-                  viewBox="0 0 16 16"
-                  onClick={() => EditStepPage(nomineeData)}
-                >
-                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                  <path
-                    fill-rule="evenodd"
-                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
-                  />
-                </svg>
-                <span className="icon-name" style={{ marginLeft: "1.5%" }}>
-                  Edit
+          <div className="container mb-5">
+            <div className="buttons">
+              <button
+                className="buttons__button buttons__button--back"
+                onClick={goBack}
+              >
+                Back
+              </button>
+              <div style={{ float: "right" }}>
+                <span className="icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ cursor: "pointer" }}
+                    color="rgb(43, 77, 129)"
+                    width="40"
+                    height="40"
+                    fill="currentColor"
+                    class="bi bi-pencil-square hoverable-image"
+                    viewBox="0 0 16 16"
+                    onClick={() => EditStepPage(nomineeData)}
+                  >
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
+                    />
+                  </svg>
+                  <span className="icon-name" style={{ marginLeft: "1.5%" }}>
+                    Edit
+                  </span>
                 </span>
-              </span>
-              <span className="icon-container">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ cursor: "pointer" }}
-                  color="rgb(43, 77, 129)"
-                  width="40"
-                  height="40"
-                  fill="currentColor"
-                  class="bi bi-file-earmark-text hoverable-image"
-                  viewBox="0 0 16 16"
-                  onClick={handleSubmit}
-                >
-                  <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
-                  <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
-                </svg>
-                <span
-                  className="icon-name"
-                  style={{ marginLeft: "4.5%", marginTop: "2px" }}
-                >
-                  Save
+                <span className="icon-container">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ cursor: "pointer" }}
+                    color="rgb(43, 77, 129)"
+                    width="40"
+                    height="40"
+                    fill="currentColor"
+                    class="bi bi-file-earmark-text hoverable-image"
+                    viewBox="0 0 16 16"
+                    onClick={
+                      JSON.parse(localStorage.getItem("AssetEditData"))
+                        ? handleEdit
+                        : handleSubmit
+                    }
+                  >
+                    <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                    <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                  </svg>
+                  <span
+                    className="icon-name"
+                    style={{ marginLeft: "4.5%", marginTop: "2px" }}
+                  >
+                    Save
+                  </span>
                 </span>
-              </span>
-              {/* </Link> */}
-            </div>
-            {/* <button
+                {/* </Link> */}
+              </div>
+              {/* <button
             className="buttons__button buttons__button--next"
             type="submit"
             onClick={handleSubmit}
           >
             Submit
           </button> */}
+            </div>
           </div>
         </div>
       </div>

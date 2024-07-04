@@ -1,19 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
-import Spinner from "react-bootstrap/Spinner";
-import { Button } from "react-bootstrap";
 import Mynavbar from "./Mynavbar";
 import { NomineesDetails } from "./assetDetail/NomineesDetails";
 import axiosConfig from "./../axiosConfig";
 import "./loader.css";
 
 const AssetDetails = () => {
+  const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
+  const [myModal, setMyModal] = useState(false);
   const [assetList, setAssetList] = useState([]);
   const [nominees, setNominees] = useState(null);
   const [model, setModel] = useState(null);
-  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [assetId, setAssetId] = useState("");
   useEffect(() => {
@@ -25,7 +23,7 @@ const AssetDetails = () => {
     axiosConfig
       .get(`/asset/view-assets-userId/${userData?._id}`)
       .then(response => {
-        console.log(response.data.Asset);
+        // console.log(response.data.Asset);
         setModel(false);
         setAssetList(response.data.Asset);
       })
@@ -34,22 +32,29 @@ const AssetDetails = () => {
         console.log(error.response?.data);
       });
   };
-  const handleClose = () => setShow(false);
   const handleDelete = id => {
+    setMyModal(true);
     setAssetId(id);
     setShow(true);
   };
-  const handlePermanentDelete = () => {
+  const handleYes = () => {
     axiosConfig
       .delete(`/asset/delete-asset/${assetId}`)
       .then(response => {
         AllAssetList();
         setShow(false);
-        // console.log(response.data.message);
+        setMyModal(false);
       })
       .catch(error => {
         console.log(error.response);
       });
+  };
+  const handleCloseModal1 = () => {
+    setMyModal(false);
+  };
+
+  const handleNo = () => {
+    setMyModal(false);
   };
 
   const handleEdit = item => {
@@ -204,6 +209,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.assetType}
@@ -216,6 +222,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.policyIssuersName}
@@ -228,6 +235,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.Field_3}
@@ -241,6 +249,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           {item?.policynumber}
@@ -252,6 +261,7 @@ const AssetDetails = () => {
                             borderRight: "2px solid white",
                             lineHeight: "15px",
                             textAlign: "center",
+                            color: "#000",
                           }}
                         >
                           NA
@@ -271,6 +281,7 @@ const AssetDetails = () => {
                               cursor: "pointer",
                               borderBottom: "1px solid rgb(43, 77, 129)",
                               fontWeight: "600",
+                              color: "#000",
                             }}
                             onClick={() => handleNomineeDetails(item.nominee)}
                           >
@@ -294,7 +305,7 @@ const AssetDetails = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 style={{ cursor: "pointer" }}
                                 // color="rgb(43, 77, 129)"
-                                color="blue"
+                                color="#3465a4"
                                 width="30"
                                 height="30"
                                 fill="currentColor"
@@ -323,7 +334,7 @@ const AssetDetails = () => {
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 // color="rgb(43, 77, 129)"
-                                color="red"
+                                color="#3465a4"
                                 width="30"
                                 height="30"
                                 fill="currentColor"
@@ -380,7 +391,96 @@ const AssetDetails = () => {
           </div>
         </>
       )}
-      <Modal show={show}>
+      {myModal != false ? (
+        <>
+          <div className="custommodal">
+            <div className="gdfhagfjhagjhfgagfjhaf modalmaincss">
+              <div
+                style={{
+                  backgroundColor: "rgb(194, 215, 233)",
+                  width: "100%",
+                  borderTopLeftRadius: "20px",
+                  borderTopRightRadius: "20px",
+                  paddingTop: "10px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    marginLeft: "1rem",
+                    // color: "#fff",
+                  }}
+                >
+                  Delete Asset
+                </span>
+
+                <span
+                  onClick={handleCloseModal1}
+                  style={{
+                    float: "right",
+                    marginRight: "1rem",
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    color: "red",
+                    cursor: "pointer",
+                  }}
+                >
+                  X
+                </span>
+              </div>
+
+              <div style={{ margin: "1rem" }}>
+                <div className=" mt-1">
+                  <div className="mb-3">
+                    Are you sure to permanently delete Asset Details ?
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <form>
+                    <div className="mt-3 buttons1">
+                      <button
+                        type="button"
+                        class="btn "
+                        //   disabled={bool ? false : true}
+                        style={{
+                          backgroundColor: "red",
+                          color: "white",
+                          height: "2.8rem",
+                          width: "55px",
+                          margin: "5px",
+                        }}
+                        onClick={handleYes}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        class="btn "
+                        //   disabled={bool ? false : true}
+                        style={{
+                          backgroundColor: "#4478c7",
+                          color: "white",
+                          height: "2.8rem",
+                          width: "55px",
+                          margin: "5px",
+                        }}
+                        onClick={handleNo}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {/* </div>
+            </div> */}
+          </div>
+        </>
+      ) : null}
+
+      {/* <Modal show={show} className="cssformoduleassetsd">
         <Modal.Header>
           <Modal.Title>
             <span>Delete Asset Details</span>
@@ -413,7 +513,7 @@ const AssetDetails = () => {
             No
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

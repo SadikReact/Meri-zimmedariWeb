@@ -72,7 +72,7 @@ const StepOne = props => {
 
     // If there are no errors, submit the form
     if (Object.keys(errors)?.length === 0) {
-      let userId = JSON.parse(localStorage.getItem("UserZimmedari"))._id;
+      let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"))._id;
       const assetType = {
         userId,
         dynamicFields,

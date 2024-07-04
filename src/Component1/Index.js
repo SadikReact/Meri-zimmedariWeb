@@ -7,6 +7,7 @@ import axiosConfig from "../axiosConfig";
 import Mynavbar from "./Mynavbar";
 
 import "./dashboard.css";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 
 const StyledText = styled("text")(({ theme }) => ({
   fill: theme.palette.text.primary,
@@ -19,12 +20,15 @@ const StyledText = styled("text")(({ theme }) => ({
 const Index = () => {
   let arr = [];
   const [PaymentStatus, setPaymentStatus] = useState({});
+  const [currentDateAdd, setCurrentDateAdd] = useState("");
+  const [lifeDeclaration, setLifeDeclaration] = useState({});
   const [user, setUser] = useState("");
   const [userPercentage, setUserPercentage] = useState("");
   const [assetList, setAssetList] = useState("");
   const [actionLength, setActionLength] = useState("");
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [nomineeList, setNomineeList] = useState([]);
-  const [futureDate, setFutureDate] = useState("");
   const pieParams = {
     width: 160,
     height: 160,
@@ -38,37 +42,82 @@ const Index = () => {
     axiosConfig
       .get(`/asset/nominee-list/${user?._id}`)
       .then(response => {
-        // console.log(response.data.Nominee);
         let lengthSize = response.data.Nominee.filter(item =>
-          item.mailVerifyStatus.includes("Not Verified")
-            ? item.mailVerifyStatus.length
+          item.mailVerifyStatus.includes("ot Verified")
+            ? item.mailVerifyStatus?.length
             : null
         );
         let lengthSize1 = response.data.Nominee.filter(item =>
-          item.mobileVerifyStatus.includes("Not Verified")
-            ? item.mobileVerifyStatus.length
+          item.mobileVerifyStatus.includes("ot Verified")
+            ? item.mobileVerifyStatus?.length
             : null
         );
-        // console.log(lengthSize.length);
-        setActionLength(lengthSize.length + lengthSize1.length);
-        // console.log(lengthSize.length + lengthSize1.length);
-        setNomineeList(response.data.Nominee);
+        setActionLength(lengthSize?.length + lengthSize1?.length);
+        setNomineeList(response?.data?.Nominee);
+        if (currentDateAdd < 0) {
+          response?.data?.Nominee.push({ remainingDays: currentDateAdd });
+        }
       })
       .catch(err => {
         console.log("err", err);
       });
+    // Function to convert month abbreviation to number
+    function monthAbbrevToNumber(monthAbbrev) {
+      const months = {
+        Jan: "01",
+        Feb: "02",
+        Mar: "03",
+        Apr: "04",
+        May: "05",
+        Jun: "06",
+        Jul: "07",
+        Aug: "08",
+        Sep: "09",
+        Oct: "10",
+        Nov: "11",
+        Dec: "12",
+      };
+      return months[monthAbbrev];
+    }
     axiosConfig
       .get("/payment/view-payment-by-userId/" + user?._id)
       .then(res => {
-        // console.log(res?.data);
+        // console.log(res?.data?.Payment);
         let length = res?.data?.Payment?.length - 1;
         localStorage.setItem("PaymentList", JSON.stringify(res?.data?.Payment));
         if (res?.data?.Payment) {
           setPaymentStatus(res?.data?.Payment[length]);
+          let nextDate = res?.data?.Payment[length].nextPaymentDate;
+
+          const today = new Date();
+          const year = today.getFullYear();
+          const month = today.toLocaleString("default", { month: "short" });
+          const day = today.getDate();
+          const currentDate = `${year}-${month}-${day}`;
+
+          // Split the date string
+          const parts = nextDate.split("-");
+          const parts1 = currentDate.split("-");
+
+          // Convert month abbreviation to number
+          const monthNumber = monthAbbrevToNumber(parts[1]);
+          const CurrentmonthNumber = monthAbbrevToNumber(parts1[1]);
+
+          // Construct the new date string
+          const newDateString = `${parts[0]}-${monthNumber}-${parts[2]}`;
+          const todayDateString = `${parts1[0]}-${CurrentmonthNumber}-${parts1[2]}`;
+
+          const date1 = new Date(todayDateString);
+          const date2 = new Date(newDateString);
+          const differenceInMilliseconds = Math.abs(date2 - date1); // Difference in milliseconds
+          const differenceInDays = Math.ceil(
+            differenceInMilliseconds / (1000 * 60 * 60 * 24)
+          );
+          setCurrentDateAdd(differenceInDays);
         }
       })
       .catch(err => {
-        // console.log("PaymentError", err?.response?.data?.message);
+        console.log("PaymentError", err?.response?.data?.message);
       });
 
     axiosConfig
@@ -83,7 +132,7 @@ const Index = () => {
     axiosConfig
       .get(`/life-declaration/view-life-declaration/${user?._id}`)
       .then(res => {
-        calculateFutureDate(res?.data?.Life.lastDeclarationDate);
+        setLifeDeclaration(res?.data?.Life);
       })
       .catch(err => {
         console.log(err);
@@ -94,21 +143,20 @@ const Index = () => {
 
     let totalPercenatage = 100;
     if (user) {
-      // console.log(user)
-      if (user?.firstName.length > 1) {
+      if (user?.firstName?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.email.length > 1) {
+      if (user?.email?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
 
       if (user?.mobileNo || user?.mobileNo !== null) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.gender.length > 1) {
+      if (user?.gender?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
-      if (user?.dob.length > 1) {
+      if (user?.dob?.length > 1) {
         arr.push(totalPercenatage / 6);
       }
       if (user?.image) {
@@ -119,39 +167,6 @@ const Index = () => {
       setUser(user);
     }
   }, []);
-  const calculateFutureDate = currectDates => {
-    const currentDateNew = new Date(currectDates);
-    currentDateNew.setDate(currentDateNew.getDate() + 15);
-    const futureDates = currentDateNew.toISOString().split("T")[0];
-    const date = new Date(futureDates);
-
-    // Get the month name
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    const month = monthNames[date.getMonth()]; // Get month name from the array
-
-    // Get the day
-    const day = date.getDate(); // Get the day of the month
-
-    // Get the year
-    const year = date.getFullYear(); // Get the year
-    // Construct the formatted date string
-    const formattedDate = `${year}-${month}-${day < 10 ? "0" : ""}${day}`;
-
-    setFutureDate(formattedDate);
-  };
 
   const PieCenterLabel = ({ children }) => {
     const { width, height, left, top } = useDrawingArea();
@@ -175,7 +190,7 @@ const Index = () => {
               "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
           }}
         >
-          <span className="ml-3">Dashboard </span>
+          <span className="ml-3">Dashboard</span>
           <span></span>
         </p>
         <div className="mt-5 container-fluid">
@@ -277,7 +292,11 @@ const Index = () => {
                         ) : (
                           "NA"
                         )} */}
-                        {futureDate ? <>{futureDate}</> : "NA"}
+                        {lifeDeclaration?.lastDeclarationDate ? (
+                          <>{lifeDeclaration.lastDeclarationDate}</>
+                        ) : (
+                          "NA"
+                        )}
                       </span>
 
                       <span
@@ -297,8 +316,8 @@ const Index = () => {
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        {PaymentStatus?.lastPaymentDate ? (
-                          <>{PaymentStatus?.lastPaymentDate}</>
+                        {lifeDeclaration?.nextDeclarationDate ? (
+                          <>{lifeDeclaration.nextDeclarationDate}</>
                         ) : (
                           "NA"
                         )}
@@ -392,11 +411,11 @@ const Index = () => {
                 style={{ justifyContent: "center", display: "flex" }}
               >
                 <div
-                className="cssforindexaction"
+                  className="cssforindexaction"
                   style={{
                     border: "1px solid rgb(43, 77, 129)",
                     width: "100%",
-                   
+
                     borderTopLeftRadius: "20px",
                   }}
                 >
@@ -411,7 +430,7 @@ const Index = () => {
                                 color: "rgb(43, 77, 129)",
                               }}
                             >
-                              {actionLength ? actionLength + 1 : 0}
+                              {actionLength ? actionLength : 0}
                             </span>
                           </div>
                           <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 col-6">
@@ -430,21 +449,37 @@ const Index = () => {
                     </div>
                     <div className="col-md-8 col-xl-8 col-lg-8 col-12 col-sm-8">
                       <div style={{ overflow: "auto", height: "10.1rem" }}>
+                        {/* (
+                        <div
+                          className="actionItem"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
+                          }}
+                        >
+                          {PaymentStatus?.nextPaymentDate
+                            ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
+                            : "Renew Subscription, expiring in 15 days "}
+                        </div>
+                        ) */}
+                        {PaymentStatus?.status !== "Active" && (
+                          <div
+                            className="actionItem"
+                            style={{
+                              backgroundImage:
+                                "linear-gradient(to right, rgb(243, 206, 175) , rgb(250, 252, 253))",
+                            }}
+                          >
+                            {PaymentStatus?.nextPaymentDate
+                              ? `Renew Subscription, ${PaymentStatus?.nextPaymentDate}`
+                              : "Renew Subscription, expiring in 15 days "}
+                          </div>
+                        )}
                         {nomineeList.map((item, ind) => (
                           <>
-                            {item?._id.includes("663104e7aec036a0bb79c0a3") && (
-                              <div
-                                className="actionItem"
-                                style={{
-                                  backgroundImage:
-                                    "linear-gradient(to right, rgb(174, 191, 207) , rgb(229, 234, 238))",
-                                }}
-                              >
-                                Renew Subscription, expiring in 15 days
-                              </div>
-                            )}
-
-                            {item.mailVerifyStatus.includes("Not Verified") && (
+                            {item?.mailVerifyStatus?.includes(
+                              "ot Verified"
+                            ) && (
                               <div
                                 className=" actionItem"
                                 style={{
@@ -455,8 +490,8 @@ const Index = () => {
                                 Validate Nominee e-mail ID
                               </div>
                             )}
-                            {item.mobileVerifyStatus.includes(
-                              "Not Verified"
+                            {item?.mobileVerifyStatus?.includes(
+                              "ot Verified"
                             ) && (
                               <div
                                 className="actionItem"
@@ -477,9 +512,9 @@ const Index = () => {
               </div>
             </div>
             <div className="col-md-5 col-xl-5 col-lg-5">
-              <div className="m-2 cssformobileindexveiw" >
+              <div className="m-2 cssformobileindexveiw">
                 <div
-                  className="row "
+                  className="row"
                   style={{
                     border: "1px solid rgb(43, 77, 129)",
                     backgroundImage:
@@ -550,6 +585,11 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

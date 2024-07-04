@@ -1,7 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axiosConfig from "../../axiosConfig";
+import UserContext from "../../context/Context";
 
-const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
+const PhoneOtp = ({
+  setModalShow,
+  myNumber,
+  newOtp,
+  setFormValues,
+  formValues,
+  phoneIndex,
+}) => {
+  const context = useContext(UserContext);
   const [otp, setOtp] = useState(null);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
   const [bool, setBool] = useState(null);
@@ -39,23 +48,28 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
   };
   const handleOtpVerify = () => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    const updatedNo = localStorage.getItem("UpdatedNo");
+    const newOTPData = localStorage.getItem("newOTP");
     let payload = {
       userId: user?._id,
-      mobileNo: Number(myNumber),
+      mobileNo: Number(updatedNo),
       otp: 123400,
-      // mobileVerifyStatus: "verify",
       // otp: Number(otp),
     };
 
-    if (newOtp === otp) {
+    if (newOtp ? newOtp : newOTPData === otp) {
       axiosConfig
         .post("/asset/otp-verify-mobile", payload)
         .then(response => {
           setModalShow(false);
-          // console.log("response", response.data);
+          let newvalue = [...formValues];
+
+          newvalue?.forEach(ele => {
+            ele["mobileVerifyStatus"] = "Verified";
+          });
         })
         .catch(error => {
-          console.log("response", error);
+          // console.log("response", error);
           setIsValidOtp(true);
         });
     } else {
@@ -65,7 +79,7 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
   return (
     <>
       <div className="row " style={{ paddingTop: "5rem" }}>
-        <div className="col-md-12 col-sm-2 col-lg-12 col-xl-12">
+        <div className="col-md-12 col-sm-2 col-lg-12 col-xl-12 col-xs-12 gdfhagfjhagjhfgagfjhaf1">
           <div
             className="gdfhagfjhagjhfgagfjhaf"
             style={{
@@ -112,7 +126,10 @@ const PhoneOtp = ({ setModalShow, myNumber, newOtp }) => {
               <div className=" mt-2">
                 <div className="mb-3">
                   Please enter 6 digit OTP sent on mobile number
-                  <span className="px-2">{myNumber && myNumber}</span>.
+                  <span className="px-2">
+                    {localStorage.getItem("UpdatedNo")}
+                  </span>
+                  .
                 </div>
                 <div
                   style={{

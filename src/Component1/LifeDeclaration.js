@@ -22,7 +22,7 @@ const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detect
 const LifeDeclaration = args => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDate, setIsDate] = useState(false);
-  const [futureDate, setFutureDate] = useState("");
+  // const [futureDate, setFutureDate] = useState("");
   const [count, setCount] = useState(0);
   const [maxLeft, setMaxLeft] = useState(0);
   const [maxRight, setMaxRight] = useState(0);
@@ -43,11 +43,6 @@ const LifeDeclaration = args => {
   };
 
   useEffect(() => {
-    let payment = JSON.parse(localStorage.getItem("PaymentList"));
-    if (payment?.length > 0) {
-      let index = payment?.length - 1;
-      setDeclarationDate(payment[index]);
-    }
     tf.setBackend("webgl");
     loadModel();
   }, []);
@@ -65,12 +60,6 @@ const LifeDeclaration = args => {
       }, 1500);
     }
   }, [isOpen]);
-  const calculateFutureDate = currectDates => {
-    const currentDateNew = new Date(currectDates);
-    currentDateNew.setDate(currentDateNew.getDate() + 15);
-    const futureDates = currentDateNew.toISOString().split("T")[0];
-    setFutureDate(futureDates);
-  };
 
   const loadModel = async () => {
     faceLandmarksDetection
@@ -79,7 +68,7 @@ const LifeDeclaration = args => {
       })
       .then(model => {
         setModel(model);
-        // console.log(model);
+        // console.log("modelllll", model);
         setText("ready for capture");
       })
       .catch(err => {
@@ -209,22 +198,23 @@ const LifeDeclaration = args => {
   };
 
   useEffect(() => {
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+    LifeDecalarationFun();
+  }, []);
+
+  let LifeDecalarationFun = () => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     (async () => {
       await axiosConfig
         .get(`/life-declaration/view-life-declaration/${user?._id}`)
         .then(res => {
           console.log(res?.data?.Life);
-
-          calculateFutureDate(res?.data?.Life.lastDeclarationDate);
           setDeclarationDate(res?.data?.Life);
         })
         .catch(err => {
           console.log(err);
         });
     })();
-  }, []);
+  };
 
   const handleCapture = () => {
     setMessage("Image Captured Suceessfully");
@@ -257,7 +247,6 @@ const LifeDeclaration = args => {
     formdata.append("userId", user?._id);
     formdata.append("image", dataURItoBlob(Data?.image));
     formdata.append("day", Data?.Date);
-    debugger;
     await axiosConfig
       .post("/life-declaration", formdata)
       .then(res => {
@@ -265,6 +254,7 @@ const LifeDeclaration = args => {
         toggle();
         setMessage(res?.data?.message);
         setErrModal(true);
+        LifeDecalarationFun();
         setTimeout(() => {
           setErrModal(false);
         }, 1000);
@@ -339,6 +329,7 @@ const LifeDeclaration = args => {
               <select
                 name="Date"
                 onChange={handleChange}
+                value={DeclarationDate?.day}
                 required
                 class="form-select"
                 aria-label="Default select example"
@@ -407,7 +398,8 @@ const LifeDeclaration = args => {
                 type="text"
                 id="dateInput"
                 class="form-control"
-                value={DeclarationDate?.lastPaymentDate}
+                disabled
+                value={DeclarationDate?.lastDeclarationDate}
                 style={{
                   border: "1px solid rgb(114, 158, 216)",
                   width: "60%",
@@ -431,8 +423,8 @@ const LifeDeclaration = args => {
             <div style={{ justifyContent: "center", display: "flex" }}>
               <input
                 type="text"
-                // value={futureDate}
-                value={DeclarationDate?.nextPaymentDate}
+                disabled
+                value={DeclarationDate?.nextDeclarationDate}
                 id="dateInput"
                 class="form-control"
                 style={{
@@ -494,23 +486,24 @@ const LifeDeclaration = args => {
         </div>
       </div>
       <Modal isOpen={modal} toggle={toggle} {...args}>
-        <ModalHeader toggle={toggle}>Submit Your Details here</ModalHeader>
+        <ModalHeader toggle={toggle}>
+          <div
+            className="mainDiv text-center"
+            style={{ fontSize: "20px", fontWeight: "600" }}
+          >
+            <span className="mx-2"> Blink Eyes</span>
+            <img
+              className="blinkEye"
+              src={BlinkEye}
+              alt="aa"
+              style={{ height: "50px" }}
+            />
+            <span className="mx-2"> to capture selfie</span>
+          </div>
+        </ModalHeader>
         <div className="p-3">
           <Row>
             <Col lg="12" sm="12" md="12">
-              <div
-                className="mainDiv text-center"
-                style={{ fontSize: "20px", fontWeight: "600" }}
-              >
-                <span className="mx-2"> Blink Eyes</span>
-                <img
-                  className="blinkEye"
-                  src={BlinkEye}
-                  alt="aa"
-                  style={{ height: "50px" }}
-                />
-                <span className="mx-2"> to capture selfie</span>
-              </div>
               {model == null ? (
                 <>
                   <div className="d-flex justify-content-center mt-5 mb-5">
@@ -528,7 +521,6 @@ const LifeDeclaration = args => {
                           audio={false}
                           ref={webcamRef}
                           screenshotFormat="image/jpeg"
-                          // className="mb-2"
                           style={{ borderRadius: "8px" }}
                         />
                       </div>

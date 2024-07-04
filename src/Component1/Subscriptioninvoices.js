@@ -348,8 +348,9 @@ const Subscriptioninvoices = args => {
                     border: "1px solid rgb(193, 194, 192)",
                   }}
                 >
-<span style={{borderBottom:'1px solid rgb(8, 73, 134)'}}>Transaction History</span>
-
+                  <span style={{ borderBottom: "1px solid rgb(8, 73, 134)" }}>
+                    Transaction History
+                  </span>
                 </button>
               </Link>
             </div>
@@ -384,11 +385,6 @@ const Subscriptioninvoices = args => {
               </p>
             </Link>
           </div>
-          {/* {selectedPlan?.price > 0 && (
-            <div style={{ float: "right" }}>
-              <Payment selectedPlan={selectedPlan} USer={USer} />
-            </div>
-          )} */}
         </div>
         <Modal isOpen={modal} toggle={toggle} {...args}>
           <ModalHeader toggle={toggle}>Change Payment Plan</ModalHeader>

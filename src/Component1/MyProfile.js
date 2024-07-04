@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "../css/style.css";
 import profile from "../image/myprofilepic.png";
 import { Link, useNavigate } from "react-router-dom";
-import axiosConfig from "../axiosConfig";
+// import axiosConfig from "../axiosConfig";
 import Mynavbar from "./Mynavbar";
 
 const MyProfile = () => {
@@ -10,8 +10,9 @@ const MyProfile = () => {
   const navigate = useNavigate();
   useEffect(() => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    if(user){
-   setUser(user);
+    if (user) {
+      console.log(user);
+      setUser(user);
     }
   }, []);
 
@@ -38,9 +39,22 @@ const MyProfile = () => {
       <div className="container">
         <div className="row mb-5 m-2">
           <div className="col-md-4 col-sm-4 col-lg-4 col-xl-4">
-            <div style={{ justifyContent: "center", display: "flex" }}>
+            {user?.image ? (
+              <div className="profileParent">
+                <img
+                  src={user?.image}
+                  alt="profile"
+                  className="profilePicture"
+                />
+              </div>
+            ) : (
+              <div style={{ justifyContent: "center", display: "flex" }}>
+                <img src={profile} alt="profile" />
+              </div>
+            )}
+            {/* <div style={{ justifyContent: "center", display: "flex" }}>
               <img src={profile} alt="profile" />
-            </div>
+            </div> */}
           </div>
           <div className="col-md-8 col-sm-8 col-lg-8 col-xl-8 mt-4">
             <div>
@@ -252,8 +266,6 @@ const MyProfile = () => {
                         name="gender"
                         readOnly
                         value={user.gender}
-                        // class="form-select"
-                        // aria-label="Default select example"
                         style={{
                           border: "none",
                           color: "#C4A484",
@@ -264,9 +276,7 @@ const MyProfile = () => {
                           paddingBottom: "10px",
                           marginBottom: "5px",
                         }}
-                      >
-                        {/* <option value="1">Male</option> */}
-                      </input>
+                      ></input>
                     </fieldset>
                   </div>
                 </div>
@@ -305,7 +315,6 @@ const MyProfile = () => {
             </Link>
           </div>
           <div style={{ float: "right" }} className="icon-container">
-            {/* <Link to={"/myprofile/edit"}> */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               style={{ cursor: "pointer" }}
@@ -326,7 +335,6 @@ const MyProfile = () => {
             <span className="icon-name" style={{ marginLeft: "1.5%" }}>
               Edit
             </span>
-            {/* </Link> */}
           </div>
         </div>
       </div>

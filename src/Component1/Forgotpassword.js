@@ -81,16 +81,16 @@ const Forgotpassword = () => {
       return;
     }
     setModalShow(true);
-    const userId = JSON.parse(localStorage.getItem("UserZimmedari"))._id;
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
     const payload = {
-      // userId:userId,
+      mobileNo: MobileNUM,
       password: password,
       confirmPassword: confirmPassword,
     };
     axiosConfig
-      .post(`/user/updated-password/${userId}`, payload)
+      .post("/user/updated-password", payload)
       .then(response => {
-        console.log(response);
+        console.log(response.data);
       })
       .catch(error => {
         console.log(error.response);
@@ -165,7 +165,7 @@ const Forgotpassword = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "8rem",
+                          width: "auto",
                         }}
                         for="Password"
                         className="form-label"
@@ -209,7 +209,7 @@ const Forgotpassword = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "9rem",
+                          width: "auto",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"
@@ -233,9 +233,17 @@ const Forgotpassword = () => {
                       />
                     </fieldset>
                     {newPasswordError && (
-                      <p style={{ color: "red" }} className="validationmobilefont">{newPasswordError}</p>
+                      <p
+                        style={{ color: "red" }}
+                        className="validationmobilefont"
+                      >
+                        {newPasswordError}
+                      </p>
                     )}
-                    <span className="validationmobilefont" style={{ color: messageColor }} >
+                    <span
+                      className="validationmobilefont"
+                      style={{ color: messageColor }}
+                    >
                       {messageClass}
                     </span>
 

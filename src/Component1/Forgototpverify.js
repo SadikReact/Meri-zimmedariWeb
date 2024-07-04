@@ -8,15 +8,12 @@ const Forgototpverify = () => {
   const [count, setCount] = useState(60);
   const [isCountingComplete, setIsCountingComplete] = useState(false);
   const [IsvalidOtp, setIsValidOtp] = useState(false);
-  const [otpMsg, setOtpMsg] = useState("");
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const phoneNumber = location.state;
 
   // useEffect(() => {
-  //   // let mobile = JSON.parse(localStorage.getItem("MobileNUM"));
-  //   // console.log(mobile);
+  //   console.log("newOTP", location.state);
   // }, []);
 
   useEffect(() => {
@@ -35,6 +32,21 @@ const Forgototpverify = () => {
     const newValue = value.replace(/\D/g, "").slice(0, 6);
     setOtp(Number(newValue));
   };
+  const sendSMS = async () => {
+    let newOTP = Math.floor(100000 + Math.random() * 900000);
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    console.log(newOTP, MobileNUM);
+    try {
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${MobileNUM}`;
+
+      const response = await axiosConfig.get(allUrl);
+      // setResponse(response.data);
+      navigate("/Forgot/password/otp", { state: newOTP });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleReset = () => {
     if (count > 0) {
       setIsCountingComplete(false);
@@ -45,26 +57,30 @@ const Forgototpverify = () => {
     } else {
       setIsCountingComplete(true);
       setCount(60);
+      sendSMS();
     }
   };
   const handleForgetPass = () => {
-    const phone = JSON.parse(localStorage.getItem("MobileNUM"));
-    const payload = {
-      // userId:userId,
-      mobileNo: phone,
-      otp: Number(otp),
-    };
-    axiosConfig
-      .post("/user/otp-verify", payload)
-      .then(response => {
-        // console.log(response.data.message);
-        navigate("/forgot/password");
-      })
-      .catch(error => {
-        console.log(error.response.data.error);
-        setOtpMsg(error.response.data.error);
-        setIsValidOtp(true);
-      });
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    if (location.state && location.state == otp) {
+      const payload = {
+        mobileNo: MobileNUM,
+        otp: Number(123400),
+      };
+      axiosConfig
+        .post("/user/otp-verify", payload)
+        .then(response => {
+          console.log(response.data.message);
+          navigate("/forgot/password");
+        })
+        .catch(error => {
+          console.log(error.response);
+          // setOtpMsg(error.response.data.error);
+          // setIsValidOtp(true);
+        });
+    } else {
+      setIsValidOtp(true);
+    }
   };
   return (
     <>
@@ -128,11 +144,10 @@ const Forgototpverify = () => {
                   <form>
                     {IsvalidOtp ? (
                       <span
-                      className="validationmobilefont"
+                        className="validationmobilefont"
                         style={{
                           color: "red",
                           padding: "2px",
-                         
                         }}
                       >
                         {/* {otpMsg} */}
@@ -223,7 +238,6 @@ const Forgototpverify = () => {
                       <span className="ml-1"></span>
                     </div>
                     <div className="mt-3">
-                      {/* <Link to={"/forgot/password"}> */}
                       <button
                         type="button"
                         class="btn "
@@ -237,7 +251,6 @@ const Forgototpverify = () => {
                       >
                         Submit
                       </button>
-                      {/* </Link> */}
                     </div>
                   </form>
                 </div>

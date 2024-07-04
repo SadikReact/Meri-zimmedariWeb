@@ -7,7 +7,6 @@ import EmailModal from "./nominee/EmailModal";
 import PhoneOtp from "./nominee/phoneOtp";
 import PhoneBox from "./nominee/PhoneBox";
 import axiosConfig from "./../axiosConfig";
-import { OTP_main } from "./Api";
 import { AutoSaveModal } from "./assetDetail/AutoSaveModal";
 import "./StepperStyle.css";
 
@@ -20,6 +19,8 @@ const CourseDetails = ({
   gotNomineeData,
 }) => {
   const [newOtp, setNewOtp] = useState(null);
+  const [phoneIndex, setPhoneIndex] = useState("");
+  const [mailIndex, setMailIndex] = useState("");
   const [model, setModel] = useState(null);
   const [formValues, setFormValues] = useState([
     {
@@ -28,6 +29,8 @@ const CourseDetails = ({
       percentageofShar: "",
       NomineePhoneNumber: null,
       relationWithNominee: "",
+      mailVerifyStatus: "not Verified",
+      mobileVerifyStatus: "not Verified",
     },
   ]);
   const [formError, setFormError] = useState({
@@ -50,10 +53,7 @@ const CourseDetails = ({
   const [modalShowauto, setModalShowauto] = useState(false);
 
   useEffect(() => {
-    debugger;
-    // console.log(showAsset);
     let AssetEditid = JSON.parse(localStorage.getItem("AssetEditData"));
-    console.log(AssetEditid.nominee);
     if (gotNomineeData?.length > 0) {
       setFormValues(gotNomineeData);
       setModel(false);
@@ -61,18 +61,20 @@ const CourseDetails = ({
       setFormValues(AssetEditid.nominee);
       setModel(false);
     }
-    // setShowAsset(showAsset);
   }, [gotNomineeData]);
 
   const handleChange = (i, e) => {
     const value = e.target.value;
     const fieldName = e.target.name;
+    // console.log(fieldName, value);
 
     setFormValues(prevFormValues => {
       const newFormValues = [...prevFormValues];
-
       if (fieldName === "nomineeName") {
-        if (/^[A-Za-z]*$/.test(value)) {
+        // if (/^[A-Za-z]*$/.test(value)) {
+        //   newFormValues[i][fieldName] = value;
+        // }
+        if (/^[a-zA-Z0-9_ ]*$/.test(value)) {
           newFormValues[i][fieldName] = value;
         }
       } else if (fieldName === "relationWithNominee") {
@@ -98,9 +100,6 @@ const CourseDetails = ({
   };
   const handleInputClick = () => {
     allError.IspercentageofShar = true;
-    // formValues?.map((value, i) =>
-    //   value?.percentageofShar.length > 1
-    // );
     let share = document.getElementById("percentageofShar").value;
 
     if (share == 100) {
@@ -121,10 +120,8 @@ const CourseDetails = ({
 
   let addFormFields = (e, item) => {
     e.preventDefault();
-    // debugger;
     const newArr = [];
     let share = document.getElementById("percentageofShar").value;
-    console.log("share", share);
     formValues.filter(el => newArr.push(Number(el.percentageofShar)));
     const sum = newArr.reduce(
       (previousValue, currentValue) => previousValue + currentValue,
@@ -132,7 +129,6 @@ const CourseDetails = ({
     );
 
     if (sum == 0 || sum == "") {
-      // debugger;
       setFormError({ IspercentageofShar: true });
       setShareError("Permissible value: 1 to 100 without decimal.");
     } else if (sum == 100) {
@@ -155,46 +151,10 @@ const CourseDetails = ({
           percentageofShar: "",
           NomineePhoneNumber: "",
           relationWithNominee: "",
-          nominee: 0,
+          mailVerifyStatus: "Not Verified",
+          mobileVerifyStatus: "Not Verified",
         },
       ]);
-      // if (item) {
-      //   setFormValues([
-      //     ...formValues,
-      //     {
-      //       nomineeName: item.name,
-      //       nomineeEmailId: "",
-      //       percentageofShar: null,
-      //       NomineePhoneNumber: "",
-      //       relationWithNominee: item.relation,
-      //       nominee: 0,
-      //     },
-      //   ]);
-      // }
-      // else {
-      // setFormValues([
-      //   ...formValues,
-      //   {
-      //     nomineeName: "",
-      //     nomineeEmailId: "",
-      //     percentageofShar: null,
-      //     NomineePhoneNumber: "",
-      //     relationWithNominee: "",
-      //     nominee: 0,
-      //   },
-      // ]);
-      // setNewArray([
-      //   ...formValues,
-      //   {
-      //     nomineeName: "",
-      //     nomineeEmailId: "",
-      //     percentageofShar: null,
-      //     NomineePhoneNumber: "",
-      //     relationWithNominee: "",
-      //     nominee: 0,
-      //   },
-      // ]);
-      // }
     }
   };
   let removeFormFields = i => {
@@ -212,7 +172,6 @@ const CourseDetails = ({
       (previousValue, currentValue) => previousValue + currentValue,
       0
     );
-    // console.log(sum);
     formValues?.forEach((value, key) => {
       if (!value.nomineeName) {
         allError.IsnomineeName = true;
@@ -227,9 +186,7 @@ const CourseDetails = ({
       }
 
       let share = document.getElementById("percentageofShar").value;
-      // debugger;
       if (!Number(sum)) {
-        debugger;
         allError.IspercentageofShar = true;
         setShareError("Permissible value: 1 to 100 without decimal.");
       } else if (sum < 100) {
@@ -285,10 +242,8 @@ const CourseDetails = ({
         if (phoneRemark) {
           setPhoneModalNotify(false);
           localStorage.setItem("nomineeDetails", JSON.stringify(formValues));
-          // console.log(formValues);
           setShowNominee(formValues);
           nextStep();
-          //  navigate("/add-asset/step3");
         }
       }
       setFormError(allError);
@@ -297,39 +252,32 @@ const CourseDetails = ({
 
   const goBack = e => {
     e.preventDefault();
-    // console.log(showAsset)
-    // setShowAsset(showAsset);
     prevStep();
   };
   const generateOTP = () => {
     // Generate a random 6-digit number
     const myOtp = Math.floor(100000 + Math.random() * 900000);
-    console.log(myOtp);
     return myOtp.toString(); // Convert number to string
   };
+
   const sendSMS = async number => {
     const newOTP = generateOTP();
     setNewOtp(newOTP);
     try {
-      const apiKey = OTP_main;
-
-      const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
-
-      // const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&variables_values=${newOTP}&route=otp&numbers=${number}`;
-
-      const response = await axiosConfig.get(url);
-      // setResponse(response.data);
-      console.log(response.data);
-      document.getElementById("alert").innerHTML = "";
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
+      const response = await axiosConfig.get(allUrl);
+      //  document.getElementById("alert").innerHTML = "";
+      //  navigate("/login/otp", {
+      //    state: { phone, newOTP },
+      //  });
     } catch (error) {
-      if (error?.response?.data?.message) {
-        document.getElementById("alert").innerHTML =
-          "Sending multiple sms to same number is not allowed";
-      }
+      //  if (error?.response?.data?.message) {
+      //    document.getElementById("alert").innerHTML =
+      //      "Sending multiple sms to same number is not allowed";
+      //  }
     }
   };
-  const handlePhoneModal = number => {
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+  const handlePhoneModal = (index, number) => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (number) {
       let payload = {
@@ -339,10 +287,10 @@ const CourseDetails = ({
       axiosConfig
         .post("/asset/otp-mobile", payload)
         .then(response => {
-          // console.log("response", response.data.message);
           sendSMS(number);
           setMyNumber(number);
           setModalShow(true);
+          setPhoneIndex(index);
           setModalShowmail(false);
           setFormError({ IsPhoneAvail: false });
         })
@@ -353,8 +301,7 @@ const CourseDetails = ({
       setFormError({ IsPhoneAvail: true });
     }
   };
-  const handleEmailModal = currentEmail => {
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
+  const handleEmailModal = (index, currentEmail) => {
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     if (currentEmail) {
       let payload = {
@@ -364,10 +311,10 @@ const CourseDetails = ({
       axiosConfig
         .post("/asset/otp-email", payload)
         .then(response => {
-          // console.log("response", response.data.message);
           setModalShowmail(true);
           setModalShow(false);
           setMyEmail(currentEmail);
+          setMailIndex(index);
         })
         .catch(error => {
           console.log(error);
@@ -385,7 +332,7 @@ const CourseDetails = ({
         // addFormFields={addFormFields}
         onHide={() => setModalShowauto(false)}
       />
-      <form>
+      <form className="cssformobilenominee">
         <div style={{ backgroundColor: "rgb(182, 205, 236)" }}>
           <div className="container-fluid">
             <div className="row">
@@ -563,7 +510,7 @@ const CourseDetails = ({
             formValues?.map((ele, index) => (
               <div className="row" key={index}>
                 <div className="container-fluid">
-                  <div className="step2deletbutton" style={{}}>
+                  <div className="step2deletbutton">
                     {index ? (
                       <>
                         <fieldset
@@ -635,7 +582,6 @@ const CourseDetails = ({
                                 placeholder="XXXXXXXXXXXX"
                                 name="nomineeName"
                                 value={ele.nomineeName || ""}
-                                // pattern="[A-Za-z]+"
                                 onChange={e => handleChange(index, e)}
                                 style={{
                                   width: "95%",
@@ -896,10 +842,12 @@ const CourseDetails = ({
                                   <span>
                                     <a
                                       onClick={() =>
-                                        handlePhoneModal(ele.NomineePhoneNumber)
+                                        handlePhoneModal(
+                                          index,
+                                          ele.NomineePhoneNumber
+                                        )
                                       }
                                       className="btn"
-                                      id="alert"
                                       style={{
                                         fontSize: "13px",
                                         width: "115%",
@@ -1005,7 +953,10 @@ const CourseDetails = ({
                                   <span>
                                     <a
                                       onClick={() =>
-                                        handleEmailModal(ele.nomineeEmailId)
+                                        handleEmailModal(
+                                          index,
+                                          ele.nomineeEmailId
+                                        )
                                       }
                                       className="btn "
                                       style={{
@@ -1131,6 +1082,9 @@ const CourseDetails = ({
             setModalShow={setModalShow}
             myNumber={myNumber}
             newOtp={newOtp}
+            phoneIndex={phoneIndex}
+            setFormValues={setFormValues}
+            formValues={formValues}
           />
         </div>
       ) : null}
@@ -1140,6 +1094,8 @@ const CourseDetails = ({
             setModalShowmail={setModalShowmail}
             setModalShow={setModalShow}
             myEmail={myEmail}
+            mailIndex={mailIndex}
+            setFormValues={setFormValues}
           />
         </div>
       ) : null}

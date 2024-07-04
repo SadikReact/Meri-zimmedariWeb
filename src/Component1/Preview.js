@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Mynavbar from "./Mynavbar";
 import axiosConfig from "../axiosConfig";
-
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import PdfDocList from "./PdfDocList";
 const Preview = () => {
   const [showIcon, setShowIcon] = useState([]); // State to manage icon visibility for each card
   const [NomineeList, setNomineeList] = useState([]);
+  const [AssetList, setAssetList] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [nominees, setNominees] = useState(null);
+  const [manageList, setManageList] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    AllAssetList();
+    confidentialList();
     axiosConfig
       .get(`/asset/nominee-list/${userData._id}`)
       .then(response => {
@@ -19,12 +27,35 @@ const Preview = () => {
         console.log("err", err);
       });
   }, []);
+  const AllAssetList = () => {
+    const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    axiosConfig
+      .get(`/asset/view-assets-userId/${userData?._id}`)
+      .then(response => {
+        setAssetList(response.data.Asset);
+      })
+      .catch(error => {
+        console.log(error.response?.data);
+      });
+  };
+  const confidentialList = () => {
+    axiosConfig
+      .get("/confidential/view-confidential")
+      .then(response => {
+        setManageList(response.data.Confidential);
+        console.log(response.data.Confidential);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
-  const toggleIcon = index => {
+  const toggleIcon = (nomineedName, index) => {
     const updatedIcons = [false, false];
     updatedIcons[index] = true;
-    console.log(updatedIcons);
+    setNominees(nomineedName);
     setShowIcon(updatedIcons);
+    setModal(!modal);
   };
   return (
     <>
@@ -74,7 +105,6 @@ const Preview = () => {
         </div>
         <div className="container">
           <div className="row">
-            <div className="col-md-1 col-xl-1 col-lg-1"></div>
             {NomineeList?.length > 0 && (
               <>
                 {NomineeList?.map((ele, index) => (
@@ -84,7 +114,7 @@ const Preview = () => {
                   >
                     <div
                       style={{ cursor: "pointer" }}
-                      onClick={() => toggleIcon(index)}
+                      onClick={() => toggleIcon(ele, index)}
                     >
                       <div>
                         {showIcon[index] && (
@@ -153,267 +183,17 @@ const Preview = () => {
                 ))}
               </>
             )}
-
-            {/* <div className="col-md-2 col-xl-2 col-lg-2 col-sm-4 col-6">
-              <div style={{ cursor: "pointer" }} onClick={() => toggleIcon(1)}>
-                <div>
-                  {showIcon[1] && (
-                    <svg
-                      style={{ position: "absolute", right: "30px" }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="cssforhandlesvgiconofpayment1"
-                      width="50"
-                      height="50"
-                      viewBox="0,0,256,256"
-                    >
-                      <g
-                        fill="none"
-                        fill-rule="nonzero"
-                        stroke="none"
-                        stroke-width="1"
-                        stroke-linecap="butt"
-                        stroke-linejoin="miter"
-                        stroke-miterlimit="10"
-                        stroke-dasharray=""
-                        stroke-dashoffset="0"
-                        font-family="none"
-                        font-weight="none"
-                        font-size="none"
-                        text-anchor="none"
-                      >
-                        <g transform="scale(0.5,0.5)">
-                          <path
-                            d="M504.1,256c0,-137 -111.1,-248.1 -248.1,-248.1c-137,0 -248.1,111.1 -248.1,248.1c0,137 111.1,248.1 248.1,248.1c137,0 248.1,-111.1 248.1,-248.1z"
-                            fill="#10a614"
-                          ></path>
-                          <path
-                            d="M392.6,172.9c-5.8,-15.1 -17.7,-12.7 -30.6,-10.1c-7.7,1.6 -42,11.6 -96.1,68.8c-22.5,23.7 -37.3,42.6 -47.1,57c-6,-7.3 -12.8,-15.2 -20,-22.3c-22.1,-22.1 -46.8,-37.3 -47.8,-37.9c-10.3,-6.3 -23.8,-3.1 -30.2,7.3c-6.3,10.3 -3.1,23.8 7.2,30.2c0.2,0.1 21.4,13.2 39.6,31.5c18.6,18.6 35.5,43.8 35.7,44.1c4.1,6.2 11,9.8 18.3,9.8c1.2,0 2.5,-0.1 3.8,-0.3c8.6,-1.5 15.4,-7.9 17.5,-16.3c0.1,-0.2 8.8,-24.3 54.7,-72.7c37,-39.1 61.7,-51.5 70.3,-54.9c0.1,0 0.1,0 0.3,0c0,0 0.3,-0.1 0.8,-0.4c1.5,-0.6 2.3,-0.8 2.3,-0.8c-0.4,0.1 -0.6,0.1 -0.6,0.1v-0.1c4,-1.7 11.4,-4.9 11.5,-5c11.1,-4.8 14.8,-16.8 10.4,-28z"
-                            fill="#ffffff"
-                          ></path>
-                        </g>
-                      </g>
-                    </svg>
-                  )}
-                </div>
-                <div
-                  className="mt-5"
-                  style={{ justifyContent: "center", display: "flex" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="130"
-                    height="130"
-                    fill="currentColor"
-                    class="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path
-                      fill-rule="evenodd"
-                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                    />
-                  </svg>
-                </div>
-                <p style={{ textAlign: "center", fontSize: "20px" }}>
-                  BCD <br></br>(Brother)
-                </p>
-              </div>
-            </div>
-            <div className="col-md-2 col-xl-2 col-lg-2 col-sm-4 col-6">
-              <div style={{ cursor: "pointer" }} onClick={() => toggleIcon(2)}>
-                <div>
-                  {showIcon[2] && (
-                    <svg
-                      style={{ position: "absolute", right: "30px" }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="cssforhandlesvgiconofpayment1"
-                      width="50"
-                      height="50"
-                      viewBox="0,0,256,256"
-                    >
-                      <g
-                        fill="none"
-                        fill-rule="nonzero"
-                        stroke="none"
-                        stroke-width="1"
-                        stroke-linecap="butt"
-                        stroke-linejoin="miter"
-                        stroke-miterlimit="10"
-                        stroke-dasharray=""
-                        stroke-dashoffset="0"
-                        font-family="none"
-                        font-weight="none"
-                        font-size="none"
-                        text-anchor="none"
-                      >
-                        <g transform="scale(0.5,0.5)">
-                          <path
-                            d="M504.1,256c0,-137 -111.1,-248.1 -248.1,-248.1c-137,0 -248.1,111.1 -248.1,248.1c0,137 111.1,248.1 248.1,248.1c137,0 248.1,-111.1 248.1,-248.1z"
-                            fill="#10a614"
-                          ></path>
-                          <path
-                            d="M392.6,172.9c-5.8,-15.1 -17.7,-12.7 -30.6,-10.1c-7.7,1.6 -42,11.6 -96.1,68.8c-22.5,23.7 -37.3,42.6 -47.1,57c-6,-7.3 -12.8,-15.2 -20,-22.3c-22.1,-22.1 -46.8,-37.3 -47.8,-37.9c-10.3,-6.3 -23.8,-3.1 -30.2,7.3c-6.3,10.3 -3.1,23.8 7.2,30.2c0.2,0.1 21.4,13.2 39.6,31.5c18.6,18.6 35.5,43.8 35.7,44.1c4.1,6.2 11,9.8 18.3,9.8c1.2,0 2.5,-0.1 3.8,-0.3c8.6,-1.5 15.4,-7.9 17.5,-16.3c0.1,-0.2 8.8,-24.3 54.7,-72.7c37,-39.1 61.7,-51.5 70.3,-54.9c0.1,0 0.1,0 0.3,0c0,0 0.3,-0.1 0.8,-0.4c1.5,-0.6 2.3,-0.8 2.3,-0.8c-0.4,0.1 -0.6,0.1 -0.6,0.1v-0.1c4,-1.7 11.4,-4.9 11.5,-5c11.1,-4.8 14.8,-16.8 10.4,-28z"
-                            fill="#ffffff"
-                          ></path>
-                        </g>
-                      </g>
-                    </svg>
-                  )}
-                </div>
-                <div
-                  className="mt-5"
-                  style={{ justifyContent: "center", display: "flex" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="130"
-                    height="130"
-                    fill="currentColor"
-                    class="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path
-                      fill-rule="evenodd"
-                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                    />
-                  </svg>
-                </div>
-                <p style={{ textAlign: "center", fontSize: "20px" }}>
-                  DEF <br></br>(Sister)
-                </p>
-              </div>
-            </div>
-            <div className="col-md-2 col-xl-2 col-lg-2 col-sm-4 col-6">
-              <div style={{ cursor: "pointer" }} onClick={() => toggleIcon(3)}>
-                <div>
-                  {showIcon[3] && (
-                    <svg
-                      style={{ position: "absolute", right: "30px" }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="cssforhandlesvgiconofpayment1"
-                      width="50"
-                      height="50"
-                      viewBox="0,0,256,256"
-                    >
-                      <g
-                        fill="none"
-                        fill-rule="nonzero"
-                        stroke="none"
-                        stroke-width="1"
-                        stroke-linecap="butt"
-                        stroke-linejoin="miter"
-                        stroke-miterlimit="10"
-                        stroke-dasharray=""
-                        stroke-dashoffset="0"
-                        font-family="none"
-                        font-weight="none"
-                        font-size="none"
-                        text-anchor="none"
-                      >
-                        <g transform="scale(0.5,0.5)">
-                          <path
-                            d="M504.1,256c0,-137 -111.1,-248.1 -248.1,-248.1c-137,0 -248.1,111.1 -248.1,248.1c0,137 111.1,248.1 248.1,248.1c137,0 248.1,-111.1 248.1,-248.1z"
-                            fill="#10a614"
-                          ></path>
-                          <path
-                            d="M392.6,172.9c-5.8,-15.1 -17.7,-12.7 -30.6,-10.1c-7.7,1.6 -42,11.6 -96.1,68.8c-22.5,23.7 -37.3,42.6 -47.1,57c-6,-7.3 -12.8,-15.2 -20,-22.3c-22.1,-22.1 -46.8,-37.3 -47.8,-37.9c-10.3,-6.3 -23.8,-3.1 -30.2,7.3c-6.3,10.3 -3.1,23.8 7.2,30.2c0.2,0.1 21.4,13.2 39.6,31.5c18.6,18.6 35.5,43.8 35.7,44.1c4.1,6.2 11,9.8 18.3,9.8c1.2,0 2.5,-0.1 3.8,-0.3c8.6,-1.5 15.4,-7.9 17.5,-16.3c0.1,-0.2 8.8,-24.3 54.7,-72.7c37,-39.1 61.7,-51.5 70.3,-54.9c0.1,0 0.1,0 0.3,0c0,0 0.3,-0.1 0.8,-0.4c1.5,-0.6 2.3,-0.8 2.3,-0.8c-0.4,0.1 -0.6,0.1 -0.6,0.1v-0.1c4,-1.7 11.4,-4.9 11.5,-5c11.1,-4.8 14.8,-16.8 10.4,-28z"
-                            fill="#ffffff"
-                          ></path>
-                        </g>
-                      </g>
-                    </svg>
-                  )}
-                </div>
-                <div
-                  className="mt-5"
-                  style={{ justifyContent: "center", display: "flex" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="130"
-                    height="130"
-                    fill="currentColor"
-                    class="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path
-                      fill-rule="evenodd"
-                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                    />
-                  </svg>
-                </div>
-                <p style={{ textAlign: "center", fontSize: "20px" }}>
-                  EFG <br></br>(Father)
-                </p>
-              </div>
-            </div>
-            <div className="col-md-2 col-xl-2 col-lg-2 col-sm-4 col-6">
-              <div style={{ cursor: "pointer" }} onClick={() => toggleIcon(4)}>
-                <div>
-                  {showIcon[4] && (
-                    <svg
-                      style={{ position: "absolute", right: "30px" }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="cssforhandlesvgiconofpayment1"
-                      width="50"
-                      height="50"
-                      viewBox="0,0,256,256"
-                    >
-                      <g
-                        fill="none"
-                        fill-rule="nonzero"
-                        stroke="none"
-                        stroke-width="1"
-                        stroke-linecap="butt"
-                        stroke-linejoin="miter"
-                        stroke-miterlimit="10"
-                        stroke-dasharray=""
-                        stroke-dashoffset="0"
-                        font-family="none"
-                        font-weight="none"
-                        font-size="none"
-                        text-anchor="none"
-                      >
-                        <g transform="scale(0.5,0.5)">
-                          <path
-                            d="M504.1,256c0,-137 -111.1,-248.1 -248.1,-248.1c-137,0 -248.1,111.1 -248.1,248.1c0,137 111.1,248.1 248.1,248.1c137,0 248.1,-111.1 248.1,-248.1z"
-                            fill="#10a614"
-                          ></path>
-                          <path
-                            d="M392.6,172.9c-5.8,-15.1 -17.7,-12.7 -30.6,-10.1c-7.7,1.6 -42,11.6 -96.1,68.8c-22.5,23.7 -37.3,42.6 -47.1,57c-6,-7.3 -12.8,-15.2 -20,-22.3c-22.1,-22.1 -46.8,-37.3 -47.8,-37.9c-10.3,-6.3 -23.8,-3.1 -30.2,7.3c-6.3,10.3 -3.1,23.8 7.2,30.2c0.2,0.1 21.4,13.2 39.6,31.5c18.6,18.6 35.5,43.8 35.7,44.1c4.1,6.2 11,9.8 18.3,9.8c1.2,0 2.5,-0.1 3.8,-0.3c8.6,-1.5 15.4,-7.9 17.5,-16.3c0.1,-0.2 8.8,-24.3 54.7,-72.7c37,-39.1 61.7,-51.5 70.3,-54.9c0.1,0 0.1,0 0.3,0c0,0 0.3,-0.1 0.8,-0.4c1.5,-0.6 2.3,-0.8 2.3,-0.8c-0.4,0.1 -0.6,0.1 -0.6,0.1v-0.1c4,-1.7 11.4,-4.9 11.5,-5c11.1,-4.8 14.8,-16.8 10.4,-28z"
-                            fill="#ffffff"
-                          ></path>
-                        </g>
-                      </g>
-                    </svg>
-                  )}
-                </div>
-                <div
-                  className="mt-5"
-                  style={{ justifyContent: "center", display: "flex" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="130"
-                    height="130"
-                    fill="currentColor"
-                    class="bi bi-person-circle"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path
-                      fill-rule="evenodd"
-                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                    />
-                  </svg>
-                </div>
-                <p style={{ textAlign: "center", fontSize: "20px" }}>
-                  XYZ <br></br>(Mother)
-                </p>
-              </div>
-            </div> */}
+            {modal && (
+              <PdfDocList
+                NomineeList={NomineeList}
+                AssetList={AssetList}
+                nominees={nominees}
+                manageList={manageList}
+                userdetails={JSON.parse(
+                  sessionStorage.getItem("UserZimmedari")
+                )}
+              />
+            )}
           </div>
         </div>
       </div>

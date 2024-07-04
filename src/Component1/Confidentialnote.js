@@ -1,18 +1,27 @@
-import React, { useState } from "react";
-import { LinkContainer } from "react-router-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Mynavbar from "./Mynavbar";
 import EmailModal from "./nominee/EmailModal";
+import axiosConfig from "../axiosConfig";
 import PhoneOtp from "./nominee/phoneOtp";
+import { ErrorModal } from "./ManageAccount/ErrorModal";
 import "../css/style.css";
 const Confidentialnote = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formValues, setFormValues] = useState({
     nomineeName: "",
     nomineeEmailId: "",
-    NomineePhoneNumber: null,
+    NomineePhoneNumber: "",
     relationWithNominee: "",
   });
-
+  const [myEmail, setMyEmail] = useState("");
+  const [myNumber, setMyNumber] = useState("");
+  const [newOtp, setNewOtp] = useState(null);
+  const [phoneNo, setPhoneNo] = useState("");
+  const [message, setMessage] = useState("");
+  const [errModal, setErrModal] = useState(false);
   const [formError, setFormError] = useState({
     IsnomineeName: false,
     IsnomineeEmailId: false,
@@ -21,44 +30,104 @@ const Confidentialnote = () => {
   });
   const [modalShow, setModalShow] = useState(false);
   const [modalShowmail, setModalShowmail] = useState(false);
-  const handlePhoneModal = () => {
-    setModalShow(true);
+
+  const generateOTP = () => {
+    // Generate a random 6-digit number
+    const myOtp = Math.floor(100000 + Math.random() * 900000);
+    console.log(myOtp);
+    return myOtp.toString(); // Convert number to string
   };
-  const handleEmailModal = () => {
-    setModalShowmail(true);
+
+  const sendSMS = async number => {
+    const newOTP = generateOTP();
+    setNewOtp(newOTP);
+    try {
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${number}`;
+      const response = await axiosConfig.get(allUrl);
+    } catch (error) {
+      //  if (error?.response?.data?.message) {
+      //    document.getElementById("alert").innerHTML =
+      //      "Sending multiple sms to same number is not allowed";
+      //  }
+    }
   };
+  // const handlePhoneModal1 = (number) => {
+
+  // };
+  const handlePhoneModal = number => {
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    if (number) {
+      let payload = {
+        userId: user?._id,
+        mobileNo: Number(number),
+      };
+      axiosConfig
+        .post("/asset/otp-mobile", payload)
+        .then(response => {
+          sendSMS(number);
+          setMyNumber(number);
+          setPhoneNo(number);
+          setModalShow(true);
+          setModalShowmail(false);
+          setFormError({ IsPhoneAvail: false });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } else {
+      setFormError({ IsPhoneAvail: true });
+    }
+  };
+  const handleEmailModal = currentEmail => {
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    if (currentEmail) {
+      let payload = {
+        userId: user?._id,
+        email: currentEmail,
+      };
+      debugger;
+      axiosConfig
+        .post("/asset/otp-email", payload)
+        .then(response => {
+          setModalShowmail(true);
+          setModalShow(false);
+          setMyEmail(currentEmail);
+          // setMailIndex(index);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  };
+
   const handleChange = e => {
     const value = e.target.value;
     const fieldName = e.target.name;
+
+    // Regular expression to allow only numbers
+    const regex = /^[0-9\b]+$/;
     setFormValues(prevValues => {
       let updatedValues = { ...prevValues }; // Create a copy of the previous form values
-
       if (fieldName === "nomineeName") {
         if (/^[A-Za-z]*$/.test(value)) {
           updatedValues[fieldName] = value; // Update nomineeName if value passes the test
         }
       } else if (fieldName === "relationWithNominee") {
-        updatedValues[fieldName] = value; // Update relationWithNominee
-      }
-
-      const phoneNumberRegex = /^\d{10}$/;
-      if (fieldName === "NomineePhoneNumber") {
-        if (phoneNumberRegex.test(value)) {
-          updatedValues[fieldName] = Number(value); // Update NomineePhoneNumber as a number if it passes the regex test
-          localStorage.setItem("UpdatedNo", Number(value)); // Store in localStorage
-        } else {
-          updatedValues[fieldName] = Number(value); // Otherwise, update NomineePhoneNumber as a number
+        updatedValues[fieldName] = value;
+      } else if (fieldName === "NomineePhoneNumber") {
+        if (value === "" || regex.test(value)) {
+          // if (isPhoneValid) {
+          updatedValues[fieldName] = value; // Update NomineePhoneNumber as a number if it passes the regex test
+          localStorage.setItem("UpdatedNo", Number(value));
         }
       } else if (fieldName === "nomineeEmailId") {
         updatedValues[fieldName] = value; // Update nomineeEmailId
       }
-
       return updatedValues; // Return the updated form values
     });
   };
   const handleSubmit = e => {
     e.preventDefault();
-
     let errors = {};
     if (!formValues.nomineeName) errors.IsnomineeName = true;
     let mobileNum = document.getElementById("NomineePhoneNumber").value;
@@ -66,15 +135,31 @@ const Confidentialnote = () => {
     if (!formValues.relationWithNominee) errors.IsrelationWithNominee = true;
 
     if (Object.keys(errors)?.length === 0) {
-      console.log(formValues);
-      setFormValues({
-        nomineeName: "",
-        nomineeEmailId: "",
-        NomineePhoneNumber: "",
-        relationWithNominee: "",
-      });
+      formValues.description = location.state.editorState.blocks[0].text;
+
+      axiosConfig
+        .post(`/confidential/save-confidential`, formValues)
+        .then(response => {
+          setMessage(`${response?.data?.message}`);
+          setErrModal(true);
+          setTimeout(() => {
+            setErrModal(false);
+            navigate("/manageconfidentialnote");
+          }, 2000);
+          // }
+          setFormValues({
+            nomineeName: "",
+            nomineeEmailId: "",
+            NomineePhoneNumber: "",
+            relationWithNominee: "",
+          });
+        })
+        .catch(error => {
+          setMessage("Something went Wrong");
+          setErrModal(true);
+        });
+
       setFormError("");
-      alert("Data Submitted Successfully!");
     } else {
       setFormError(errors);
     }
@@ -84,12 +169,22 @@ const Confidentialnote = () => {
       <Mynavbar />
       {modalShow ? (
         <div className="myModal1">
-          <PhoneOtp setModalShow={setModalShow} />
+          <PhoneOtp
+            setModalShow={setModalShow}
+            myNumber={phoneNo}
+            newOtp={newOtp}
+            setFormValues={setFormValues}
+          />
         </div>
       ) : null}
       {modalShowmail ? (
         <div className="myModal1">
-          <EmailModal setModalShowmail={setModalShowmail} />
+          <EmailModal
+            setModalShowmail={setModalShowmail}
+            setModalShow={setModalShow}
+            myEmail={myEmail}
+            setFormValues={setFormValues}
+          />
         </div>
       ) : null}
 
@@ -237,8 +332,11 @@ const Confidentialnote = () => {
                         >
                           <option
                             selected
+                            value=""
                             style={{ float: "left", border: "none" }}
-                          ></option>
+                          >
+                            Select Nominee
+                          </option>
                           <option value="Wife">Wife</option>
                           <option value="Father">Father</option>
                           <option value="Mother">Mother</option>
@@ -318,7 +416,8 @@ const Confidentialnote = () => {
                           </div>
                           <div className="col-md-6 col-sm-6 col-lg-6 col-xl-6 col-6">
                             <input
-                              type="tel"
+                              maxLength={10}
+                              type="text"
                               placeholder="965XX50XX0"
                               style={{
                                 width: "90%",
@@ -340,7 +439,11 @@ const Confidentialnote = () => {
                           >
                             <span>
                               <a
-                                onClick={handlePhoneModal}
+                                onClick={() =>
+                                  handlePhoneModal(
+                                    formValues.NomineePhoneNumber
+                                  )
+                                }
                                 className="btn"
                                 style={{
                                   fontSize: "13px",
@@ -419,7 +522,7 @@ const Confidentialnote = () => {
                               }}
                               id="nomineeEmailId"
                               name="nomineeEmailId"
-                              value={formValues.nomineeEmailId}
+                              value={formValues?.nomineeEmailId}
                               onChange={handleChange}
                             />
                           </div>
@@ -429,7 +532,9 @@ const Confidentialnote = () => {
                           >
                             <span>
                               <a
-                                onClick={handleEmailModal}
+                                onClick={() =>
+                                  handleEmailModal(formValues.nomineeEmailId)
+                                }
                                 className="btn "
                                 style={{
                                   fontSize: "13px",
@@ -515,6 +620,11 @@ const Confidentialnote = () => {
           </Link>
         </span>
       </div>
+      <ErrorModal
+        show={errModal}
+        message={message}
+        onHide={() => setErrModal(false)}
+      />
     </>
   );
 };

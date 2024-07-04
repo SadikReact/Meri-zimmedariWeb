@@ -52,7 +52,6 @@ const Otpveri = () => {
         .post("/otp-verify", payload)
         .then(response => {
           if (response.data.success == "ok") {
-            console.log(response.data.User);
             setIsValidOtp(false);
             localStorage.setItem(
               "user_token",

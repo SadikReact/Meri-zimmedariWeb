@@ -9,6 +9,7 @@ const Payment = () => {
   const [selectedPlan, setselectedPlan] = useState({});
   const [plan, setplan] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [isChecked1, setIsChecked1] = useState(false);
 
   const toggleIcon = index => {
     const updatedIcons = [false, false];
@@ -16,8 +17,8 @@ const Payment = () => {
     setShowIcon(updatedIcons);
   };
   const handleCheckboxChange = () => {
-    // Toggle the isChecked state when the checkbox is clicked
-    setIsChecked(!isChecked);
+    setIsChecked1(!isChecked1);
+    console.log(isChecked1);
   };
 
   useEffect(() => {
@@ -168,7 +169,7 @@ const Payment = () => {
                                     fontSize: "18px",
                                   }}
                                 >
-                                  Asset allowed to{" "}
+                                  Asset allowed to
                                 </span>
                                 <p
                                   style={{
@@ -294,7 +295,6 @@ const Payment = () => {
                           required
                           class="form-check-input cssforcheckboxstylepayment"
                           type="checkbox"
-                          value=""
                           onChange={handleCheckboxChange}
                         />
                         <label
@@ -316,17 +316,21 @@ const Payment = () => {
                           marginTop: "15px",
                         }}
                       >
-                        <button
-                          disabled={!isChecked}
+                        {/* <button
+                          disabled={!isChecked1}
                           style={{
                             backgroundColor: "none",
                             border: "none",
                             outline: "none",
                           }}
                         >
-                          <GateWay selectedPlan={selectedPlan} USer={USer} />
-                        </button>
-
+                          DFGGG
+                        </button> */}
+                        <GateWay
+                          check={isChecked1}
+                          selectedPlan={selectedPlan}
+                          USer={USer}
+                        />
                         {/* <button
                           style={{
                             width: "90%",

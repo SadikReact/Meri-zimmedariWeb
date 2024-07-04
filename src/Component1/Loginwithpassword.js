@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axiosConfig from "../axiosConfig";
 import NavBar from "./NavBar";
@@ -15,6 +15,22 @@ const Loginwithpassword = () => {
   const location = useLocation();
   const phoneNumber = location.state;
 
+  const sendSMS = async () => {
+    let newOTP = Math.floor(100000 + Math.random() * 900000);
+    // const newOTP = generateOTP();
+    let MobileNUM = JSON.parse(localStorage.getItem("MobileNUM"));
+    console.log(newOTP, MobileNUM);
+    try {
+      const allUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=tPeRv5qsOyILgfbKuFVinQcA6ZM0kNa7Dw1rzGh2Y438ljCHpXgy0kifoKxGPLvcB6lhYbFpMwt4NXQd&route=dlt&sender_id=MRZMDR&message=167804&variables_values=${newOTP}&flash=0&numbers=${MobileNUM}`;
+
+      const response = await axiosConfig.get(allUrl);
+      // setResponse(response.data);
+      navigate("/Forgot/password/otp", { state: newOTP });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleFormSubmit = e => {
     e.preventDefault();
     let payload = {
@@ -58,9 +74,8 @@ const Loginwithpassword = () => {
     axiosConfig
       .post("/user/forget-password", { mobileNo: Number(phoneNumber) })
       .then(response => {
-        console.log(response.data);
-        // navigate("/forgot/password");
-        navigate("/Forgot/password/otp");
+        console.log(response.data.message);
+        sendSMS();
       })
       .catch(error => {
         //  setIsValidOtp(true);
@@ -154,7 +169,7 @@ const Loginwithpassword = () => {
                           paddingLeft: "5px",
                           fontFamily: "Calibri",
                           marginLeft: "15px",
-                          width: "7.5rem",
+                          width: "auto",
                         }}
                         for="exampleInputPassword1"
                         class="form-label"
@@ -187,7 +202,7 @@ const Loginwithpassword = () => {
                     <div className="mt-2">
                       <span className="ml-1">
                         <span
-                          onClick={handleForgetPassword} // corrected function name
+                          onClick={handleForgetPassword}
                           style={{
                             textDecoration: "none",
                             color: "#007bff",

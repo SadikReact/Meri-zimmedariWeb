@@ -1,24 +1,31 @@
 import React, { useState } from "react";
-import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Link, useNavigate } from "react-router-dom";
 import Mynavbar from "./Mynavbar";
 const Confidentialeditor = () => {
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
 
   const onEditorStateChange = newEditorState => {
-    setEditorState(newEditorState.getCurrentContent().getPlainText());
-    // Here, you can access the new editor state if needed
-    console.log(newEditorState.getCurrentContent().getPlainText());
-    // This will log the plain text content of the editor whenever it changes
+    setEditorState(newEditorState);
+    // console.log(newEditorState.getCurrentContent().getPlainText());
   };
   const handleNext = () => {
-    console.log(editorState);
-    navigate("/confidentialnote");
+    console.log(editorState.getCurrentContent().getPlainText());
+    const contentState = editorState.getCurrentContent();
+    const contentStateJSON = convertToRaw(contentState);
+    if (editorState.getCurrentContent().getPlainText()) {
+      navigate("/confidentialnote", {
+        state: { editorState: contentStateJSON },
+      });
+    } else {
+      setMessage("* indicates required field");
+    }
   };
   return (
     <>
@@ -98,6 +105,19 @@ const Confidentialeditor = () => {
             }}
           />
         </div>
+        {message.length > 0 && (
+          <div
+            className="validationmobilefont"
+            style={{
+              color: "red",
+              padding: "5px",
+
+              marginTop: "3px",
+            }}
+          >
+            * indicates required field
+          </div>
+        )}
 
         <div className="container mt-2">
           <div style={{ float: "left" }}>
