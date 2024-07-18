@@ -292,8 +292,8 @@ const Index = () => {
                         ) : (
                           "NA"
                         )} */}
-                        {lifeDeclaration?.lastDeclarationDate ? (
-                          <>{lifeDeclaration.lastDeclarationDate}</>
+                        {lifeDeclaration?.nextDeclarationDate ? (
+                          <>{lifeDeclaration.nextDeclarationDate}</>
                         ) : (
                           "NA"
                         )}
@@ -316,8 +316,8 @@ const Index = () => {
                           color: "rgb(43, 77, 129)",
                         }}
                       >
-                        {lifeDeclaration?.nextDeclarationDate ? (
-                          <>{lifeDeclaration.nextDeclarationDate}</>
+                        {lifeDeclaration?.lastDeclarationDate ? (
+                          <>{lifeDeclaration.lastDeclarationDate}</>
                         ) : (
                           "NA"
                         )}

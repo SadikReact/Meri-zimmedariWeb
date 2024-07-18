@@ -1,52 +1,55 @@
 import React, { useState, useEffect } from "react";
 import Mynavbar from "./Mynavbar";
 import axiosConfig from "../axiosConfig";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import PdfDocList from "./PdfDocList";
 const Preview = () => {
-  const [showIcon, setShowIcon] = useState([]); // State to manage icon visibility for each card
+  const [showIcon, setShowIcon] = useState([]);
   const [NomineeList, setNomineeList] = useState([]);
-  const [AssetList, setAssetList] = useState([]);
+  const [AssetList, setAssetList] = useState({});
   const [modal, setModal] = useState(false);
   const [nominees, setNominees] = useState(null);
   const [manageList, setManageList] = useState([]);
-  const navigate = useNavigate();
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    AllAssetList();
-    confidentialList();
+    (async function () {
+      try {
+        const response = await axiosConfig.get(
+          "/confidential/view-confidential"
+        );
+
+        setManageList(response.data.Confidential);
+        allNominee(userData, response.data.Confidential);
+      } catch (err) {
+        allNominee(userData, []);
+      }
+    })();
+  }, []);
+
+  const AllAssetList = () => {
+    if (nominees?._id) {
+      axiosConfig
+        .get(`/asset/view-nominee-assets/${nominees?._id}`)
+        .then(response => {
+          console.log(response.data.Assets);
+          setAssetList(response.data.Assets);
+        })
+        .catch(error => {
+          setAssetList();
+          console.log(error.response?.data);
+        });
+    }
+  };
+  const allNominee = (userData, Confidential) => {
     axiosConfig
       .get(`/asset/nominee-list/${userData._id}`)
       .then(response => {
-        setNomineeList(response.data?.Nominee);
-        // console.log(response.data?.Nominee);
+        let total = [...Confidential, ...response.data?.Nominee];
+        setNomineeList(total);
       })
       .catch(err => {
         setNomineeList([]);
 
         console.log("err", err);
-      });
-  }, []);
-  const AllAssetList = () => {
-    const userData = JSON.parse(sessionStorage.getItem("UserZimmedari"));
-    axiosConfig
-      .get(`/asset/view-assets-userId/${userData?._id}`)
-      .then(response => {
-        setAssetList(response.data.Asset);
-      })
-      .catch(error => {
-        console.log(error.response?.data);
-      });
-  };
-  const confidentialList = () => {
-    axiosConfig
-      .get("/confidential/view-confidential")
-      .then(response => {
-        setManageList(response.data.Confidential);
-        console.log(response.data.Confidential);
-      })
-      .catch(err => {
-        console.log(err);
       });
   };
 
@@ -54,6 +57,7 @@ const Preview = () => {
     const updatedIcons = [false, false];
     updatedIcons[index] = true;
     setNominees(nomineedName);
+    AllAssetList();
     setShowIcon(updatedIcons);
     setModal(!modal);
   };
@@ -194,6 +198,13 @@ const Preview = () => {
                 )}
               />
             )}
+            {/* <PdfDocList
+              NomineeList={NomineeList}
+              AssetList={AssetList}
+              nominees={nominees}
+              manageList={manageList}
+              userdetails={JSON.parse(sessionStorage.getItem("UserZimmedari"))}
+            /> */}
           </div>
         </div>
       </div>

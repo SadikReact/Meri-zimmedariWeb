@@ -37,9 +37,12 @@ const Summary = ({
 
   const handleSubmit = () => {
     const formData = new FormData();
+    debugger;
     let userId = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     formData.append("userId", userId?._id);
-    formData.append("file", uploadedFile);
+    if (uploadedFile !== null) {
+      formData.append("file", uploadedFile);
+    }
     formData.append(
       "assetType",
       AssetData?.dynamicFields?.assetType

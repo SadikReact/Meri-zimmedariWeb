@@ -7,14 +7,12 @@ export default function ViewConfidentialNote() {
   const [viewData, setViewData] = useState("");
   useEffect(() => {
     let id = location.state._id;
-    console.log(location.state._id);
     axiosConfig
       .get(`/confidential/view-confidential-by-id/${id}`)
-      .then(response => {
+      .then((response) => {
         setViewData(response.data.Confidential);
-        console.log(response.data.Confidential);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }, []);
@@ -30,8 +28,7 @@ export default function ViewConfidentialNote() {
                 style={{
                   color: "white",
                   textAlign: "center",
-                }}
-              >
+                }}>
                 <th scope="col" style={{ borderRight: "2px solid white" }}>
                   Item
                 </th>
@@ -50,14 +47,13 @@ export default function ViewConfidentialNote() {
                   textAlign: "center",
                   fontSize: "18px",
                   color: "black",
-                }}
-              >
+                }}>
                 <td style={{ borderRight: "2px solid white", color: "#fff" }}>
                   <input
                     type="text"
                     disabled
                     value={viewData?.description}
-                    style={{ color: "#fff" }}
+                    style={{ color: "black" }}
                   />
                 </td>
                 <td style={{ borderRight: "2px solid white" }}>
@@ -65,7 +61,7 @@ export default function ViewConfidentialNote() {
                     type="text"
                     disabled
                     value={viewData?.nomineeName}
-                    style={{ color: "#fff" }}
+                    style={{ color: "black" }}
                   />
                 </td>
                 <td style={{ borderRight: "2px solid white" }}>
@@ -73,7 +69,7 @@ export default function ViewConfidentialNote() {
                     type="text"
                     disabled
                     value={viewData?.relationWithNominee}
-                    style={{ color: "#fff" }}
+                    style={{ color: "black" }}
                   />
                 </td>
               </tr>
@@ -85,15 +81,13 @@ export default function ViewConfidentialNote() {
           <div style={{ float: "left", bottom: "0", position: "absolute" }}>
             <Link
               to={"/manageconfidentialnote"}
-              style={{ textDecoration: "none" }}
-            >
+              style={{ textDecoration: "none" }}>
               <p
                 style={{
                   color: "rgb(82, 114, 161)",
                   fontSize: "20px",
                   fontWeight: "500",
-                }}
-              >
+                }}>
                 <span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -101,8 +95,7 @@ export default function ViewConfidentialNote() {
                     height="20"
                     fill="currentColor"
                     class="bi bi-arrow-left"
-                    viewBox="0 0 16 16"
-                  >
+                    viewBox="0 0 16 16">
                     <path
                       fill-rule="evenodd"
                       d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
