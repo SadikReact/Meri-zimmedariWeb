@@ -183,11 +183,9 @@ const Login = () => {
     axiosConfig
       .post("/signin", formdDetails)
       .then(res => {
-        console.log(res?.data?.message);
-        console.log(res?.data?.User);
-        setLoading("Sign-in with face recognition");
+        setLoading("Sign-in with Face recognition");
         if (res?.data?.User) {
-          setMessage(`${res?.data?.message}`);
+          setMessage(`Face recognition  Succussfully`);
           setErrModal(true);
           setIsSubmit(false);
           sessionStorage.setItem(
@@ -200,7 +198,7 @@ const Login = () => {
         }
       })
       .catch(err => {
-        setMessage(`${err.message}`);
+        setMessage("Face not Matched");
         setErrModal(true);
         setLoading("Sign-in with face recognition");
         console.log(err.message);

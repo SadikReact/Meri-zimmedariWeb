@@ -115,8 +115,7 @@ export default function EditConfidentialNote() {
                         fontFamily: "Calibri",
                         border: "1px solid rgb(114, 158, 216)",
                         borderRadius: "10px",
-                      }}
-                    >
+                      }}>
                       <legend
                         style={{
                           color: "rgb(82, 114, 161)",
@@ -126,8 +125,7 @@ export default function EditConfidentialNote() {
                           width: "auto",
                         }}
                         for="exampleInputPassword1"
-                        class="form-label"
-                      >
+                        class="form-label">
                         Item
                         <span style={{ color: "red" }}> *</span>
                       </legend>
@@ -138,8 +136,7 @@ export default function EditConfidentialNote() {
                           padding: "20px",
                           height: "9rem",
                           overflow: "auto",
-                        }}
-                      >
+                        }}>
                         <Editor
                           toolbarClassName="demo-toolbar-absolute"
                           wrapperClassName="demo-wrapper"
@@ -194,8 +191,7 @@ export default function EditConfidentialNote() {
                           padding: "5px",
 
                           marginTop: "3px",
-                        }}
-                      >
+                        }}>
                         * indicates required field
                       </div>
                     )}
@@ -214,8 +210,7 @@ export default function EditConfidentialNote() {
                         fontFamily: "Calibri",
                         border: "1px solid rgb(114, 158, 216)",
                         borderRadius: "10px",
-                      }}
-                    >
+                      }}>
                       <legend
                         style={{
                           color: "rgb(82, 114, 161)",
@@ -225,8 +220,7 @@ export default function EditConfidentialNote() {
                           width: "auto",
                         }}
                         for="exampleInputPassword1"
-                        class="form-label"
-                      >
+                        class="form-label">
                         Nominee Name
                         <span style={{ color: "red" }}> *</span>
                       </legend>
@@ -257,8 +251,7 @@ export default function EditConfidentialNote() {
                           padding: "5px",
 
                           marginTop: "3px",
-                        }}
-                      >
+                        }}>
                         * indicates required field
                       </div>
                     )}
@@ -278,8 +271,7 @@ export default function EditConfidentialNote() {
                         border: "1px solid rgb(114, 158, 216)",
                         borderRadius: "10px",
                         height: "5.3rem",
-                      }}
-                    >
+                      }}>
                       <legend
                         style={{
                           color: "rgb(82, 114, 161)",
@@ -289,8 +281,7 @@ export default function EditConfidentialNote() {
                           width: "auto",
                         }}
                         for="exampleInputPassword1"
-                        class="form-label"
-                      >
+                        class="form-label">
                         Relation with Nominee
                         <span style={{ color: "red" }}> *</span>
                       </legend>
@@ -312,13 +303,11 @@ export default function EditConfidentialNote() {
                           paddingBottom: "10px",
                           marginBottom: "5px",
                           backgroundColor: "white",
-                        }}
-                      >
+                        }}>
                         <option
                           Nominee
                           Relation
-                          style={{ float: "left", border: "none" }}
-                        ></option>
+                          style={{ float: "left", border: "none" }}></option>
 
                         <option disabled value="">
                           Select
@@ -341,8 +330,7 @@ export default function EditConfidentialNote() {
                           padding: "5px",
 
                           marginTop: "3px",
-                        }}
-                      >
+                        }}>
                         * indicates required field
                       </div>
                     )}
@@ -355,14 +343,13 @@ export default function EditConfidentialNote() {
         <div className="container">
           <div className="container mt-5 mb-2 cssforfooternomineedetails">
             <div style={{ float: "left" }}>
-              <Link to={"/manageconfidentialnote"}>
+              <Link to={"/dashboard"}>
                 <p
                   style={{
                     color: "rgb(82, 114, 161)",
                     fontSize: "20px",
                     fontWeight: "500",
-                  }}
-                >
+                  }}>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -370,8 +357,7 @@ export default function EditConfidentialNote() {
                       height="20"
                       fill="currentColor"
                       class="bi bi-arrow-left"
-                      viewBox="0 0 16 16"
-                    >
+                      viewBox="0 0 16 16">
                       <path
                         fill-rule="evenodd"
                         d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
@@ -392,8 +378,7 @@ export default function EditConfidentialNote() {
                   fill="currentColor"
                   class="bi bi-file-earmark-text"
                   viewBox="0 0 16 16"
-                  onClick={handleSubmit}
-                >
+                  onClick={handleSubmit}>
                   <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
                   <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
                 </svg>

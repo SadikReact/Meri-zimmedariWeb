@@ -22,7 +22,6 @@ const faceLandmarksDetection = require("@tensorflow-models/face-landmarks-detect
 const LifeDeclaration = args => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDate, setIsDate] = useState(false);
-  // const [futureDate, setFutureDate] = useState("");
   const [count, setCount] = useState(0);
   const [maxLeft, setMaxLeft] = useState(0);
   const [maxRight, setMaxRight] = useState(0);
@@ -47,9 +46,9 @@ const LifeDeclaration = args => {
     loadModel();
   }, []);
   const handleChange = e => {
-    let { name, value } = e.target;
-    setIsDate(true);
-    setData({ ...Data, [name]: value });
+    debugger;
+    const { name, value } = e.target;
+    setDeclarationDate({ ...DeclarationDate, [name]: value });
   };
 
   useEffect(() => {
@@ -68,7 +67,6 @@ const LifeDeclaration = args => {
       })
       .then(model => {
         setModel(model);
-        // console.log("modelllll", model);
         setText("ready for capture");
       })
       .catch(err => {
@@ -77,7 +75,6 @@ const LifeDeclaration = args => {
   };
   const handleClick = () => {
     const newIsOpen = !isOpen;
-    console.log(newIsOpen);
     const newCount = isOpen ? count : 0;
     setIsOpen(newIsOpen);
     setCount(newCount);
@@ -119,9 +116,7 @@ const LifeDeclaration = args => {
         setMaxLeft(0);
         setMaxRight(0);
       }
-    } catch (error) {
-      // console.log(error);
-    }
+    } catch (error) {}
     if (!isOpen) {
       // stop detection
       setText("");
@@ -181,18 +176,12 @@ const LifeDeclaration = args => {
     if (maxRight < eyeRight) {
       setMaxRight(eyeRight);
     }
-    // console.log("isopen:::::", isOpen);
     let result = false;
     //    if ((maxLeft > limitOpenEye) && (maxRight > limitOpenEye)) {
     if (eyeLeft < baseCloseEye && eyeRight < baseCloseEye) {
       result = true;
       setIsOpen(false);
-      // console.log("isopen11", isOpen);
     }
-    // console.log("isopen", isOpen);
-    //    }
-
-    // console.log(result);
 
     return result;
   };
@@ -207,11 +196,12 @@ const LifeDeclaration = args => {
       await axiosConfig
         .get(`/life-declaration/view-life-declaration/${user?._id}`)
         .then(res => {
-          console.log(res?.data?.Life);
-          setDeclarationDate(res?.data?.Life);
+          if (res?.data?.Life) {
+            setDeclarationDate(res?.data?.Life);
+          }
         })
         .catch(err => {
-          console.log(err);
+          setDeclarationDate("");
         });
     })();
   };
@@ -246,7 +236,7 @@ const LifeDeclaration = args => {
     let formdata = new FormData();
     formdata.append("userId", user?._id);
     formdata.append("image", dataURItoBlob(Data?.image));
-    formdata.append("day", Data?.Date);
+    // formdata.append("day", Data?.Date);
     await axiosConfig
       .post("/life-declaration", formdata)
       .then(res => {
@@ -263,18 +253,39 @@ const LifeDeclaration = args => {
         setLoading(false);
         toggle();
         console.log(err);
-        setMessage("Error Occured ");
+        setMessage("Life Declaration not Completed");
         setErrModal(true);
       });
   };
 
   const handleManage = e => {
-    e.preventDefault();
-    if (isDate) {
-      detectPoints();
-      toggle();
-      setShowWebcam(true);
-    }
+    // e.preventDefault();
+    // if (isDate) {
+    detectPoints();
+    toggle();
+    setShowWebcam(true);
+    // }
+  };
+  const handleSubmitDate = async () => {
+    let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
+    const payload = {
+      day: DeclarationDate.day,
+      userId: user._id,
+    };
+    debugger;
+    setLoading(true);
+    await axiosConfig
+      .post("/life-declaration/save-life-declaration", payload)
+      .then(res => {
+        console.log(res.data.message);
+        // toggle();
+        setMessage(res?.data?.message);
+        setErrModal(true);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   return (
     <>
@@ -324,10 +335,10 @@ const LifeDeclaration = args => {
               </p>
             </span>
           </div>
-          <div className="col-md-6 col-sm-6 col-xl-6 col-lg-6">
+          <div className="col-md-4 col-sm-4 col-xl-4 col-lg-4">
             <div style={{ justifyContent: "center", display: "flex" }}>
               <select
-                name="Date"
+                name="day"
                 onChange={handleChange}
                 value={DeclarationDate?.day}
                 required
@@ -341,7 +352,7 @@ const LifeDeclaration = args => {
                   border: "1px solid rgb(114, 158, 216)",
                 }}
               >
-                <option selected>Select Date</option>
+                <option value="">Select Date</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -372,6 +383,11 @@ const LifeDeclaration = args => {
                 <option value="28">28</option>
               </select>
             </div>
+          </div>
+          <div className="col-md-2 col-sm-2 col-xl-2 col-lg-2">
+            <Button color="primary" onClick={handleSubmitDate}>
+              Submit
+            </Button>
           </div>
         </div>
         <div
@@ -470,7 +486,7 @@ const LifeDeclaration = args => {
         <div style={{ float: "right" }}>
           <button
             onClick={handleManage}
-            disabled={isDate ? false : true}
+            // disabled={isDate ? false : true}
             style={{
               border: "none",
               fontSize: "14px",

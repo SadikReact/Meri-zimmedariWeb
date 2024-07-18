@@ -23,7 +23,7 @@ const AssetDetails = () => {
     axiosConfig
       .get(`/asset/view-assets-userId/${userData?._id}`)
       .then(response => {
-        // console.log(response.data.Asset);
+        console.log(response.data.Asset);
         setModel(false);
         setAssetList(response.data.Asset);
       })
