@@ -127,10 +127,7 @@ const Login = () => {
     setIsOpen(newIsOpen);
     setCount(newCount);
   };
-  // const capture = () => {
-  //   setShowWebcam(true);
-  //   handleClick();
-  // };
+
   const capture = () => {
     setShowWebcam(true);
     handleClick();
@@ -138,7 +135,6 @@ const Login = () => {
     setTimeout(() => {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
-        console.log("Screenshot captured:", imageSrc);
         handleCapture();
       } else {
         console.error("Error: Screenshot not captured.");

@@ -231,7 +231,6 @@ const LifeDeclaration = args => {
   }
   const handleSubmit = async () => {
     setLoading(true);
-    // let user = JSON.parse(localStorage.getItem("UserZimmedari"));
     let user = JSON.parse(sessionStorage.getItem("UserZimmedari"));
     let formdata = new FormData();
     formdata.append("userId", user?._id);
